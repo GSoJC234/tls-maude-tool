@@ -35,10 +35,8 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.security.cert.Extension;
+import java.util.*;
 
 public class MaudeTLS {
     private Config config;
@@ -159,16 +157,13 @@ public class MaudeTLS {
                                                     Maude.Random random,
                                                     Maude.SessionId sid) {
         ClientHelloMessage message = new ClientHelloMessage();
-        message.setCipherSuiteLength(1);
-
-
-
+        message.setCipherSuiteLength(Modifiable.explicit(2));
         switch(suite){
             case TLS_ECDHE_ECDSA_WITH_AES_128_CCM: message.setCipherSuites(Modifiable.explicit(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM.getByteValue())); break;
             case TLS_ECDHE_ECDSA_WITH_AES_256_CCM: message.setCipherSuites(Modifiable.explicit(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CCM.getByteValue())); break;
             default: return null;
         }
-        message.setCompressionLength(1);
+        message.setCompressionLength(Modifiable.explicit(1));
         switch(method){
             case NO_COMPRESSION: message.setCompressions(Modifiable.explicit(CompressionMethod.NULL.getArrayValue())); break;
             case DEFLATE: message.setCompressions(Modifiable.explicit(CompressionMethod.DEFLATE.getArrayValue())); break;
@@ -177,45 +172,40 @@ public class MaudeTLS {
         return (ClientHelloMessage) genHelloMessage(message, version, random, sid);
     }
 
-    public void addClientHelloExtension(ProtocolMessage message, Maude.NamedGroup namedGroup){
-        if(message instanceof ClientHelloMessage){
-            ClientHelloMessage chMsg = (ClientHelloMessage) message;
+    public void addHelloMessageExtension(ProtocolMessage message, Maude.NamedGroup namedGroup){
+        EllipticCurvesExtensionMessage supported_ext = new EllipticCurvesExtensionMessage();
+        supported_ext.setSupportedGroupsLength(Modifiable.explicit(2));
+        supported_ext.setSupportedGroups(Modifiable.explicit(namedGroup.transform().getValue()));
 
-            EllipticCurvesExtensionMessage supported_ext = new EllipticCurvesExtensionMessage();
-            supported_ext.setSupportedGroupsLength(Modifiable.explicit(2));
-            supported_ext.setSupportedGroups(Modifiable.explicit(namedGroup.transform().getValue()));
-
-            List<ExtensionMessage> extensionMessages = chMsg.getExtensions();
-            extensionMessages.add(supported_ext);
-            chMsg.setExtensions(extensionMessages);
-        }
+        addHelloMessageExtension(supported_ext, message);
     }
 
-    public void addClientHelloExtension(ProtocolMessage message, Maude.ECPointFormat pointFormat){
-        if(message instanceof ClientHelloMessage){
-            ClientHelloMessage chMsg = (ClientHelloMessage) message;
+    public void addHelloMessageExtension(ProtocolMessage message, Maude.ECPointFormat pointFormat){
+        ECPointFormatExtensionMessage supported_format = new ECPointFormatExtensionMessage();
+        supported_format.setPointFormatsLength(Modifiable.explicit(1));
+        supported_format.setPointFormats(Modifiable.explicit(pointFormat.transform().getArrayValue()));
 
-            ECPointFormatExtensionMessage supported_format = new ECPointFormatExtensionMessage();
-            supported_format.setPointFormatsLength(Modifiable.explicit(2));
-            supported_format.setPointFormats(pointFormat.transform().getArrayValue());
-
-            List<ExtensionMessage> extensionMessages = chMsg.getExtensions();
-            extensionMessages.add(supported_format);
-            chMsg.setExtensions(extensionMessages);
-        }
+        addHelloMessageExtension(supported_format, message);
     }
 
-    public void addClientHelloExtension(ProtocolMessage message, Maude.SignatureAndHashAlgorithm signatureAndHashAlgorithm){
-        if(message instanceof ClientHelloMessage){
-            ClientHelloMessage chMsg = (ClientHelloMessage) message;
+    public void addHelloMessageExtension(ProtocolMessage message, Maude.SignatureAndHashAlgorithm signatureAndHashAlgorithm){
+         SignatureAndHashAlgorithmsExtensionMessage supported_hash = new SignatureAndHashAlgorithmsExtensionMessage();
+         supported_hash.setSignatureAndHashAlgorithmsLength(Modifiable.explicit(2));
+         supported_hash.setSignatureAndHashAlgorithms(Modifiable.explicit(signatureAndHashAlgorithm.transform().getByteValue()));
 
-            SignatureAndHashAlgorithmsExtensionMessage supported_hash = new SignatureAndHashAlgorithmsExtensionMessage();
-            supported_hash.setSignatureAndHashAlgorithmsLength(Modifiable.explicit(2));
-            supported_hash.setSignatureAndHashAlgorithms(signatureAndHashAlgorithm.transform().getByteValue());
+         addHelloMessageExtension(supported_hash, message);
+    }
 
-            List<ExtensionMessage> extensionMessages = chMsg.getExtensions();
-            extensionMessages.add(supported_hash);
-            chMsg.setExtensions(extensionMessages);
+    private void addHelloMessageExtension(ExtensionMessage extension, ProtocolMessage message){
+        if(message instanceof HelloMessage){
+            HelloMessage helloMessage = (HelloMessage) message;
+
+            List<ExtensionMessage> extensionMessages = helloMessage.getExtensions();
+            if(extensionMessages == null){
+                extensionMessages = new ArrayList<ExtensionMessage>();
+            }
+            extensionMessages.add(extension);
+            helloMessage.setExtensions(extensionMessages);
         }
     }
 
@@ -552,14 +542,15 @@ public class MaudeTLS {
         }
         return false;
     }
-    public boolean verifySignature(ProtocolMessage message){
+
+    public boolean verifySignature(ProtocolMessage<? extends ServerKeyExchangeMessage<?>> message){
         if(message instanceof ServerKeyExchangeMessage){
-            ServerKeyExchangeMessage sMsg = (ServerKeyExchangeMessage) message;
+            ServerKeyExchangeMessage<?> sMsg = (ServerKeyExchangeMessage<?>) message;
             return sMsg.getSignature() != null;
         }
         return false;
     }
-    public boolean verifyData(ProtocolMessage message){
+    public boolean verifyData(ProtocolMessage<FinishedMessage> message){
         if(message instanceof FinishedMessage){
             FinishedMessage fMsg = (FinishedMessage) message;
             return fMsg.getVerifyData().getValue() != null;
@@ -569,9 +560,9 @@ public class MaudeTLS {
 
     public ProtocolMessage recv(){
         if(receivedMsgs.isEmpty()) {
-            ReceiveAction action2 = new ReceiveAction(alias);
-            action2.execute(state);
-            receivedMsgs.addAll(action2.getReceivedMessages());
+            ReceiveAction action = new ReceiveAction(alias);
+            action.execute(state);
+            receivedMsgs.addAll(action.getReceivedMessages());
         }
         return receivedMsgs.poll();
     }
