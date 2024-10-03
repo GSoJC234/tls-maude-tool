@@ -10,10 +10,10 @@ public class ServerTest {
     private MaudeTLS md;
     @Before
     public void initialize(){
-        md = new MaudeTLS("/home/jaehun/git/My-TLS-Attacker/resources/default_config2.xml");
-        md.setCertificateKeyPair("/home/jaehun/git/My-TLS-Attacker/resources/ca-cert.pem");
-        md.setCertificateKeyPair("/home/jaehun/git/My-TLS-Attacker/resources/server-cert.pem",
-                "/home/jaehun/git/My-TLS-Attacker/resources/server-key.pem");
+        md = new MaudeTLS("/home/jaehun/maude-tls-attacker/resources/default_config2.xml");
+        md.setCertificateKeyPair("/home/jaehun/maude-tls-attacker/resources/ca-cert.pem");
+        md.setCertificateKeyPair("/home/jaehun/maude-tls-attacker/resources/server-cert.pem",
+                "/home/jaehun/maude-tls-attacker/resources/server-key.pem");
         md.initialize("localhost", 4433, "server");
     }
 
@@ -115,4 +115,46 @@ public class ServerTest {
         Assert.assertTrue(md.getCompressionMethods(v0).contains(CompressionMethod.NULL));
     }
 
+    @Test
+    public void test_duplicate_extension_type(){
+        // There MUST NOT be more than one extension of the same type.
+
+        // Receive ClientHello
+        ProtocolMessage v0 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v0));
+        Assert.assertEquals(HandshakeMessageType.CLIENT_HELLO, md.getHandshakeMessageType(v0));
+
+        // Send ServerHello
+        ProtocolMessage v1 = md.genServerHelloMessage(TLSVersion.TLS12, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM,
+                CompressionMethod.NO_COMPRESSION, Random.NONCE, SessionId.NONCE);
+        md.addHelloMessageExtension(v1, ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v1, ECPointFormat.UNCOMPRESSED);
+        Assert.assertNotNull(v1);
+        md.send(v1);
+
+        // Receive Alert Fatal
+        ProtocolMessage v2 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v2));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v2));
+    }
+
+    @Test
+    public void test_early_ccs_injection(){
+        // The ChangeCipherSpec message is sent during the
+        // handshake after the security parameters have been agreed upon, but
+        // before the verifying Finished message is sent.
+
+        // Receive ClientHello
+        ProtocolMessage v0 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v0));
+        Assert.assertEquals(HandshakeMessageType.CLIENT_HELLO, md.getHandshakeMessageType(v0));
+
+        // Send ChangeCipherSpec
+        ProtocolMessage v1 = md.genChangeCipherSpec();
+        md.send(v1);
+
+        ProtocolMessage v2 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v2));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v2));
+    }
 }

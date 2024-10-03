@@ -8,9 +8,9 @@ public class ClientTest {
     private MaudeTLS md;
     @Before
     public void initialize(){
-        md = new MaudeTLS("/home/jaehun/git/My-TLS-Attacker/resources/default_config2.xml");
-        md.setCertificateKeyPair("/home/jaehun/git/My-TLS-Attacker/resources/ca-cert.pem");
-        md.initialize("192.168.45.143", 4477, "client");
+        md = new MaudeTLS("/home/jaehun/maude-tls-attacker/resources/default_config2.xml");
+        md.setCertificateKeyPair("/home/jaehun/maude-tls-attacker/resources/ca-cert.pem");
+        md.initialize("localhost", 4433, "client");
     }
 
     @Test
@@ -20,11 +20,12 @@ public class ClientTest {
                 CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
                 Random.NONCE, SessionId.EMPTY);
 
-        md.addClientHelloExtension(v0, Maude.NamedGroup.SECP256R1);
-        md.addClientHelloExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
-        md.addClientHelloExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
 
         md.send(v0);
+
         // Receive ServerHello
         ProtocolMessage v1 = md.recv();
         Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v1));
@@ -137,17 +138,186 @@ public class ClientTest {
         ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
                 CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
                 Random.NONCE, SessionId.EMPTY);
-        md.addClientHelloExtension(v0, Maude.NamedGroup.SECP256R1);
-        md.addClientHelloExtension(v0, Maude.NamedGroup.SECP256R1);
-        md.addClientHelloExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
-        md.addClientHelloExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
         md.send(v0);
 
-        // Receive ServerHello
+        // Receive Alert Fatal
         ProtocolMessage v1 = md.recv();
         Assert.assertEquals(MessageType.ALERT, md.getMessageType(v1));
         Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v1));
     }
 
+    @Test
+    public void test_duplicate_extension_type2(){
+        // There MUST NOT be more than one extension of the same type.
+
+        // Send ClientHello
+        ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
+                Random.NONCE, SessionId.EMPTY);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.send(v0);
+
+        // Receive Alert Fatal
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v1));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v1));
+    }
+
+    @Test
+    public void test_duplicate_extension_type3(){
+        // There MUST NOT be more than one extension of the same type.
+
+        // Send ClientHello
+        ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
+                Random.NONCE, SessionId.EMPTY);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.send(v0);
+
+        // Receive Alert Fatal
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v1));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v1));
+    }
+
+    @Test
+    public void test_consistent_signature_and_hash_algorithm1(){
+        // If the client provided a "signature_algorithms" extension, then all
+        // certificates provided by the server MUST be signed by a
+        // hash/signature algorithm pair that appears in that extension.
+
+        // Send ClientHello
+        ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
+                Random.NONCE, SessionId.EMPTY);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+        md.send(v0);
+
+        // Receive ServerHello
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v1));
+        Assert.assertEquals(HandshakeMessageType.SERVER_HELLO, md.getHandshakeMessageType(v1));
+        Assert.assertEquals(CompressionMethod.NULL, md.getSelectedCompressionMethod(v1));
+
+        // Receive ServerCertificate
+        ProtocolMessage v2 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v2));
+        Assert.assertEquals(HandshakeMessageType.CERTIFICATE, md.getHandshakeMessageType(v2));
+        Assert.assertEquals(SignatureAndHashAlgorithm.ECDSA_SHA256, md.getSignatureAndHashAlgorithm(v2));
+    }
+
+    @Test
+    public void test_consistent_signature_and_hash_algorithm2(){
+        // If the client provided a "signature_algorithms" extension, then all
+        // certificates provided by the server MUST be signed by a
+        // hash/signature algorithm pair that appears in that extension.
+
+        // Send ClientHello
+        ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
+                Random.NONCE, SessionId.EMPTY);
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.RSA_SHA256);
+        md.send(v0);
+
+        // Receive ServerHello
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v1));
+        Assert.assertEquals(HandshakeMessageType.SERVER_HELLO, md.getHandshakeMessageType(v1));
+        Assert.assertEquals(CompressionMethod.NULL, md.getSelectedCompressionMethod(v1));
+
+        // Receive ServerCertificate
+        ProtocolMessage v2 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v2));
+        Assert.assertEquals(HandshakeMessageType.CERTIFICATE, md.getHandshakeMessageType(v2));
+        Assert.assertEquals(SignatureAndHashAlgorithm.RSA_SHA256, md.getSignatureAndHashAlgorithm(v2));
+    }
+
+    @Test
+    public void test_early_ccs_injection1(){
+        // The ChangeCipherSpec message is sent during the
+        // handshake after the security parameters have been agreed upon, but
+        // before the verifying Finished message is sent.
+
+        // Send ChangeCipherSpec
+        ProtocolMessage v0 = md.genChangeCipherSpec();
+        md.send(v0);
+
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v1));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v1));
+    }
+
+    @Test
+    public void test_early_ccs_injection2(){
+        // The ChangeCipherSpec message is sent during the
+        // handshake after the security parameters have been agreed upon, but
+        // before the verifying Finished message is sent.
+
+        // Send ClientHello
+        ProtocolMessage v0 = md.genClientHelloMessage(TLSVersion.TLS12,
+                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, CompressionMethod.NO_COMPRESSION,
+                Random.NONCE, SessionId.EMPTY);
+
+        md.addHelloMessageExtension(v0, Maude.NamedGroup.SECP256R1);
+        md.addHelloMessageExtension(v0, Maude.ECPointFormat.UNCOMPRESSED);
+        md.addHelloMessageExtension(v0, Maude.SignatureAndHashAlgorithm.ECDSA_SHA256);
+
+        md.send(v0);
+
+        // Receive ServerHello
+        ProtocolMessage v1 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v1));
+        Assert.assertEquals(HandshakeMessageType.SERVER_HELLO, md.getHandshakeMessageType(v1));
+        Assert.assertEquals(TLSVersion.TLS12, md.getProtocolVersion(v1));
+        Assert.assertEquals(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM, md.getSelectedCipherSuite(v1));
+        Assert.assertEquals(CompressionMethod.NULL, md.getSelectedCompressionMethod(v1));
+        Assert.assertTrue(md.hasRandom(v1));
+        Assert.assertTrue(md.hasSessionId(v1));
+
+        // Receive Server Certificate
+        ProtocolMessage v2 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v2));
+        Assert.assertEquals(HandshakeMessageType.CERTIFICATE, md.getHandshakeMessageType(v2));
+        Assert.assertTrue(md.hasPeerPublicKey(v2));
+
+        // Receive ServerKeyExchange
+        ProtocolMessage v3 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v3));
+        Assert.assertEquals(HandshakeMessageType.SERVER_KEY_EXCHANGE, md.getHandshakeMessageType(v3));
+        Assert.assertTrue(md.hasServerKey(v3));
+        Assert.assertTrue(md.verifySignature(v3));
+
+        // Receive Certificate Request
+        ProtocolMessage v4 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v4));
+        Assert.assertEquals(HandshakeMessageType.CERTIFICATE_REQUEST, md.getHandshakeMessageType(v4));
+
+        // Receive ServerHelloDone
+        ProtocolMessage v5 = md.recv();
+        Assert.assertEquals(MessageType.HANDSHAKE, md.getMessageType(v5));
+        Assert.assertEquals(HandshakeMessageType.SERVER_HELLO_DONE, md.getHandshakeMessageType(v5));
+
+        // Send ChangeCipherSpec
+        ProtocolMessage v6 = md.genChangeCipherSpec();
+        md.send(v6);
+
+        ProtocolMessage v7 = md.recv();
+        Assert.assertEquals(MessageType.ALERT, md.getMessageType(v7));
+        Assert.assertEquals(AlertLevel.FATAL, md.getAlertLevel(v7));
+    }
 
 }
