@@ -1,129 +1,154 @@
 import Maude.*;
 import Maude.HandshakeMessageType;
-import Maude.NamedGroup;
+import Maude.ProtocolVersion;
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
 import de.rub.nds.modifiablevariable.util.Modifiable;
-import de.rub.nds.tlsattacker.core.certificate.CertificateKeyPair;
-import de.rub.nds.tlsattacker.core.certificate.PemUtil;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
+import de.rub.nds.tlsattacker.core.connection.InboundConnection;
+import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.constants.*;
 import de.rub.nds.tlsattacker.core.constants.AlertLevel;
 import de.rub.nds.tlsattacker.core.constants.CompressionMethod;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
-import de.rub.nds.tlsattacker.core.constants.HashAlgorithm;
-import de.rub.nds.tlsattacker.core.constants.SignatureAlgorithm;
 import de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.*;
+import de.rub.nds.tlsattacker.core.protocol.message.cert.CertificateEntry;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ECPointFormatExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.EllipticCurvesExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.SignatureAndHashAlgorithmsExtensionMessage;
+import de.rub.nds.tlsattacker.core.record.Record;
 import de.rub.nds.tlsattacker.core.state.Context;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.workflow.action.ReceiveAction;
 import de.rub.nds.tlsattacker.core.workflow.action.SendAction;
-import de.rub.nds.tlsattacker.transport.TransportHandler;
-import de.rub.nds.tlsattacker.transport.TransportHandlerFactory;
+import de.rub.nds.x509attacker.signatureengine.keyparsers.PemUtil;
+import de.rub.nds.x509attacker.x509.model.X509Certificate;
 import org.bouncycastle.crypto.tls.Certificate;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.security.cert.Extension;
 import java.util.*;
 
 public class MaudeTLS {
     private Config config;
     private Context context;
     private State state;
+    private Maude.Alias alias;
 
-    private String alias;
+    private Certificate serverCertificate = null;
+    private Certificate clientCertificate = null;
+    private PrivateKey serverPrivateKey = null;
+    private PrivateKey clientPrivateKey = null;
+
+    private String ip;
+    private int port;
 
     private Queue<ProtocolMessage> receivedMsgs;
 
-    public MaudeTLS(){receivedMsgs = new LinkedList<ProtocolMessage>();}
     public MaudeTLS(String configPath){
         config = Config.createConfig(new File(configPath));
         receivedMsgs = new LinkedList<ProtocolMessage>();
     }
 
-    public void setCertificateKeyPair(String certPath){
-        try {
-            config.setAutoSelectCertificate(false);
-            config.setUseFreshRandom(true);
-            Certificate caCertificate = PemUtil.readCertificate(new FileInputStream(new File(certPath)));
-            config.setDefaultExplicitCertificateKeyPair(new CertificateKeyPair(caCertificate));
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchProviderException e) {
-            throw new RuntimeException(e);
+    public void setAlias(Maude.Alias alias) {
+        this.alias = alias;
+        switch(alias){
+            case CLIENT: config.setDefaultRunningMode(RunningModeType.CLIENT); break;
+            case SERVER: config.setDefaultRunningMode(RunningModeType.SERVER); break;
+            default: throw new IllegalArgumentException("Unknown alias: " + alias);
         }
     }
 
-    public void setCertificateKeyPair(String servPath, String keyPath){
+    public void setCertificate(String path){
         try {
-            config.setAutoSelectCertificate(false);
-            Certificate servCertificate = PemUtil.readCertificate(new FileInputStream(new File(servPath)));
-            PrivateKey privateKey = PemUtil.readPrivateKey(new FileInputStream(new File(keyPath)));
-            config.setDefaultExplicitCertificateKeyPair(new CertificateKeyPair(servCertificate, privateKey));
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchProviderException e) {
-            throw new RuntimeException(e);
+            switch(alias){
+                case SERVER: serverCertificate = PemUtil.readCertificate(new FileInputStream(new File(path))); break;
+                case CLIENT: clientCertificate = PemUtil.readCertificate(new FileInputStream(new File(path))); break;
+                default: throw new IllegalArgumentException("Unknown alias: " + alias);
+            }
+        } catch (CertificateException | IOException e) {
+            throw new RuntimeException("Error reading certificate from path: " + path, e);
         }
     }
 
-    public void initialize(String ip, int port, String _alias){
-        if(_alias.equals("server")){
-            config.setDefaultRunningMode(RunningModeType.SERVER);
-        } else if(_alias.equals("client")){
-            config.setDefaultRunningMode(RunningModeType.CLIENT);
-        } else {
-            System.out.println("The given alias is not supported");
-            return;
+    public void setPrivateKey(String path){
+        try {
+            switch(alias){
+                case SERVER: serverPrivateKey = PemUtil.readPrivateKey(new FileInputStream(new File(path))); break;
+                case CLIENT: clientPrivateKey = PemUtil.readPrivateKey(new FileInputStream(new File(path))); break;
+                default: throw new IllegalArgumentException("Unknown alias: " + alias);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading private key from path: " + path, e);
         }
+    }
 
-        context = new Context(config);
-        alias = _alias;
-        AliasedConnection conn = context.getConnection();
-        //timeout value should be changed!
-        conn.setFirstTimeout(1000);
-        conn.setTimeout(1000);
-        conn.setConnectionTimeout(1000);
-        conn.setIp(ip);
-        conn.setPort(port);
-
-        TransportHandler handler = TransportHandlerFactory.createTransportHandler(context.getConnection());
-        try{
-            handler.preInitialize();
-            handler.initialize();
-        } catch(Exception e){
-            System.out.println(e.getCause());
+    public void setConnection(String _ip, int _port){
+        if(_ip == null){
+            throw new NullPointerException("ip is null");
         }
-        context.setTransportHandler(handler);
+        if(_port < 0){
+            throw new NullPointerException("port is invalid");
+        }
+        ip = _ip; port = _port;
+    }
 
+    public void initialize2(){
         state = new State(config);
-        state.getContext(alias).setTlsContext(context.getTlsContext());
+
+        AliasedConnection aliasedConnection = null;
+        switch(alias){
+            case SERVER: aliasedConnection = new OutboundConnection(alias.toString(), port, ip); break;
+            case CLIENT: aliasedConnection = new InboundConnection(alias.toString(), port, ip); break;
+            default: throw new IllegalArgumentException("Unknown alias: " + alias);
+        }
+        aliasedConnection.setTimeout(1000);
+
+        context = new Context(state, aliasedConnection);
     }
 
-    private HelloMessage genHelloMessage(HelloMessage message, Maude.TLSVersion version, Maude.Random random, Maude.SessionId sid){
-        switch(version){
-            case TLS11:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS11.getValue())); break;
-            case TLS12:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS12.getValue())); break;
-            case TLS13:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS13.getValue())); break;
-            case SSLV2 : message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.SSL2.getValue())); break;
-            default:    return null;
-        }
+    //public void initialize(){
+    //    context = new Context(config);
+    //    AliasedConnection conn = context.getConnection();
+    //    //timeout value should be changed!
+    //    conn.setTimeout(1000);
+    //    conn.setConnectionTimeout(1000);
+    //    conn.setIp(ip);
+    //    conn.setPort(port);
+    //
+    //    TransportHandler handler = TransportHandlerFactory.createTransportHandler(context.getConnection());
+    //    try{
+    //        handler.preInitialize();
+    //        handler.initialize();
+    //    } catch(Exception e){
+    //        System.out.println(e.getCause());
+    //   }
+    //    context.setTransportHandler(handler);
+    //
+    //    state = new State(config);
+    //    state.getContext(alias).setTlsContext(context.getTlsContext());
+    //}
+
+    private Record genRecordHeader(){
+        Record record = new Record();
+        return record;
+    }
+
+    private HelloMessage genHelloMessage(HelloMessage message, ProtocolVersion version, Maude.Random random, Maude.SessionId sid){
+        //switch(version){
+        //   case TLS11:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS11.getValue())); break;
+        //    case TLS12:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS12.getValue())); break;
+        //    case TLS13:  message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.TLS13.getValue())); break;
+        //    case SSLV2 : message.setProtocolVersion(Modifiable.explicit(ProtocolVersion.SSL2.getValue())); break;
+        //    default:    return null;
+        //}
         SecureRandom randomGenerator;
         try{
             randomGenerator = SecureRandom.getInstanceStrong();
@@ -151,7 +176,7 @@ public class MaudeTLS {
         return message;
     }
 
-    public ClientHelloMessage genClientHelloMessage(Maude.TLSVersion version,
+    public ClientHelloMessage genClientHelloMessage(ProtocolVersion version,
                                                     Maude.CipherSuite suite,
                                                     Maude.CompressionMethod method,
                                                     Maude.Random random,
@@ -209,7 +234,7 @@ public class MaudeTLS {
         }
     }
 
-    public ServerHelloMessage genServerHelloMessage(Maude.TLSVersion version, Maude.CipherSuite suite, Maude.CompressionMethod method, Maude.Random random, Maude.SessionId sid) {
+    public ServerHelloMessage genServerHelloMessage(ProtocolVersion version, Maude.CipherSuite suite, Maude.CompressionMethod method, Maude.Random random, Maude.SessionId sid) {
         ServerHelloMessage message = new ServerHelloMessage();
         message.setExtensionBytes(Modifiable.explicit(new byte[]{}));
         switch(suite){
@@ -265,13 +290,30 @@ public class MaudeTLS {
         return message;
     }
 
-
-
-    public CertificateMessage genCertificate(){
+    public CertificateMessage genCertificateMessage(){
         CertificateMessage message = new CertificateMessage();
+        List<CertificateEntry> certificateEntries = new ArrayList<CertificateEntry>();
 
+        try {
+            CertificateEntry certificateEntry = createCertificateEntry();
+            message.setCertificateEntryList(certificateEntries);
+        } catch (IOException e) {
+            throw new RuntimeException("Error encoding certificate for alias: " + alias, e);
+        }
+
+        message.setCertificateEntryList(certificateEntries);
         return message;
     }
+
+    private CertificateEntry createCertificateEntry() throws IOException {
+        CertificateEntry certificateEntry = new CertificateEntry();
+        switch (alias){
+            case SERVER: certificateEntry.setCertificateBytes(PemUtil.encodeCert(serverCertificate)); break;
+            case CLIENT: certificateEntry.setCertificateBytes(PemUtil.encodeCert(clientCertificate)); break;
+        }
+        return certificateEntry;
+    }
+
 
     public CertificateRequestMessage genCertificateRequest(Maude.CertificateType type, Maude.SignatureAlgorithm sigAlgo, Maude.HashAlgorithm hashAlgo){
         CertificateRequestMessage message = new CertificateRequestMessage();
@@ -303,13 +345,12 @@ public class MaudeTLS {
             case NONE:   hashAlgorithm = HashAlgorithm.NONE;   break;
             case MD5:    hashAlgorithm = HashAlgorithm.MD5;    break;
             case SHA1:   hashAlgorithm = HashAlgorithm.SHA1;   break;
-            case SAH224: hashAlgorithm = HashAlgorithm.SHA224; break;
             case SHA256: hashAlgorithm = HashAlgorithm.SHA256; break;
             case SHA384: hashAlgorithm = HashAlgorithm.SHA384; break;
             case SHA512: hashAlgorithm = HashAlgorithm.SHA512; break;
             default: hashAlgorithm = null;
         }
-        SignatureAndHashAlgorithm signatureAndHashAlgorithm = SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(signatureAlgorithm, hashAlgorithm);
+        SignatureAndHashAlgorithm signatureAndHashAlgorithm = null; //SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(signatureAlgorithm, hashAlgorithm);
         message.setSignatureHashAlgorithmsLength(Modifiable.explicit(signatureAndHashAlgorithm.getByteValue().length));
         message.setSignatureHashAlgorithms(Modifiable.explicit(signatureAndHashAlgorithm.getByteValue()));
 
@@ -319,16 +360,16 @@ public class MaudeTLS {
         return message;
     }
 
-    public Maude.TLSVersion getProtocolVersion(ProtocolMessage message){
+    public ProtocolVersion getProtocolVersion(ProtocolMessage message){
         if(message instanceof HelloMessage){
             HelloMessage shMsg = (HelloMessage) message;
-            switch(ProtocolVersion.getProtocolVersion(shMsg.getProtocolVersion().getValue())){
-                case TLS11: return Maude.TLSVersion.TLS11;
-                case TLS12: return Maude.TLSVersion.TLS12;
-                case TLS13: return Maude.TLSVersion.TLS13;
-                case SSL2: return Maude.TLSVersion.SSLV2;
-                default: return null;
-            }
+            //switch(ProtocolVersion.getProtocolVersion(shMsg.getProtocolVersion().getValue())){
+            //    case TLS11: return ProtocolVersion.TLS11;
+            //    case TLS12: return ProtocolVersion.TLS12;
+            //    case TLS13: return ProtocolVersion.TLS13;
+            //    case SSL2: return ProtocolVersion.SSLV2;
+            //    default: return null;
+            //}
         }
         return null;
     }
@@ -397,40 +438,47 @@ public class MaudeTLS {
     public Maude.CertificateKeyType getCertificateKeyType(ProtocolMessage message){
         if(message instanceof CertificateMessage){
             CertificateMessage cMsg = (CertificateMessage)message;
-            CertificateKeyPair pair = cMsg.getCertificateKeyPair();
-            switch(pair.getCertSignatureType()){
-                case ECDSA: return Maude.CertificateKeyType.ECDSA;
-                case DSS: return Maude.CertificateKeyType.DSS;
-                case RSA: return Maude.CertificateKeyType.RSA;
-                case NONE: return Maude.CertificateKeyType.NONE;
+            List<X509Certificate> certificates = cMsg.getX509CertificateListFromEntries();
+
+            switch(certificates.get(1).getPublicKey().getX509PublicKeyType()){
+                case ECDH_ECDSA: return Maude.CertificateKeyType.ECDSA;
+
             }
+
+            // CertificateKeyPair pair = cMsg.getCertificateKeyPair();
+            // switch(pair.getCertSignatureType()){
+            //     case ECDSA: return Maude.CertificateKeyType.ECDSA;
+            //     case DSS: return Maude.CertificateKeyType.DSS;
+            //     case RSA: return Maude.CertificateKeyType.RSA;
+            //     case NONE: return Maude.CertificateKeyType.NONE;
+            // }
         }
         return null;
     }
 
-    public NamedGroup getPublicKeyGroup(ProtocolMessage message){
-        if(message instanceof CertificateMessage){
-            CertificateMessage cMsg = (CertificateMessage)message;
-            CertificateKeyPair pair = cMsg.getCertificateKeyPair();
-            switch(pair.getPublicKeyGroup()){
-                case SECP256R1: return NamedGroup.SECP256R1;
-                default: return NamedGroup.NONE;
-            }
-        }
-        return null;
-    }
+    //public NamedGroup getPublicKeyGroup(ProtocolMessage message){
+    //    if(message instanceof CertificateMessage){
+    //        CertificateMessage cMsg = (CertificateMessage)message;
+    //        CertificateKeyPair pair = cMsg.getCertificateKeyPair();
+    //        switch(pair.getPublicKeyGroup()){
+    //            case SECP256R1: return NamedGroup.SECP256R1;
+    //            default: return NamedGroup.NONE;
+    //        }
+    //    }
+    //    return null;
+    //}
 
-    public NamedGroup getSignatureGroup(ProtocolMessage message){
-        if(message instanceof CertificateMessage){
-            CertificateMessage cMsg = (CertificateMessage)message;
-            CertificateKeyPair pair = cMsg.getCertificateKeyPair();
-            switch(pair.getSignatureGroup()){
-                case SECP256R1: return NamedGroup.SECP256R1;
-                default: return NamedGroup.NONE;
-            }
-        }
-        return null;
-    }
+    //public NamedGroup getSignatureGroup(ProtocolMessage message){
+    //    if(message instanceof CertificateMessage){
+    //        CertificateMessage cMsg = (CertificateMessage)message;
+    //        CertificateKeyPair pair = cMsg.getCertificateKeyPair();
+    //        switch(pair.getSignatureGroup()){
+    //            case SECP256R1: return NamedGroup.SECP256R1;
+    //            default: return NamedGroup.NONE;
+    //        }
+    //    }
+    //    return null;
+    //}
 
     public boolean hasECDHClientPublicKey(ProtocolMessage message){
         if(message instanceof ClientKeyExchangeMessage){
@@ -449,26 +497,22 @@ public class MaudeTLS {
         return false;
     }
 
-    public Maude.SignatureAndHashAlgorithm getSignatureAndHashAlgorithm(ProtocolMessage message){
-        if (message instanceof CertificateMessage){
-            CertificateMessage cert = (CertificateMessage) message;
-            return Maude.SignatureAndHashAlgorithm.transform(cert.getCertificateKeyPair().getSignatureAndHashAlgorithm());
-        }
-        return null;
-    }
-    /*
-      public Maude.SignatureAndHashAlgorithm getSignatureAndHashAlgorithm(ProtocolMessage message){
-          if(message instanceof CertificateVerifyMessage){
-              CertificateVerifyMessage cvMsg = (CertificateVerifyMessage)message;
-              switch(SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(cvMsg.getSignatureHashAlgorithm().getValue())){
-                  case ECDSA_SHA256: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA256;
-                  case ECDSA_SHA384: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA384;
-                  case ECDSA_SHA512: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA512;
-                  default: return Maude.SignatureAndHashAlgorithm.NONE;
-              }
-          }
-      }
-    */
+    //public Maude.SignatureAndHashAlgorithm getSignatureAndHashAlgorithm(ProtocolMessage message){
+    //    if (message instanceof CertificateMessage){
+    //        CertificateMessage cert = (CertificateMessage) message;
+    //        return Maude.SignatureAndHashAlgorithm.transform(cert.getCertificateKeyPair().getSignatureAndHashAlgorithm());
+    //    }
+    //    if(message instanceof CertificateVerifyMessage){
+    //        CertificateVerifyMessage cvMsg = (CertificateVerifyMessage)message;
+    //        switch(SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(cvMsg.getSignatureHashAlgorithm().getValue())){
+    //            case ECDSA_SHA256: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA256;
+    //            case ECDSA_SHA384: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA384;
+    //           case ECDSA_SHA512: return Maude.SignatureAndHashAlgorithm.ECDSA_SHA512;
+    //            default: return Maude.SignatureAndHashAlgorithm.NONE;
+    //        }
+    //    }
+    //    return null;
+    //}
 
     public Maude.AlertLevel getAlertLevel(ProtocolMessage message){
         if(message instanceof AlertMessage){
@@ -528,13 +572,13 @@ public class MaudeTLS {
         }
         return null;
     }
-    public boolean hasPeerPublicKey(ProtocolMessage message){
-        if(message instanceof CertificateMessage){
-            CertificateMessage cMsg = (CertificateMessage) message;
-            return cMsg.getCertificateKeyPair().getPublicKey() != null;
-        }
-        return false;
-    }
+    //public boolean hasPeerPublicKey(ProtocolMessage message){
+    //    if(message instanceof CertificateMessage){
+    //        CertificateMessage cMsg = (CertificateMessage) message;
+    //        return cMsg.getCertificateKeyPair().getPublicKey() != null;
+    //    }
+    //    return false;
+    //}
     public boolean hasServerKey(ProtocolMessage message){
         if(message instanceof ServerKeyExchangeMessage){
             ServerKeyExchangeMessage sMsg = (ServerKeyExchangeMessage) message;
@@ -543,14 +587,14 @@ public class MaudeTLS {
         return false;
     }
 
-    public boolean verifySignature(ProtocolMessage<? extends ServerKeyExchangeMessage<?>> message){
+    public boolean verifySignature(ProtocolMessage message){
         if(message instanceof ServerKeyExchangeMessage){
-            ServerKeyExchangeMessage<?> sMsg = (ServerKeyExchangeMessage<?>) message;
+            ServerKeyExchangeMessage sMsg = (ServerKeyExchangeMessage) message;
             return sMsg.getSignature() != null;
         }
         return false;
     }
-    public boolean verifyData(ProtocolMessage<FinishedMessage> message){
+    public boolean verifyData(ProtocolMessage message){
         if(message instanceof FinishedMessage){
             FinishedMessage fMsg = (FinishedMessage) message;
             return fMsg.getVerifyData().getValue() != null;
@@ -560,7 +604,7 @@ public class MaudeTLS {
 
     public ProtocolMessage recv(){
         if(receivedMsgs.isEmpty()) {
-            ReceiveAction action = new ReceiveAction(alias);
+            ReceiveAction action = new ReceiveAction(alias.toString());
             action.execute(state);
             receivedMsgs.addAll(action.getReceivedMessages());
         }
@@ -568,7 +612,7 @@ public class MaudeTLS {
     }
 
     public void send(ProtocolMessage msg){
-        SendAction action = new SendAction(alias, msg);
+        SendAction action = new SendAction(alias.toString(), msg);
         action.execute(state);
     }
 }
