@@ -27,16 +27,10 @@ public class TLSProtocolTest {
         protocol.send("CI", v2);
         Variable v3 = protocol.recv("SI");
         protocol.send("CI", v3);
-        Variable v4 = protocol.recv("SI");
-        protocol.send("CI", v4);
         Variable v5 = protocol.recv("SI");
         protocol.send("CI", v5);
-        Variable v6 = protocol.recv("CI");
-        protocol.send("SI", v6);
         Variable v7 = protocol.recv("CI");
         protocol.send("SI", v7);
-        Variable v8 = protocol.recv("CI");
-        protocol.send("SI", v8);
         Variable v9 = protocol.recv("CI");
         protocol.send("SI", v9);
         Variable v10 = protocol.recv("CI");
