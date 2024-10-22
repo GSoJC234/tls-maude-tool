@@ -5,6 +5,7 @@ import Protocol.TLSProtocol;
 import Protocol.Variable;
 import de.rub.nds.modifiablevariable.util.Modifiable;
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.constants.RunningModeType;
@@ -18,6 +19,7 @@ import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.core.workflow.action.ReceiveAction;
 import de.rub.nds.tlsattacker.core.workflow.action.ReceiveOneAction;
 import de.rub.nds.tlsattacker.core.workflow.action.SendAction;
+import de.rub.nds.tlsattacker.transport.ConnectionEndType;
 import org.xbill.DNS.Message;
 
 import java.io.File;
@@ -33,28 +35,31 @@ public class TLSAttacker extends TLSProtocol {
     private State state = null;
     private DefaultWorkflowExecutor executor = null;
     private List<ProtocolMessage> receivedMessage = null;
-
+    private List<AliasedConnection> aliasedConnections = null;
 
     public TLSAttacker(String configPath){
         ProviderUtil.addBouncyCastleProvider();
+        receivedMessage = new ArrayList<>();
+        aliasedConnections = new ArrayList<>();
         config = Config.createConfig(new File(configPath));
         config.setDefaultRunningMode(RunningModeType.MITM);
-        trace = new WorkflowTrace();
-        receivedMessage = new ArrayList<>();
+        trace = new WorkflowTrace(aliasedConnections);
+
+    }
+
+
+    @Override
+    public void connect(String alias, int port, String ip) {
+        OutboundConnection connection = new OutboundConnection(alias, port, ip);
+        connection.setConnectionTimeout(10000);
+        aliasedConnections.add(connection);
     }
 
     @Override
-    public void connect(String alias) {
-        OutboundConnection connection = new OutboundConnection(alias, 4433, "localhost");
+    public void accept(String alias, int port, String ip){
+        InboundConnection connection = new InboundConnection(alias, port, ip);
         connection.setConnectionTimeout(10000);
-        config.setDefaultClientConnection(connection);
-    }
-
-    @Override
-    public void accept(String alias){
-        InboundConnection connection = new InboundConnection(alias, 4444, "localhost");
-        connection.setConnectionTimeout(10000);
-        config.setDefaultServerConnection(connection);
+        aliasedConnections.add(connection);
     }
 
     @Override
