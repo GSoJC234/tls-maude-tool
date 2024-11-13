@@ -1,5 +1,10 @@
 package Protocol;
 
+import Maude.*;
+import de.rub.nds.tlsattacker.core.constants.AlertDescription;
+
+import javax.crypto.Cipher;
+
 public interface Protocol {
     void accept(String alias, int port, String ip);
     void connect(String alias, int port, String ip);
