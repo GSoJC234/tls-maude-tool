@@ -10,6 +10,7 @@ public class MessageVariable implements Variable {
 
     private List<ProtocolMessage> protocolMessages;
     private List<Record> recordMessages;
+
     public MessageVariable(List<Record> recordMessages, List<ProtocolMessage> message) {
         this.protocolMessages = message;
         this.recordMessages = recordMessages;
@@ -21,4 +22,10 @@ public class MessageVariable implements Variable {
     public List<Record> getRecordMessages() {
         return recordMessages;
     }
+
+    @Override
+    public List<?> getValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

@@ -1,3 +1,5 @@
+
+import Maude.*;
 import Protocol.Variable;
 import scenario.TLSAttacker;
 import Protocol.TLSProtocol;
@@ -116,6 +118,43 @@ public class TLSProtocolTest {
         protocol.close("SI1");
         protocol.close("CI2");
         protocol.close("SI2");
+
+        protocol.execute();
+    }
+
+    @Test
+    public void test3(){
+        protocol.connect("CI", 4444, "localhost");
+        Variable v0 = protocol.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/server-cert.pem"); // Server Certificate
+        Variable v1 = protocol.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/client-ecc-cert.pem"); // Attacker Certificate
+
+        Variable v2 = protocol.recv("CI");
+        protocol.assertEqual(protocol.constant(ProtocolMessageType.HANDSHAKE), protocol.getContentType(v2));
+        protocol.assertEqual(protocol.constant(ProtocolVersion.TLS12), protocol.getRecordVersion(v2));
+        protocol.assertEqual(protocol.constant(HandshakeMessageType.CLIENT_HELLO), protocol.getHandshakeMessageType(v2));
+        protocol.assertEqual(protocol.constant(ProtocolVersion.TLS12), protocol.getProtocolVersion(v2));
+        protocol.assertEqual(protocol.constant(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM), protocol.getCipherSuite(v2));
+        protocol.assertEqual(protocol.constant(CompressionMethod.NULL), protocol.getCompressionMethod(v2));
+
+        Variable v3 = protocol.buildServerHello(protocol.constant(HandshakeMessageType.SERVER_HELLO),
+                                                protocol.constant(MessageSize.VALID), protocol.constant(ProtocolVersion.TLS12), protocol.constant(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CCM), protocol.constant(Random.NONCE),
+                                                protocol.constant(Random.NONCE), protocol.constant(MessageSize.VALID), protocol.constant(CompressionMethod.NULL));
+        Variable v4 = protocol.buildRecord(protocol.constant(ProtocolMessageType.HANDSHAKE), protocol.constant(ProtocolVersion.TLS12), protocol.constant(MessageSize.VALID), v3);
+        Variable v5 = protocol.buildMessage(v4, v3);
+
+        Variable v6 = protocol.buildCertificate(protocol.constant(HandshakeMessageType.CERTIFICATE), protocol.constant(MessageSize.VALID), v0);
+        Variable v7 = protocol.buildRecord(protocol.constant(ProtocolMessageType.HANDSHAKE), protocol.constant(ProtocolVersion.TLS12), protocol.constant(MessageSize.VALID), v6);
+        Variable v8 = protocol.buildMessage(v7, v6);
+
+        Variable v9 = protocol.changeCertificate(v8, v1);
+
+        protocol.send("CI", v5);
+        protocol.send("CI", v9);
+
+        Variable v10 = protocol.recv("CI");
+        protocol.assertEqual(protocol.constant(ProtocolMessageType.ALERT), protocol.getContentType(v10));
+        protocol.assertEqual(protocol.constant(ProtocolVersion.TLS12), protocol.getRecordVersion(v10));
+        protocol.assertEqual(protocol.constant(AlertLevel.FATAL), protocol.getAlertLevel(v10));
 
         protocol.execute();
     }
