@@ -36,6 +36,5 @@ public interface Protocol {
     Variable buildServerHello(Variable handshake_type, Variable handshake_length,
                               Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
     Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate);
-    Variable changeCertificate(Variable msg, Variable certificate);
-
+    Variable changeCertificate(Variable variable, Variable before_certificate, Variable after_certificate);
 }

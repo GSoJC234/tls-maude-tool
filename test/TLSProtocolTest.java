@@ -124,9 +124,10 @@ public class TLSProtocolTest {
 
     @Test
     public void test3(){
-        protocol.connect("CI", 4444, "localhost");
+        protocol.accept("CI", 4446, "localhost");
+
         Variable v0 = protocol.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/server-cert.pem"); // Server Certificate
-        Variable v1 = protocol.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/client-ecc-cert.pem"); // Attacker Certificate
+        Variable v1 = protocol.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/client-ecc-cert.pem"); // Attacker Certificate (for testing, change invalid certificate)
 
         Variable v2 = protocol.recv("CI");
         protocol.assertEqual(protocol.constant(ProtocolMessageType.HANDSHAKE), protocol.getContentType(v2));
@@ -146,7 +147,7 @@ public class TLSProtocolTest {
         Variable v7 = protocol.buildRecord(protocol.constant(ProtocolMessageType.HANDSHAKE), protocol.constant(ProtocolVersion.TLS12), protocol.constant(MessageSize.VALID), v6);
         Variable v8 = protocol.buildMessage(v7, v6);
 
-        Variable v9 = protocol.changeCertificate(v8, v1);
+        Variable v9 = protocol.changeCertificate(v8, v0, v1);
 
         protocol.send("CI", v5);
         protocol.send("CI", v9);

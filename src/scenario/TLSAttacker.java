@@ -25,10 +25,9 @@ import de.rub.nds.x509attacker.context.X509Context;
 import de.rub.nds.x509attacker.x509.model.X509Certificate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.util.io.pem.PemReader;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ public class TLSAttacker extends TLSProtocol {
     private DefaultWorkflowExecutor executor = null;
     private List<AliasedConnection> aliasedConnections = null;
     private SecureRandom secureRandom;
+    private boolean isClient, isServer;
 
     private static Logger LOGGER = LogManager.getLogger();
 
@@ -49,7 +49,6 @@ public class TLSAttacker extends TLSProtocol {
         ProviderUtil.addBouncyCastleProvider();
         aliasedConnections = new ArrayList<>();
         config = Config.createConfig(new File(configPath));
-        config.setDefaultRunningMode(RunningModeType.MITM);
         trace = new WorkflowTrace(aliasedConnections);
     }
 
@@ -59,6 +58,7 @@ public class TLSAttacker extends TLSProtocol {
         OutboundConnection connection = new OutboundConnection(alias, port, ip);
         connection.setConnectionTimeout(10000);
         aliasedConnections.add(connection);
+        isServer = true;
     }
 
     @Override
@@ -66,6 +66,7 @@ public class TLSAttacker extends TLSProtocol {
         InboundConnection connection = new InboundConnection(alias, port, ip);
         connection.setConnectionTimeout(10000);
         aliasedConnections.add(connection);
+        isClient = true;
     }
 
     @Override
@@ -91,26 +92,31 @@ public class TLSAttacker extends TLSProtocol {
 
     @Override
     public void execute(){
+        if(isServer && isClient){
+            config.setDefaultRunningMode(RunningModeType.MITM);
+        }else if(isServer){
+            config.setDefaultRunningMode(RunningModeType.SERVER);
+        }else if(isClient){
+            config.setDefaultRunningMode(RunningModeType.CLIENT);
+        }
         state = new State(config, trace);
         executor = new DefaultWorkflowExecutor(state);
         executor.executeWorkflow();
     }
 
     @Override
-    public Variable makeCertificate(String path) {
-        X509Certificate x509Certificate = null;
+    public Variable makeCertificate(String pemFilePath) {
+        List<CertificateEntry> container = new ArrayList<>();
         try{
-            X509Context context = new X509Context();
-            X509Chooser chooser = context.getChooser();
-            x509Certificate = new X509Certificate("certificate");
-            x509Certificate.getParser(chooser).parse(new BufferedInputStream(new FileInputStream(path)));
+            PemReader pemReader = new PemReader(new FileReader(pemFilePath));
+            byte[] derBytes = pemReader.readPemObject().getContent();
+            CertificateEntry entry = new CertificateEntry(derBytes);
+            container.add(entry);
         } catch (Exception E){
-            LOGGER.warn("Could not parse a valid certificate fom provided certificate path: " + path);
+            LOGGER.warn("Could not parse a valid certificate fom provided certificate path: " + pemFilePath);
             return null;
         }
-        List<X509Certificate> certificate_container = new ArrayList<>();
-        certificate_container.add(x509Certificate);
-        return new CertificateVariable(certificate_container);
+        return new CertificateVariable(container);
     }
 
     @Override
@@ -194,6 +200,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<ProtocolMessageType>(container);
     }
 
@@ -209,6 +216,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<ProtocolVersion>(container);
     }
 
@@ -224,6 +232,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<HandshakeMessageType>(container);
     }
 
@@ -244,6 +253,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<ProtocolVersion>(container);
     }
 
@@ -265,6 +275,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<CipherSuite>(container);
     }
 
@@ -286,6 +297,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<CompressionMethod>(container);
     }
 
@@ -301,6 +313,7 @@ public class TLSAttacker extends TLSProtocol {
                     }
                     return null;
                 });
+        trace.addTlsAction(action);
         return new FieldVariable<AlertLevel>(container);
     }
 
@@ -316,13 +329,12 @@ public class TLSAttacker extends TLSProtocol {
     public Variable buildRecord(Variable content_type, Variable record_version, Variable record_length, Variable message) {
         List<Record> container = new ArrayList<>();
 
-        BuildRecordAction action = new BuildRecordAction(
-                container,
-                (List<ProtocolMessageType>) content_type.getValue(),
-                (List<ProtocolVersion>) record_version.getValue(),
-                (List<Integer>) record_length.getValue(),
-                (List<ProtocolMessage>) message.getValue()
-        );
+        BuildRecordAction action = new BuildRecordAction(container);
+        action.setProtocolMessageType((List<ProtocolMessageType>) content_type.getValue());
+        action.setProtocolVersion((List<ProtocolVersion>) record_version.getValue());
+        action.setLength((List<Boolean>) record_length.getValue());
+        action.setProtocolMessage((List<ProtocolMessage>) message.getValue());
+
         trace.addTlsAction(action);
 
         return new RecordVariable(container);
@@ -334,12 +346,12 @@ public class TLSAttacker extends TLSProtocol {
 
         BuildServerHelloAction action = new BuildServerHelloAction(container);
         action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Integer>) handshake_length.getValue());
+        action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setVersion((List<ProtocolVersion>) version.getValue());
         action.setCipherSuite((List<CipherSuite>) suite.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
-        action.setSessionIdLength((List<Integer>) sessionId_length.getValue());
+        action.setSessionIdLength((List<Boolean>) sessionId_length.getValue());
         action.setCompression((List<CompressionMethod>) compression.getValue());
 
         trace.addTlsAction(action);
@@ -351,10 +363,10 @@ public class TLSAttacker extends TLSProtocol {
     public Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate) {
         List<ProtocolMessage> container = new ArrayList<>();
 
-        BuildCertificate action = new BuildCertificateAction(container);
+        BuildCertificateAction action = new BuildCertificateAction(container);
         action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Integer>) handshake_length.getValue());
-        action.setCertificate((List<X509Certificate>) certificate.getValue());
+        action.setMessageLength((List<Boolean>) handshake_length.getValue());
+        action.setCertificate((List<CertificateEntry>) certificate.getValue());
 
         trace.addTlsAction(action);
 
@@ -362,7 +374,14 @@ public class TLSAttacker extends TLSProtocol {
     }
 
     @Override
-    public Variable changeCertificate(Variable msg, Variable certificate) {
-        return null;
+    public Variable changeCertificate(Variable variable, Variable before_certificate, Variable after_certificate) {
+        MessageVariable messageVariable = (MessageVariable) variable;
+        CertificateVariable before_variable = (CertificateVariable) before_certificate;
+        CertificateVariable after_variable = (CertificateVariable) after_certificate;
+        ChangeCertificateAction action = new ChangeCertificateAction(messageVariable.getProtocolMessages(), before_variable.getValue(), after_variable.getValue());
+
+        trace.addTlsAction(action);
+
+        return variable;
     }
 }
