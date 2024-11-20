@@ -1,6 +1,6 @@
 package scenario;
 
-import Protocol.Variable;
+import protocol.Variable;
 import de.rub.nds.tlsattacker.core.protocol.message.cert.CertificateEntry;
 import de.rub.nds.x509attacker.x509.model.X509Certificate;
 

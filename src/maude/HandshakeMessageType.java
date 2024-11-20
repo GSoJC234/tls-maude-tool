@@ -1,4 +1,4 @@
-package Maude;
+package maude;
 
 public enum HandshakeMessageType {
     CLIENT_HELLO,

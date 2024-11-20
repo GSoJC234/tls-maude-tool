@@ -1,4 +1,4 @@
-package Maude;
+package maude;
 
 public enum ProtocolMessageType {
     HANDSHAKE, ALERT, CHANGE_CIPHER_SPEC, UNKNOWN;

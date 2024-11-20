@@ -1,6 +1,6 @@
 package scenario;
 
-import Protocol.Variable;
+import protocol.Variable;
 
 import java.util.List;
 

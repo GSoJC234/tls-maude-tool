@@ -1,4 +1,4 @@
-package Maude;
+package maude;
 
 public enum NamedGroup {
     NONE, SECP256R1;

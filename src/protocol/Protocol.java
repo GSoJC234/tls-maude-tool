@@ -1,7 +1,7 @@
-package Protocol;
+package protocol;
 
 
-import Maude.*;
+import maude.*;
 
 public interface Protocol {
     void accept(String alias, int port, String ip);

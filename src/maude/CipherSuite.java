@@ -1,4 +1,4 @@
-package Maude;
+package maude;
 
 public enum CipherSuite {
     TLS_ECDHE_ECDSA_WITH_AES_128_CCM,

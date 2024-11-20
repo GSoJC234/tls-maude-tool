@@ -1,6 +1,6 @@
 package scenario;
 
-import Protocol.Variable;
+import protocol.Variable;
 import de.rub.nds.tlsattacker.core.record.Record;
 
 import java.util.List;

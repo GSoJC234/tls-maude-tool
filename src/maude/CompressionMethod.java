@@ -1,4 +1,4 @@
-package Maude;
+package maude;
 
 public enum CompressionMethod {
     NO_COMPRESSION,

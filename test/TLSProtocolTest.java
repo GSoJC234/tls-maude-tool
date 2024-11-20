@@ -1,8 +1,8 @@
 
-import Maude.*;
-import Protocol.Variable;
+import maude.*;
+import protocol.Variable;
 import scenario.TLSAttacker;
-import Protocol.TLSProtocol;
+import protocol.TLSProtocol;
 import org.junit.Before;
 import org.junit.Test;
 

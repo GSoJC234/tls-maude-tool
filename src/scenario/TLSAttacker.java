@@ -1,8 +1,8 @@
 package scenario;
 
 import de.rub.nds.tlsattacker.core.constants.*;
-import Protocol.TLSProtocol;
-import Protocol.Variable;
+import protocol.TLSProtocol;
+import protocol.Variable;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
@@ -126,56 +126,56 @@ public class TLSAttacker extends TLSProtocol {
     }
 
     @Override
-    public Variable constant(Maude.ProtocolMessageType msgType) {
+    public Variable constant(maude.ProtocolMessageType msgType) {
         List<ProtocolMessageType> container = new ArrayList<>();
         container.add(msgType.transform());
         return new ConstantVariable<ProtocolMessageType>(container);
     }
 
     @Override
-    public Variable constant(Maude.ProtocolVersion version) {
+    public Variable constant(maude.ProtocolVersion version) {
         List<ProtocolVersion> container = new ArrayList<>();
         container.add(version.transform());
         return new ConstantVariable<ProtocolVersion>(container);
     }
 
     @Override
-    public Variable constant(Maude.HandshakeMessageType msgType) {
+    public Variable constant(maude.HandshakeMessageType msgType) {
         List<HandshakeMessageType> container = new ArrayList<>();
         container.add(msgType.transform());
         return new ConstantVariable<HandshakeMessageType>(container);
     }
 
     @Override
-    public Variable constant(Maude.CipherSuite cipher) {
+    public Variable constant(maude.CipherSuite cipher) {
         List<CipherSuite> container = new ArrayList<>();
         container.add(cipher.transform());
         return new ConstantVariable<CipherSuite>(container);
     }
 
     @Override
-    public Variable constant(Maude.CompressionMethod compression) {
+    public Variable constant(maude.CompressionMethod compression) {
         List<CompressionMethod> container = new ArrayList<>();
         container.add(compression.transform());
         return new ConstantVariable<CompressionMethod>(container);
     }
 
     @Override
-    public Variable constant(Maude.AlertLevel level) {
+    public Variable constant(maude.AlertLevel level) {
         List<AlertLevel> container = new ArrayList<>();
         container.add(level.transform());
         return new ConstantVariable<AlertLevel>(container);
     }
 
     @Override
-    public Variable constant(Maude.MessageSize size) {
+    public Variable constant(maude.MessageSize size) {
         List<Boolean> container = new ArrayList<>();
-        container.add(size.equals(Maude.MessageSize.VALID));
+        container.add(size.equals(maude.MessageSize.VALID));
         return new ConstantVariable<Boolean>(container);
     }
 
     @Override
-    public Variable constant(Maude.Random random) {
+    public Variable constant(maude.Random random) {
         List<byte[]> container = new ArrayList<>();
         byte[] randomByte = new byte[32];
         try {
