@@ -16,16 +16,16 @@ public class VisualMode implements RunningMode {
     private int port;
     private DatagramSocket socket;
 
-    private byte[] targetIP;
-    private byte[] targetPort;
+    private byte[] TLSLibraryIP;
+    private byte[] TLSLibraryPort;
     private byte[] requirementInfo;
     private int requirementLength;
 
     public VisualMode(String ip, int port){
         this.ip = ip;
         this.port = port;
-        this.targetIP = new byte[4];
-        this.targetPort = new byte[2];
+        this.TLSLibraryIP = new byte[4];
+        this.TLSLibraryPort = new byte[2];
         this.requirementInfo = new byte[40];
         this.requirementLength = 0;
         try {
@@ -55,10 +55,12 @@ public class VisualMode implements RunningMode {
                     break;
                 case RECV_NODE_INFO:
                     result = recvReqInfo();
-                    runMaudeVerification();
-                    MaudeRunner runner = new MaudeRunner(requirementInfo, requirementLength);
-                    runner.run();
-                    mode = NetworkState.RECV_REQ_INFO;
+                    if(result){
+                        runMaudeVerification();
+                        MaudeRunner runner = new MaudeRunner(requirementInfo, requirementLength);
+                        runner.run();
+                        mode = NetworkState.RECV_REQ_INFO;
+                    }
                     break;
                 case RECV_REQ_INFO:
                     result = sendResult();
@@ -73,13 +75,13 @@ public class VisualMode implements RunningMode {
                     break;
             }
         }
+        System.out.println("System terminates");
     }
 
     private boolean sendReady() {
         byte[] data = {0x01, 0x00};
         try{
-            InetAddress serverAddress = InetAddress.getByName(this.ip);
-            DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, port);
+            DatagramPacket packet = new DatagramPacket(data, data.length,  InetAddress.getByName(ip), port);
             socket.send(packet);
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: " + e.getMessage());
@@ -94,12 +96,13 @@ public class VisualMode implements RunningMode {
 
     private boolean recvReady(){
         byte[] buffer = new byte[1024];
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         System.out.println("Waiting for recv ready...");
         try{
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
             socket.receive(packet);
-            return packet.getLength() > 0 && packet.getData()[0] == 0x02
-                    && packet.getData()[1] == 0x00;
+            System.out.println("receive ready");
+            byte[] received_buffer = packet.getData();
+            return received_buffer[0] == 0x02 && received_buffer[1] == 0x00;
         } catch (IOException e) {
             System.out.println("IO exception: " + e.getMessage());
         }
@@ -112,15 +115,16 @@ public class VisualMode implements RunningMode {
         System.out.println("Waiting for recv node...");
         try{
             socket.receive(packet);
-            if(packet.getLength() > 7 && packet.getData()[0] == 0x03) {
-                byte[] received_buffer = packet.getData();
-                targetIP[0] = received_buffer[1];
-                targetIP[1] = received_buffer[2];
-                targetIP[2] = received_buffer[3];
-                targetIP[3] = received_buffer[4];
+            byte[] received_buffer = packet.getData();
+            if(received_buffer[0] == 0x03) {
+                TLSLibraryIP[0] = received_buffer[1];
+                TLSLibraryIP[1] = received_buffer[2];
+                TLSLibraryIP[2] = received_buffer[3];
+                TLSLibraryIP[3] = received_buffer[4];
 
-                targetPort[0] = received_buffer[5];
-                targetPort[1] = received_buffer[6];
+                TLSLibraryPort[0] = received_buffer[5];
+                TLSLibraryPort[1] = received_buffer[6];
+                System.out.println("receive node info");
                 return true;
             }
         } catch (IOException e) {
@@ -136,12 +140,13 @@ public class VisualMode implements RunningMode {
         System.out.println("Waiting for recv requirement info...");
         try{
           socket.receive(packet);
-          if(packet.getLength() > 7 && packet.getData()[0] == 0x04) {
-              byte[] received_buffer = packet.getData();
+          byte[] received_buffer = packet.getData();
+          if(received_buffer[0] == 0x04) {
               for(int i = 1; received_buffer[i] != (byte) 0xff ; i++){
-                  requirementInfo[i] = received_buffer[i];
+                  requirementInfo[i-1] = received_buffer[i];
                   requirementLength++;
               }
+              System.out.println("receive requirement info");
               return true;
           }
         } catch (IOException e) {
@@ -152,7 +157,7 @@ public class VisualMode implements RunningMode {
     }
 
     private boolean sendResult(){
-        byte[] data = {0x05, 0x00, 0x00};
+        byte[] data = {0x05, 0x01, 0x00};
         try{
             InetAddress serverAddress = InetAddress.getByName(this.ip);
             DatagramPacket packet = new DatagramPacket(data, data.length, serverAddress, port);
@@ -174,7 +179,8 @@ public class VisualMode implements RunningMode {
         System.out.println("Waiting for recv complete...");
         try{
             socket.receive(packet);
-            return packet.getLength() > 2 && packet.getData()[0] == 0x06;
+            byte[] received_buffer = packet.getData();
+            return received_buffer[0] == 0x06 && received_buffer[1] == 0x00;
         } catch (IOException e) {
             System.out.println("IO exception: " + e.getMessage());
             return false;
