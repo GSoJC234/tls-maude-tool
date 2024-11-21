@@ -1,0 +1,7 @@
+Title: requirement3
+NodeNum: 2
+NodeId: client, server
+Message Sequence:
+ 1. [ClientHello] client -> server: (contentType: handshake), (version: TLS-10), (recordLen: valid), (handshakeType: client-hello), (handshakeLen: valid), (protocol: TLS-12), (cipherSuites: TLS-ECDHE-ECDSA-WITH-AES-256-CCM), (cipherSuitesLen: valid), (random: nonce(AI, 3)), (sessionID: noNonce), (extension : (signatureAndHashAlgorithm: {ecdsaAuth, sha256}, {ecdsaAuth, sha224}), (namedCurve: secp256r1, secp256k1))
+ 2. [ServerHello] server -> client: (contentType: handshake), (version: TLS-12), (recordLen: valid), (handshakeType: server-hello), (handshakeLen: valid), (protocol: TLS-12), (cipherSuites: TLS-ECDHE-ECDSA-WITH-AES-256-CCM), (random: nonce(SI, 2)), (sessionID: nonce(SI, 3)), (sessionIDLen: valid), (compression: no-compression), (extension: (signatureAndHashAlgorithm: {ecdsaAuth, sha256}), (namedCurve: secp256r1))
+ 3. [Certificate] server -> client: (contentType: handshake), (version: TLS-12), (recordLen: valid), (handshakeType: server-certificate), (handshakeLen: valid), (certificate: (signatureAndHashAlgorithm: {ecdsa, sha256}), (certificateAuthor: CA), (publicKey : pubKey(ecdsaAuth, nonce(SI, 0))), (author: SI), (signature: (key: prvKey(ecdsaAuth, nonce(CA, 0))), (content: (certificateAlgo: {ecdsaAuth, sha256}), (certificateAuth: CA)))), (certificateLen: valid)

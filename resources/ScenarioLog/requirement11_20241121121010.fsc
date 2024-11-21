@@ -1,0 +1,6 @@
+Title: requirement11
+NodeNum: 2
+NodeId: client, server
+Message Sequence:
+ 1. [ClientHello] client -> server: (contentType: handshake), (version: TLS-10), (recordLen: valid), (handshakeType: client-hello), (handshakeLen: valid), (protocol: TLS-12), (cipherSuites: TLS-ECDHE-ECDSA-WITH-AES-256-CCM), (cipherSuitesLen: valid), (random: nonce(AI, 3)), (sessionID: noNonce), (compression: no-compression)
+ 2. [ServerHello] server -> client: (contentType: handshake), (version: TLS-12), (recordLen: valid), (handshakeType: server-hello), (handshakeLen: valid), (protocol: TLS-12), (cipherSuites: TLS-ECDHE-ECDSA-WITH-AES-256-CCM), (random: nonce(SI, 2)), (sessionID: nonce(SI, 3)), (sessionIDLen: valid), (compression: no-compression)

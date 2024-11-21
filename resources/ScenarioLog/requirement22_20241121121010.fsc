@@ -1,0 +1,6 @@
+Title: requirement22
+NodeNum: 2
+NodeId: client, server
+Message Sequence:
+ 1. [ClientHello] client -> server: (contentType: handshake), (version: TLS-10), (recordLen: valid), (handshakeType: client-hello), (handshakeLen: valid), (protocol: TLS-11), (cipherSuites: TLS-ECDHE-ECDSA-WITH-AES-256-CCM), (cipherSuitesLen: valid), (random: nonce(AI, 3)), (sessionID: noNonce), (extension : (signatureAndHashAlgorithm: {ecdsaAuth, sha256}, {ecdsaAuth, sha224}), (namedCurve: secp256r1, secp256k1))
+ 2. [Alert] server -> client: (contentType: alert), (version: TLS-12), (recordLen: valid), (alertLevel: fatal), (alertDescription: protocol-version)
