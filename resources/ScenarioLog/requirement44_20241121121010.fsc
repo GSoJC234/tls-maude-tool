@@ -11,6 +11,6 @@ Message Sequence:
  7. [Certificate] client -> server: (contentType: handshake), (version: TLS-10), (recordLen: valid), (handshakeType: client-certificate), (handshakeLen: valid), (certificate: (signatureAndHashAlgorithm: {ecdsa, sha256}), (certificateAuthor: CA), (publicKey : pubKey(ecdsaAuth, nonce(CI, 0))), (author: CI), (signature: (key: prvKey(ecdsaAuth, nonce(CA, 0))), (content: (certificateAlgo: {ecdsaAuth, sha256}), (certificateAuth: CA)))), (certificateLen: valid)
  8. [ClientKeyExchange] client -> server: (contentType: handshake), (version: TLS-10), (recordLen: valid), (handshakeType: client-key-exchange), (handshakeLen: valid), (ClientKey: ecdheParam(pubKey(ecdhe, nonce(AI, 9))))
  9. [ChangeCipherSpec] client-> server: (contentType: changeCipherSpec), (version: TLS-12), (recordLen: valid), (changeCipherSpec: true)
- 10. [Finished] client -> attacker: (contentType: handshake), (version: TLS-12), (recordLen: valid), (handshakeType: finished), (handshakeLen: valid), (verifyData: nonce(SI, 0))
+ 10. [Finished] client -> attacker: (contentType: handshake), (version: TLS-12), (recordLen: valid), (encrypted: nonce(CI, 6)) 
  11. [Finished] attacker -> server: (contentType: handshake), (version: TLS-12), (recordLen: valid), (handshakeType: finished), (handshakeLen: valid), (verifyData: noNonce)
  12. [Alert] server -> client: (contentType: alert), (version: TLS-12), (recordLen: valid), (alertLevel: fatal), (alertDescription: handshake-failure)
