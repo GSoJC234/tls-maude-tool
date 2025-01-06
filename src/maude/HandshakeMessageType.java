@@ -3,6 +3,7 @@ package maude;
 public enum HandshakeMessageType {
     CLIENT_HELLO,
     SERVER_HELLO,
+    ENCRYPTED_EXTENSION,
     CERTIFICATE,
     SERVER_KEY_EXCHANGE,
     CERTIFICATE_REQUEST,
@@ -16,6 +17,7 @@ public enum HandshakeMessageType {
         switch(this){
             case CLIENT_HELLO: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.CLIENT_HELLO;
             case SERVER_HELLO: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.SERVER_HELLO;
+            case ENCRYPTED_EXTENSION: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.ENCRYPTED_EXTENSIONS;
             case CERTIFICATE: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.CERTIFICATE;
             case SERVER_KEY_EXCHANGE: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.SERVER_KEY_EXCHANGE;
             case CERTIFICATE_REQUEST: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.CERTIFICATE_REQUEST;
