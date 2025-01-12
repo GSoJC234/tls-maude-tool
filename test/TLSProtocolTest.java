@@ -24,7 +24,7 @@ public class TLSProtocolTest {
 
     @Before
     public void setTLSAttacker(){
-        protocol = new TLSAttacker("/home/jaehun/git/maude-tls-attacker/resources/default_config3.xml");
+        protocol = new TLSAttacker("/home/jaehun/git/temp/maude-tls-attacker/resources/default_config3.xml");
 
         client_session = new TLSClientSession("CI");
         client_session.setExecutor(protocol);
@@ -200,8 +200,8 @@ public class TLSProtocolTest {
     public void CVE_2020_24613(){
         server_session.accept(4446, "localhost");
         server_session.setRandomPrivateKey("SECP256R1");
-        server_session.setCertificateEcPrivateKey("/home/jaehun/git/maude-tls-attacker/resources/server-key.pem", "SECP256R1");
-        Variable v0 = server_session.makeCertificate("/home/jaehun/git/maude-tls-attacker/resources/server-cert.pem"); // Server Certificate
+        server_session.setCertificateEcPrivateKey("/home/jaehun/git/temp/maude-tls-attacker/resources/server-key.pem", "SECP256R1");
+        Variable v0 = server_session.makeCertificate("/home/jaehun/git/temp/maude-tls-attacker/resources/server-cert.pem"); // Server Certificate
 
         Variable v1 = server_session.recv();
         server_session.assertEqual(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.getContentType(v1));
@@ -223,24 +223,26 @@ public class TLSProtocolTest {
                                                       server_session.constant(Random.NONCE),
                                                       server_session.constant(Random.EMPTY),
                                                       server_session.constant(MessageSize.VALID),
-                                                      server_session.constant(CompressionMethod.NULL),
-                                                      server_session.constant(SupportedVersion.TLS13),
-                                                      v5
+                                                      server_session.constant(CompressionMethod.NULL)
                                                       );
-        Variable v7 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v6);
-        Variable v8 = server_session.buildMessage(v7, v6);
+        Variable v6_ext = server_session.buildExtension(v6, server_session.constant(SupportedVersion.TLS13), v5);
+        server_session.updateDigest(v6_ext);
+        Variable v7 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v6_ext);
+        Variable v8 = server_session.buildMessage(v7, v6_ext);
         server_session.send(v8);
 
         Variable v12 = server_session.buildEncryptedExtension(server_session.constant(HandshakeMessageType.ENCRYPTED_EXTENSION),
-                                                              server_session.constant(MessageSize.VALID),
-                                                              server_session.constant(NamedGroup.SECP256R1));
-        Variable v13 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v12);
-        Variable v14 = server_session.buildMessage(v13, v12);
+                                                              server_session.constant(MessageSize.VALID));
+        Variable v12_ext = server_session.buildExtension(v12, server_session.constant(NamedGroup.SECP256R1));
+        server_session.updateDigest(v12_ext);
+        Variable v13 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v12_ext);
+        Variable v14 = server_session.buildMessage(v13, v12_ext);
         Variable v15 = server_session.encrypt(v14);
         server_session.send(v15);
 
         Variable v28 = server_session.buildFinished(server_session.constant(HandshakeMessageType.FINISHED),
                                                     server_session.constant(MessageSize.VALID));
+        server_session.updateDigest(v28);
         Variable v29 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v28);
         Variable v30 = server_session.buildMessage(v29, v28);
         Variable v31 = server_session.encrypt(v30);

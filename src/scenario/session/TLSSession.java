@@ -564,7 +564,7 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildServerHello(Variable handshake_type, Variable handshake_length, Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable compression, Variable... extensions){
+    public Variable buildServerHello(Variable handshake_type, Variable handshake_length, Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable compression){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildServerHelloAction action = new BuildServerHelloAction(alias, container);
@@ -576,14 +576,23 @@ public abstract class TLSSession implements Protocol {
         action.setSessionId((List<byte[]>) sessionId.getValue());
         action.setSessionIdLength((List<Boolean>) sessionId_length.getValue());
         action.setCompression((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) compression.getValue());
+        trace.addTlsAction(action);
+
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildExtension(Variable handshake_message, Variable... extensions){
+        BuildExtensionAction action = new BuildExtensionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         List<List<?>> extensionMessages = new ArrayList<>();
         for(Variable variable : extensions){
             extensionMessages.add((List<?>) variable.getValue());
         }
-        action.setExtension(extensionMessages);
+        action.setExtensions(extensionMessages);
         trace.addTlsAction(action);
 
-        return new ProtocolMessageVariable(container);
+        return handshake_message;
+
     }
 
     @Override
@@ -601,24 +610,19 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_lenth, Variable... extensions) {
+    public Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_lenth) {
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
         action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
         action.setMessageLength((List<Boolean>) handshake_lenth.getValue());
-        List<List<?>> extensionMessages = new ArrayList<>();
-        for(Variable variable : extensions){
-            extensionMessages.add((List<?>) variable.getValue());
-        }
-        action.setExtension(extensionMessages);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
     }
 
     @Override
-    public Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len, Variable... extensions) {
+    public Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len) {
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildCertificateRequestAction action = new BuildCertificateRequestAction(alias, container);
@@ -626,11 +630,6 @@ public abstract class TLSSession implements Protocol {
         action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setCertificateRequestContext((List<byte[]>) certificate_context.getValue());
         action.setCertificateRequestContextLen((List<Boolean>) certificate_context_len.getValue());
-        List<List<?>> extensionMessages = new ArrayList<>();
-        for(Variable variable : extensions){
-            extensionMessages.add((List<?>) variable.getValue());
-        }
-        action.setExtension(extensionMessages);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
@@ -692,4 +691,11 @@ public abstract class TLSSession implements Protocol {
 
         return variable;
     }
+
+    @Override
+    public void updateDigest(Variable msg){
+        UpdateDigestAction action = new UpdateDigestAction(alias, (List<ProtocolMessage>)msg.getValue());
+        trace.addTlsAction(action);
+    }
+
 }

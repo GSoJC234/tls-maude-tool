@@ -48,12 +48,12 @@ public interface Protocol {
     Variable buildMessage(Variable record, Variable protocol_message);
     Variable buildRecord(Variable content_type, Variable record_version, Variable record_length, Variable message);
     Variable buildServerHello(Variable handshake_type, Variable handshake_length,
-                              Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method, Variable... extensions);
-
+                              Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
+    Variable buildExtension(Variable handshake_message, Variable... extensions);
 
     Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate);
-    Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_leng, Variable... extensions);
-    Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len, Variable... extensions);
+    Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_leng);
+    Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len);
     Variable buildCertificateVerify(Variable handshake_type, Variable handshake_length, Variable signatureHashAlgorithm);
     Variable buildFinished(Variable handshake_type, Variable handshake_length);
 
@@ -64,5 +64,7 @@ public interface Protocol {
 
     void setRandomPrivateKey(String group);
     void setCertificateEcPrivateKey(String keyPath, String namedCurve);
+
+    void updateDigest(Variable msg);
 }
 
