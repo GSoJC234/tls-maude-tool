@@ -29,6 +29,7 @@ public interface Protocol {
     Variable constant(SupportedVersion supportedVersion);
 
     Variable makeCertificate(String path);
+    Variable emptyCertificate();
 
     Variable getContentType(Variable msg);
     Variable getRecordVersion(Variable msg);

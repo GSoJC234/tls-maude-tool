@@ -138,6 +138,12 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable emptyCertificate(){
+        List<CertificateEntry> container = new ArrayList<>();
+        return new CertificateVariable(container);
+    }
+
+    @Override
     public Variable makeCertificate(String pemFilePath) {
         List<CertificateEntry> container = new ArrayList<>();
         try{

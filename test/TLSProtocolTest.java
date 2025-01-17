@@ -196,6 +196,7 @@ public class TLSProtocolTest {
         server_session.assertEqual(server_session.constant(AlertLevel.FATAL), server_session.getAlertLevel(v10));
     }
 
+    // WolfSSL Client 4.4.0 version
     @Test
     public void CVE_2020_24613(){
         server_session.accept(4446, "localhost");
@@ -253,5 +254,79 @@ public class TLSProtocolTest {
         server_session.assertEqual(server_session.constant(ProtocolVersion.TLS12), server_session.getRecordVersion(v32));
         server_session.assertEqual(server_session.constant(AlertLevel.FATAL), server_session.getAlertLevel(v32));
         server_session.assertEqual(server_session.constant(AlertDescription.UNEXPECTED_MESSAGE), server_session.getAlertDescription(v32));
+    }
+
+    // WolfSSL Client 5.1.1 version
+    @Test
+    public void CVE_2022_25638(){
+        server_session.accept(4446, "localhost");
+        server_session.setRandomPrivateKey("SECP256R1");
+        server_session.setCertificateEcPrivateKey("/home/jaehun/git/temp/maude-tls-attacker/resources/server-key.pem", "SECP256R1");
+
+        Variable v1 = server_session.recv();
+        server_session.assertEqual(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.getContentType(v1));
+        server_session.assertEqual(server_session.constant(ProtocolVersion.TLS12), server_session.getRecordVersion(v1));
+        server_session.assertEqual(server_session.constant(HandshakeMessageType.CLIENT_HELLO), server_session.getHandshakeMessageType(v1));
+        server_session.assertEqual(server_session.constant(ProtocolVersion.TLS12), server_session.getProtocolVersion(v1));
+        server_session.assertEqual(server_session.constant(CompressionMethod.NULL), server_session.getCompressionMethod(v1));
+        server_session.assertEqual(server_session.constant(CipherSuite.TLS_AES_128_CCM_SHA256), server_session.getCipherSuite(v1));
+        server_session.assertEqual(server_session.constant(ProtocolVersion.TLS13), server_session.getSupportedVersion(v1));
+        server_session.assertEqual(server_session.constant(SignatureAndHashAlgorithm.ECDSA_SHA256), server_session.getSignatureAndHashAlgorithm(v1));
+        server_session.assertEqual(server_session.constant(NamedGroup.SECP256R1), server_session.getNamedGroupFromKeyShares(server_session.getKeyShareEntries(v1)));
+        server_session.assertEqual(server_session.constant(NamedGroup.SECP256R1), server_session.getNamedGroup(v1));
+
+        Variable v5 = server_session.buildKeyShareEntry(server_session.constant(NamedGroup.SECP256R1));
+        Variable v6 = server_session.buildServerHello(server_session.constant(HandshakeMessageType.SERVER_HELLO),
+                server_session.constant(MessageSize.VALID),
+                server_session.constant(ProtocolVersion.TLS12),
+                server_session.constant(CipherSuite.TLS_AES_128_CCM_SHA256),
+                server_session.constant(Random.NONCE),
+                server_session.constant(Random.EMPTY),
+                server_session.constant(MessageSize.VALID),
+                server_session.constant(CompressionMethod.NULL)
+        );
+        Variable v6_ext = server_session.buildExtension(v6, server_session.constant(SupportedVersion.TLS13), v5);
+        server_session.updateDigest(v6_ext);
+        Variable v7 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v6_ext);
+        Variable v8 = server_session.buildMessage(v7, v6_ext);
+        server_session.send(v8);
+
+        Variable v12 = server_session.buildEncryptedExtension(server_session.constant(HandshakeMessageType.ENCRYPTED_EXTENSION),
+                server_session.constant(MessageSize.VALID));
+        Variable v12_ext = server_session.buildExtension(v12, server_session.constant(NamedGroup.SECP256R1));
+        server_session.updateDigest(v12_ext);
+        Variable v13 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v12_ext);
+        Variable v14 = server_session.buildMessage(v13, v12_ext);
+        Variable v15 = server_session.encrypt(v14);
+        server_session.send(v15);
+
+        Variable v0 = server_session.emptyCertificate();
+        Variable v16 = server_session.buildCertificate(server_session.constant(HandshakeMessageType.CERTIFICATE), server_session.constant(MessageSize.VALID), v0);
+        server_session.updateDigest(v16);
+        Variable v17 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v16);
+        Variable v18 = server_session.buildMessage(v17, v16);
+        Variable v19 = server_session.encrypt(v18);
+        server_session.send(v19);
+
+        Variable v20 = server_session.buildCertificateVerify(server_session.constant(HandshakeMessageType.CERTIFICATE_VERIFY), server_session.constant(MessageSize.VALID), server_session.constant(SignatureAndHashAlgorithm.DSA_SHA256));
+        server_session.updateDigest(v20);
+        Variable v21 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v20);
+        Variable v22 = server_session.buildMessage(v21, v20);
+        Variable v23 = server_session.encrypt(v22);
+        server_session.send(v23);
+
+        Variable v24 = server_session.buildFinished(server_session.constant(HandshakeMessageType.FINISHED),
+                server_session.constant(MessageSize.VALID));
+        server_session.updateDigest(v24);
+        Variable v25 = server_session.buildRecord(server_session.constant(ProtocolMessageType.HANDSHAKE), server_session.constant(ProtocolVersion.TLS12), server_session.constant(MessageSize.VALID), v24);
+        Variable v26 = server_session.buildMessage(v25, v24);
+        Variable v27 = server_session.encrypt(v26);
+        server_session.send(v27);
+
+        Variable v28 = server_session.recv();
+        server_session.assertEqual(server_session.constant(ProtocolMessageType.ALERT), server_session.getContentType(v28));
+        server_session.assertEqual(server_session.constant(ProtocolVersion.TLS12), server_session.getRecordVersion(v28));
+        server_session.assertEqual(server_session.constant(AlertLevel.FATAL), server_session.getAlertLevel(v28));
+        server_session.assertEqual(server_session.constant(AlertDescription.UNEXPECTED_MESSAGE), server_session.getAlertDescription(v28));
     }
 }
