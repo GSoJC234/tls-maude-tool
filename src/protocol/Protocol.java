@@ -50,6 +50,9 @@ public interface Protocol {
     Variable buildRecord(Variable content_type, Variable record_version, Variable record_length, Variable message);
     Variable buildServerHello(Variable handshake_type, Variable handshake_length,
                               Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
+    Variable buildClientHello(Variable handshake_type, Variable handshake_length,
+                              Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
+
     Variable buildExtension(Variable handshake_message, Variable... extensions);
 
     Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate);

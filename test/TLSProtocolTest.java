@@ -329,4 +329,83 @@ public class TLSProtocolTest {
         server_session.assertEqual(server_session.constant(AlertLevel.FATAL), server_session.getAlertLevel(v28));
         server_session.assertEqual(server_session.constant(AlertDescription.UNEXPECTED_MESSAGE), server_session.getAlertDescription(v28));
     }
+
+    // WolfSSL Server 5.1.1 version
+    @Test
+    public void CVE_2022_25640(){
+        client_session.connect(4433, "localhost");
+        client_session.setRandomPrivateKey("SECP256R1");
+
+        Variable v0 = client_session.buildClientHello(
+                client_session.constant(HandshakeMessageType.CLIENT_HELLO),
+                client_session.constant(MessageSize.VALID),
+                client_session.constant(ProtocolVersion.TLS12),
+                client_session.constant(CipherSuite.TLS_AES_128_CCM_SHA256),
+                client_session.constant(Random.NONCE),
+                client_session.constant(Random.EMPTY),
+                client_session.constant(MessageSize.VALID),
+                client_session.constant(CompressionMethod.NULL)
+        );
+        Variable v1 = client_session.buildKeyShareEntry(client_session.constant(NamedGroup.SECP256R1));
+        Variable v2 = client_session.buildExtension(
+                v0,
+                client_session.constant(SupportedVersion.TLS13),
+                client_session.constant(NamedGroup.SECP256R1),
+                client_session.constant(SignatureAndHashAlgorithm.ECDSA_SHA256),
+                v1);
+        client_session.updateDigest(v2);
+        Variable v3 = client_session.buildRecord(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.constant(ProtocolVersion.TLS12), client_session.constant(MessageSize.VALID), v2);
+        Variable v4 = client_session.buildMessage(v3, v2);
+        client_session.send(v4);
+
+        Variable v5 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v5));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v5));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.SERVER_HELLO), client_session.getHandshakeMessageType(v5));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getProtocolVersion(v5));
+        client_session.assertEqual(client_session.constant(CompressionMethod.NULL), client_session.getCompressionMethod(v5));
+        client_session.assertEqual(client_session.constant(CipherSuite.TLS_AES_128_CCM_SHA256), client_session.getCipherSuite(v5));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS13), client_session.getSupportedVersion(v5));
+        client_session.assertEqual(client_session.constant(NamedGroup.SECP256R1), client_session.getNamedGroupFromKeyShares(client_session.getKeyShareEntries(v5)));
+
+        Variable v6 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v6));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v6));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.ENCRYPTED_EXTENSION), client_session.getHandshakeMessageType(v6));
+        client_session.assertEqual(client_session.constant(NamedGroup.SECP256R1), client_session.getNamedGroup(v6));
+
+        Variable v7 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v7));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v7));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.CERTIFICATE_REQUEST), client_session.getHandshakeMessageType(v7));
+
+        Variable v8 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v8));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v8));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.CERTIFICATE), client_session.getHandshakeMessageType(v8));
+
+        Variable v9 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v9));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v9));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.CERTIFICATE_VERIFY), client_session.getHandshakeMessageType(v9));
+
+        Variable v10 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.getContentType(v10));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v10));
+        client_session.assertEqual(client_session.constant(HandshakeMessageType.FINISHED), client_session.getHandshakeMessageType(v10));
+
+        Variable v24 = client_session.buildFinished(client_session.constant(HandshakeMessageType.FINISHED),
+                client_session.constant(MessageSize.VALID));
+        client_session.updateDigest(v24);
+        Variable v25 = client_session.buildRecord(client_session.constant(ProtocolMessageType.HANDSHAKE), client_session.constant(ProtocolVersion.TLS12), client_session.constant(MessageSize.VALID), v24);
+        Variable v26 = client_session.buildMessage(v25, v24);
+        Variable v27 = client_session.encrypt(v26);
+        client_session.send(v27);
+
+        Variable v28 = client_session.recv();
+        client_session.assertEqual(client_session.constant(ProtocolMessageType.ALERT), client_session.getContentType(v28));
+        client_session.assertEqual(client_session.constant(ProtocolVersion.TLS12), client_session.getRecordVersion(v28));
+        client_session.assertEqual(client_session.constant(AlertLevel.FATAL), client_session.getAlertLevel(v28));
+        client_session.assertEqual(client_session.constant(AlertDescription.UNEXPECTED_MESSAGE), client_session.getAlertDescription(v28));
+    }
 }

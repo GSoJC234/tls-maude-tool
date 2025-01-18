@@ -570,6 +570,25 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable buildClientHello(Variable handshake_type, Variable handshake_length,
+                                     Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method){
+        List<ProtocolMessage> container = new ArrayList<>();
+
+        BuildClientHelloAction action = new BuildClientHelloAction(alias, container);
+        action.setHandshakeMessageType((List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>) handshake_type.getValue());
+        action.setMessageLength((List<Boolean>) handshake_length.getValue());
+        action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) version.getValue());
+        action.setCipherSuite((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) suite.getValue());
+        action.setRandom((List<byte[]>) random.getValue());
+        action.setSessionId((List<byte[]>) sessionId.getValue());
+        action.setSessionIdLength((List<Boolean>) sessionId_length.getValue());
+        action.setCompression((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) method.getValue());
+        trace.addTlsAction(action);
+
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
     public Variable buildServerHello(Variable handshake_type, Variable handshake_length, Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable compression){
         List<ProtocolMessage> container = new ArrayList<>();
 
