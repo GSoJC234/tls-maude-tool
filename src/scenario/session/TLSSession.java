@@ -15,6 +15,10 @@ import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeySet;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.core.workflow.action.*;
 import de.rub.nds.tlsattacker.core.workflow.action.custom.*;
+import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.AddKeyShareAction;
+import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.AddSignatureAndHashAlgorithmAction;
+import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.AddSupportedGroupAction;
+import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.AddSupportedVersionAction;
 import de.rub.nds.x509attacker.config.X509CertificateConfig;
 import de.rub.nds.x509attacker.constants.X509NamedCurve;
 import de.rub.nds.x509attacker.context.X509Context;
@@ -201,16 +205,20 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable constant(maude.CipherSuite cipher) {
+    public Variable constant(maude.CipherSuite... ciphers) {
         List<de.rub.nds.tlsattacker.core.constants.CipherSuite> container = new ArrayList<>();
-        container.add(cipher.transform());
+        for(maude.CipherSuite cipher: ciphers){
+            container.add(cipher.transform());
+        }
         return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CipherSuite>(container);
     }
 
     @Override
-    public Variable constant(maude.CompressionMethod compression) {
+    public Variable constant(maude.CompressionMethod... methods) {
         List<de.rub.nds.tlsattacker.core.constants.CompressionMethod> container = new ArrayList<>();
-        container.add(compression.transform());
+        for(maude.CompressionMethod method : methods){
+            container.add(method.transform());
+        }
         return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CompressionMethod>(container);
     }
 
@@ -268,9 +276,11 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable constant(maude.SupportedVersion supportedVersion) {
+    public Variable constant(maude.SupportedVersion... supportedVersions) {
         List<ProtocolVersion> container = new ArrayList<>();
-        container.add(supportedVersion.transform());
+        for(maude.SupportedVersion version : supportedVersions){
+            container.add(version.transform());
+        }
         return new ConstantVariable<ProtocolVersion>(container);
     }
 
@@ -555,13 +565,12 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildRecord(Variable content_type, Variable record_version, Variable record_length, Variable message) {
+    public Variable buildRecord(Variable content_type, Variable record_version, Variable message) {
         List<Record> container = new ArrayList<>();
 
         BuildRecordAction action = new BuildRecordAction(container);
         action.setProtocolMessageType((List<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType>) content_type.getValue());
         action.setProtocolVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) record_version.getValue());
-        action.setLength((List<Boolean>) record_length.getValue());
         action.setProtocolMessage((List<ProtocolMessage>) message.getValue());
 
         trace.addTlsAction(action);
@@ -570,36 +579,29 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildClientHello(Variable handshake_type, Variable handshake_length,
-                                     Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method){
+    public Variable buildClientHello(Variable versions, Variable ciphers, Variable random, Variable sessionId, Variable methods){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildClientHelloAction action = new BuildClientHelloAction(alias, container);
-        action.setHandshakeMessageType((List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
-        action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) version.getValue());
-        action.setCipherSuite((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) suite.getValue());
+        action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) versions.getValue());
+        action.setCipherSuites((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) ciphers.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
-        action.setSessionIdLength((List<Boolean>) sessionId_length.getValue());
-        action.setCompression((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) method.getValue());
+        action.setCompressions((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) methods.getValue());
         trace.addTlsAction(action);
 
         return new ProtocolMessageVariable(container);
     }
 
     @Override
-    public Variable buildServerHello(Variable handshake_type, Variable handshake_length, Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable compression){
+    public Variable buildServerHello(Variable version, Variable suite, Variable random, Variable sessionId, Variable compression){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildServerHelloAction action = new BuildServerHelloAction(alias, container);
-        action.setHandshakeMessageType((List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) version.getValue());
         action.setCipherSuite((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) suite.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
-        action.setSessionIdLength((List<Boolean>) sessionId_length.getValue());
         action.setCompression((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) compression.getValue());
         trace.addTlsAction(action);
 
@@ -607,65 +609,66 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildExtension(Variable handshake_message, Variable... extensions){
-        BuildExtensionAction action = new BuildExtensionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        List<List<?>> extensionMessages = new ArrayList<>();
-        for(Variable variable : extensions){
-            extensionMessages.add((List<?>) variable.getValue());
-        }
-        action.setExtensions(extensionMessages);
+    public void addSupportedVersionExtension(Variable handshake_message, Variable supported_versions){
+        AddSupportedVersionAction action = new AddSupportedVersionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<ProtocolVersion>) supported_versions.getValue());
         trace.addTlsAction(action);
-
-        return handshake_message;
-
     }
 
     @Override
-    public Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate) {
-        List<ProtocolMessage> container = new ArrayList<>();
+    public void addSignatureAndHashAlgorithmExtension(Variable handshake_message, Variable algorithms){
+        AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
+        trace.addTlsAction(action);
+    }
 
+    @Override
+    public void addSupportedGroupExtension(Variable handshake_message, Variable supported_groups){
+        AddSupportedGroupAction action = new AddSupportedGroupAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<NamedGroup>) supported_groups.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addKeyShareExtension(Variable handshake_message, Variable key_shares){
+        AddKeyShareAction action = new AddKeyShareAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<KeyShareEntry>) key_shares.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public Variable buildCertificate(Variable certificate) {
+        List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateAction action = new BuildCertificateAction(alias, container);
-        action.setHandshakeMessageType((List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setCertificate((List<CertificateEntry>) certificate.getValue());
 
         trace.addTlsAction(action);
-
         return new ProtocolMessageVariable(container);
     }
 
     @Override
-    public Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_lenth) {
+    public Variable buildEncryptedExtension() {
         List<ProtocolMessage> container = new ArrayList<>();
-
         BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
-        action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_lenth.getValue());
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
     }
 
     @Override
-    public Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len) {
+    public Variable buildCertificateRequest(Variable certificate_context) {
         List<ProtocolMessage> container = new ArrayList<>();
-
         BuildCertificateRequestAction action = new BuildCertificateRequestAction(alias, container);
-        action.setHandshakeMessageType((List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setCertificateRequestContext((List<byte[]>) certificate_context.getValue());
-        action.setCertificateRequestContextLen((List<Boolean>) certificate_context_len.getValue());
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
     }
 
     @Override
-    public Variable buildCertificateVerify(Variable handshake_type, Variable handshake_length, Variable signatureHashAlgorithm) {
+    public Variable buildCertificateVerify(Variable signatureHashAlgorithm) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateVerifyAction action = new BuildCertificateVerifyAction(alias, container);
-        action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
         action.setSignature_and_hash_algorithm_container((List<SignatureAndHashAlgorithm>)signatureHashAlgorithm.getValue());
 
         trace.addTlsAction(action);
@@ -673,11 +676,9 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildFinished(Variable handshake_type, Variable handshake_length) {
+    public Variable buildFinished() {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildFinishedAction action = new BuildFinishedAction(alias, container);
-        action.setHandshakeMessageType((List<HandshakeMessageType>) handshake_type.getValue());
-        action.setMessageLength((List<Boolean>) handshake_length.getValue());
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
@@ -722,5 +723,6 @@ public abstract class TLSSession implements Protocol {
         UpdateDigestAction action = new UpdateDigestAction(alias, (List<ProtocolMessage>)msg.getValue());
         trace.addTlsAction(action);
     }
+
 
 }

@@ -18,15 +18,15 @@ public interface Protocol {
     Variable constant(ProtocolMessageType msgType);
     Variable constant(ProtocolVersion version);
     Variable constant(HandshakeMessageType msgType);
-    Variable constant(CipherSuite cipher);
-    Variable constant(CompressionMethod compression);
+    Variable constant(CipherSuite... ciphers);
+    Variable constant(maude.CompressionMethod... methods);
     Variable constant(AlertLevel level);
     Variable constant(MessageSize size);
     Variable constant(Random random);
     Variable constant(NamedGroup group);
     Variable constant(SignatureAndHashAlgorithm signatureAndHashAlgorithm);
     Variable constant(AlertDescription description);
-    Variable constant(SupportedVersion supportedVersion);
+    Variable constant(SupportedVersion... supportedVersions);
 
     Variable makeCertificate(String path);
     Variable emptyCertificate();
@@ -47,28 +47,31 @@ public interface Protocol {
     Variable getNamedGroupFromKeyShares(Variable keyShares);
 
     Variable buildMessage(Variable record, Variable protocol_message);
-    Variable buildRecord(Variable content_type, Variable record_version, Variable record_length, Variable message);
-    Variable buildServerHello(Variable handshake_type, Variable handshake_length,
-                              Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
-    Variable buildClientHello(Variable handshake_type, Variable handshake_length,
-                              Variable version, Variable suite, Variable random, Variable sessionId, Variable sessionId_length, Variable method);
+    Variable buildRecord(Variable content_type, Variable record_version, Variable message);
+    Variable buildServerHello(Variable version, Variable suite, Variable random, Variable sessionId, Variable compression);
+    Variable buildClientHello(Variable versions, Variable ciphers, Variable random, Variable sessionId, Variable methods);
 
-    Variable buildExtension(Variable handshake_message, Variable... extensions);
-
-    Variable buildCertificate(Variable handshake_type, Variable handshake_length, Variable certificate);
-    Variable buildEncryptedExtension(Variable handshake_type, Variable handshake_leng);
-    Variable buildCertificateRequest(Variable handshake_type, Variable handshake_length, Variable certificate_context, Variable certificate_context_len);
-    Variable buildCertificateVerify(Variable handshake_type, Variable handshake_length, Variable signatureHashAlgorithm);
-    Variable buildFinished(Variable handshake_type, Variable handshake_length);
+    Variable buildCertificate(Variable certificate);
+    Variable buildEncryptedExtension();
+    Variable buildCertificateRequest(Variable certificate_context);
+    Variable buildCertificateVerify(Variable signatureHashAlgorithm);
+    Variable buildFinished();
 
     Variable buildKeyShareEntry(Variable group);
     Variable calculateMessageDigest(Variable... messages);
 
     Variable changeCertificate(Variable variable, Variable before_certificate, Variable after_certificate);
+    void addSupportedVersionExtension(Variable handshake_message, Variable supported_versions);
+    void addSignatureAndHashAlgorithmExtension(Variable handshake_message, Variable algorithms);
+    void addSupportedGroupExtension(Variable handshake_message, Variable supported_groups);
+    void addKeyShareExtension(Variable handshake_message, Variable key_shares);
+
 
     void setRandomPrivateKey(String group);
     void setCertificateEcPrivateKey(String keyPath, String namedCurve);
 
     void updateDigest(Variable msg);
+
+
 }
 
