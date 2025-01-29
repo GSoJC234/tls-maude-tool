@@ -4,11 +4,13 @@ package protocol;
 import maude.*;
 
 public interface Protocol {
-    void accept(int port, String ip);
-    void connect(int port, String ip);
+    void accept(String alias, String ip, int port);
+    void connect(String alias, String ip, int port);
     void close();
     Variable recv();
+    Variable recv(String alias);
     void send(Variable msg);
+    void send(String alias, Variable msg);
     Variable encrypt(Variable message);
     Variable encrypt(Variable message, Variable key);
     Variable decrypt(Variable message);
@@ -29,7 +31,6 @@ public interface Protocol {
     Variable constant(SupportedVersion... supportedVersions);
 
     Variable makeCertificate(String path);
-    Variable emptyCertificate();
 
     Variable getContentType(Variable msg);
     Variable getRecordVersion(Variable msg);
@@ -52,12 +53,14 @@ public interface Protocol {
     Variable buildClientHello(Variable versions, Variable ciphers, Variable random, Variable sessionId, Variable methods);
 
     Variable buildCertificate(Variable certificate);
+    Variable buildEmptyCertificate();
     Variable buildEncryptedExtension();
     Variable buildCertificateRequest(Variable certificate_context);
     Variable buildCertificateVerify(Variable signatureHashAlgorithm);
     Variable buildFinished();
 
     Variable buildKeyShareEntry(Variable group);
+    Variable buildKeyShareEntry(Variable group, Variable privateKey);
     Variable calculateMessageDigest(Variable... messages);
 
     Variable changeCertificate(Variable variable, Variable before_certificate, Variable after_certificate);
@@ -65,7 +68,6 @@ public interface Protocol {
     void addSignatureAndHashAlgorithmExtension(Variable handshake_message, Variable algorithms);
     void addSupportedGroupExtension(Variable handshake_message, Variable supported_groups);
     void addKeyShareExtension(Variable handshake_message, Variable key_shares);
-
 
     void setRandomPrivateKey(String group);
     void setCertificateEcPrivateKey(String keyPath, String namedCurve);

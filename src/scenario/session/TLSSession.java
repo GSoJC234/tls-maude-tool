@@ -1,10 +1,10 @@
 package scenario.session;
 
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
+import de.rub.nds.tlsattacker.core.connection.InboundConnection;
+import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.constants.*;
-import de.rub.nds.tlsattacker.core.crypto.KeyShareCalculator;
 import de.rub.nds.tlsattacker.core.crypto.MessageDigestCollector;
-import de.rub.nds.tlsattacker.core.layer.Message;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.*;
 import de.rub.nds.tlsattacker.core.protocol.message.cert.CertificateEntry;
@@ -29,6 +29,10 @@ import org.bouncycastle.util.io.pem.PemReader;
 import protocol.Protocol;
 import protocol.Variable;
 import scenario.*;
+import scenario.variable.CertificateVariable;
+import scenario.variable.ConstantVariable;
+import scenario.variable.MessageVariable;
+import scenario.variable.ProtocolMessageVariable;
 
 import java.io.FileReader;
 import java.math.BigInteger;
@@ -37,7 +41,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TLSSession implements Protocol {
+public class TLSSession implements Protocol {
 
     protected AliasedConnection connection;
     private WorkflowTrace trace;
@@ -47,6 +51,7 @@ public abstract class TLSSession implements Protocol {
 
     private static Logger LOGGER = LogManager.getLogger();
 
+    public TLSSession(){}
 
     public TLSSession(String alias){
         this.alias = alias;
@@ -71,8 +76,21 @@ public abstract class TLSSession implements Protocol {
         }
     }
 
-    public abstract void accept(int port, String ip);
-    public abstract void connect(int port, String ip);
+    @Override
+    public void accept(String alias, String ip, int port){
+        this.alias = alias;
+        connection = new InboundConnection(alias, port, ip);
+        connection.setConnectionTimeout(10000);
+        attacker.addAliasedConnection(connection);
+    }
+
+    @Override
+    public void connect(String alias, String ip, int port){
+        this.alias = alias;
+        connection = new OutboundConnection(alias, port, ip);
+        connection.setConnectionTimeout(10000);
+        attacker.addAliasedConnection(connection);
+    }
 
     @Override
     public void close() { }
@@ -86,7 +104,23 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable recv(String alias) {
+        List<ProtocolMessage> protocolMessages = new ArrayList<>();
+        List<Record> recordMessages = new ArrayList<>();
+        trace.addTlsAction(new ReceiveOneAction(alias, recordMessages, protocolMessages));
+        return new MessageVariable(recordMessages, protocolMessages);
+    }
+
+    @Override
     public void send(Variable variable) {
+        MessageVariable messageVariable = (MessageVariable) variable;
+        SendAction action = new SendAction(alias, messageVariable.getProtocolMessages());
+        action.setConfiguredRecords(messageVariable.getRecordMessages());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void send(String alias, Variable variable) {
         MessageVariable messageVariable = (MessageVariable) variable;
         SendAction action = new SendAction(alias, messageVariable.getProtocolMessages());
         action.setConfiguredRecords(messageVariable.getRecordMessages());
@@ -119,12 +153,6 @@ public abstract class TLSSession implements Protocol {
     @Override
     public Variable decrypt(Variable message) {
         MessageVariable messageVariable = (MessageVariable) message;
-
-        DecryptAction action = new DecryptAction(alias);
-        action.setRecordMessage((List<Record>)messageVariable.getRecordMessages());
-        action.setProtocolMessage((List<ProtocolMessage>)messageVariable.getProtocolMessages());
-        trace.addTlsAction(action);
-
         return messageVariable;
     }
 
@@ -139,12 +167,6 @@ public abstract class TLSSession implements Protocol {
         trace.addTlsAction(action);
 
         return messageVariable;
-    }
-
-    @Override
-    public Variable emptyCertificate(){
-        List<CertificateEntry> container = new ArrayList<>();
-        return new CertificateVariable(container);
     }
 
     @Override
@@ -187,7 +209,7 @@ public abstract class TLSSession implements Protocol {
     public Variable constant(maude.ProtocolMessageType msgType) {
         List<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType> container = new ArrayList<>();
         container.add(msgType.transform());
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType>(container);
+        return new ConstantVariable<ProtocolMessageType>(container);
     }
 
     @Override
@@ -403,10 +425,12 @@ public abstract class TLSSession implements Protocol {
         List<de.rub.nds.tlsattacker.core.constants.AlertLevel> container = new ArrayList<>();
         FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.AlertLevel>(container,
                 () -> {
-                    ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                    if((message instanceof AlertMessage) && !((MessageVariable) msg).getProtocolMessages().isEmpty()){
-                        AlertMessage alertMessage = (AlertMessage) message;
-                        return de.rub.nds.tlsattacker.core.constants.AlertLevel.getAlertLevel(alertMessage.getLevel().getValue());
+                    if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
+                        ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
+                        if(message instanceof AlertMessage){
+                            AlertMessage alertMessage = (AlertMessage) message;
+                            return de.rub.nds.tlsattacker.core.constants.AlertLevel.getAlertLevel(alertMessage.getLevel().getValue());
+                        }
                     }
                     return null;
                 });
@@ -420,10 +444,12 @@ public abstract class TLSSession implements Protocol {
         List<de.rub.nds.tlsattacker.core.constants.AlertDescription> container = new ArrayList<>();
         FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.AlertDescription>(container,
                 () -> {
-                    ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                    if((message instanceof AlertMessage) && !((MessageVariable) msg).getProtocolMessages().isEmpty()){
-                        AlertMessage alertMessage = (AlertMessage) ((MessageVariable) msg).getProtocolMessages().get(0);
-                        return de.rub.nds.tlsattacker.core.constants.AlertDescription.getAlertDescription(alertMessage.getDescription().getValue());
+                    if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
+                        ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
+                        if(message instanceof AlertMessage){
+                            AlertMessage alertMessage = (AlertMessage) message;
+                            return de.rub.nds.tlsattacker.core.constants.AlertDescription.getAlertDescription(alertMessage.getDescription().getValue());
+                        }
                     }
                     return null;
                 });
@@ -575,7 +601,7 @@ public abstract class TLSSession implements Protocol {
 
         trace.addTlsAction(action);
 
-        return new RecordVariable(container);
+        return new MessageVariable(container, (List<ProtocolMessage>) message.getValue());
     }
 
     @Override
@@ -647,6 +673,17 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable buildEmptyCertificate(){
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildCertificateAction action = new BuildCertificateAction(alias, container);
+        List<CertificateEntry> emptyCertificate = new ArrayList<>();
+        action.setCertificate(emptyCertificate);
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
     public Variable buildEncryptedExtension() {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
@@ -685,10 +722,22 @@ public abstract class TLSSession implements Protocol {
     }
 
     @Override
+    @Deprecated
     public Variable buildKeyShareEntry(Variable group) {
         List<KeyShareEntry> container = new ArrayList<>();
         BuildKeyShareEntryAction action = new BuildKeyShareEntryAction(alias, container);
         action.setNamedGroup((List<NamedGroup>) group.getValue());
+        trace.addTlsAction(action);
+
+        return new ConstantVariable<KeyShareEntry>(container);
+    }
+
+    @Override
+    public Variable buildKeyShareEntry(Variable group, Variable privateKey) {
+        List<KeyShareEntry> container = new ArrayList<>();
+        BuildKeyShareEntryAction action = new BuildKeyShareEntryAction(alias, container);
+        action.setNamedGroup((List<NamedGroup>) group.getValue());
+        action.setPrivateKey((List<byte[]>) privateKey.getValue());
         trace.addTlsAction(action);
 
         return new ConstantVariable<KeyShareEntry>(container);

@@ -1,6 +1,6 @@
 package mode;
 
-import runner.MaudeRunner;
+import runner.MaudeRunner2;
 
 import java.io.IOException;
 import java.net.*;
@@ -195,7 +195,7 @@ public class VisualMode implements RunningMode {
     }
 
     private void runMaudeVerification(){
-        MaudeRunner runner = new MaudeRunner(requirementInfo, requirementLength);
+        MaudeRunner2 runner = new MaudeRunner2(requirementInfo, requirementLength);
         Thread thread = new Thread(runner);
         thread.start();
         try {

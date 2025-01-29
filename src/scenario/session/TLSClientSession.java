@@ -9,15 +9,4 @@ public class TLSClientSession extends TLSSession {
         super(alias);
     }
 
-    @Override
-    public void accept(int port, String ip) {
-        throw new RuntimeException("Client session can not call accept() method");
-    }
-
-    @Override
-    public void connect(int port, String ip) {
-        connection = new OutboundConnection(alias, port, ip);
-        connection.setConnectionTimeout(10000);
-        attacker.addAliasedConnection(connection);
-    }
 }
