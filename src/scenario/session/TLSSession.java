@@ -1,5 +1,6 @@
 package scenario.session;
 
+import com.sun.jdi.Field;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
@@ -22,10 +23,17 @@ import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.AddSupported
 import de.rub.nds.x509attacker.config.X509CertificateConfig;
 import de.rub.nds.x509attacker.constants.X509NamedCurve;
 import de.rub.nds.x509attacker.context.X509Context;
+import de.rub.nds.x509attacker.x509.model.X509Certificate;
+import de.rub.nds.x509attacker.x509.model.publickey.PublicKeyContent;
+import de.rub.nds.x509attacker.x509.model.publickey.X509EcdhEcdsaPublicKey;
+import de.rub.nds.x509attacker.x509.model.publickey.X509RsaPublicKey;
+import maude.MessageSize;
 import maude.Random;
+import maude.SupportedVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.xbill.DNS.Message;
 import protocol.Protocol;
 import protocol.Variable;
 import scenario.*;
@@ -37,8 +45,10 @@ import scenario.variable.ProtocolMessageVariable;
 import java.io.FileReader;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TLSSession implements Protocol {
@@ -62,6 +72,7 @@ public class TLSSession implements Protocol {
         this.trace = attacker.getWorkFlowTrace();
     }
 
+
     @Override
     public void setRandomPrivateKey(String group) {
         byte[] privateKey;
@@ -80,7 +91,7 @@ public class TLSSession implements Protocol {
     public void accept(String alias, String ip, int port){
         this.alias = alias;
         connection = new InboundConnection(alias, port, ip);
-        connection.setConnectionTimeout(10000);
+        connection.setConnectionTimeout(30000);
         attacker.addAliasedConnection(connection);
     }
 
@@ -88,7 +99,7 @@ public class TLSSession implements Protocol {
     public void connect(String alias, String ip, int port){
         this.alias = alias;
         connection = new OutboundConnection(alias, port, ip);
-        connection.setConnectionTimeout(10000);
+        connection.setConnectionTimeout(30000);
         attacker.addAliasedConnection(connection);
     }
 
@@ -128,7 +139,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable encrypt(Variable message) {
+    public Variable encrypt(String alias, Variable message) {
         MessageVariable messageVariable = (MessageVariable) message;
 
         EncryptAction action = new EncryptAction(alias);
@@ -170,7 +181,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable makeCertificate(String pemFilePath) {
+    public Variable genCertificate(String pemFilePath) {
         List<CertificateEntry> container = new ArrayList<>();
         try{
             PemReader pemReader = new PemReader(new FileReader(pemFilePath));
@@ -182,6 +193,20 @@ public class TLSSession implements Protocol {
             return null;
         }
         return new CertificateVariable(container);
+    }
+
+    @Override
+    public Variable genCertificatePrivateKey(String privateKeyPath){
+        byte[] derBytes = new byte[0];
+        try{
+            PemReader pemReader = new PemReader(new FileReader(privateKeyPath));
+            derBytes = pemReader.readPemObject().getContent();
+        } catch (Exception e){
+            LOGGER.warn("Could not parse a valid certificate fom provided private key: " + privateKeyPath);
+        }
+        List<byte[]> privateKeyContainer = new ArrayList<byte[]>();
+        privateKeyContainer.add(derBytes);
+        return new ConstantVariable<byte[]>(privateKeyContainer);
     }
 
     @Override
@@ -207,52 +232,52 @@ public class TLSSession implements Protocol {
 
     @Override
     public Variable constant(maude.ProtocolMessageType msgType) {
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType> container = new ArrayList<>();
+        List<ProtocolMessageType> container = new ArrayList<>();
         container.add(msgType.transform());
         return new ConstantVariable<ProtocolMessageType>(container);
     }
 
     @Override
     public Variable constant(maude.ProtocolVersion version) {
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion> container = new ArrayList<>();
+        List<ProtocolVersion> container = new ArrayList<>();
         container.add(version.transform());
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container);
+        return new ConstantVariable<ProtocolVersion>(container);
     }
 
     @Override
     public Variable constant(maude.HandshakeMessageType msgType) {
-        List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType> container = new ArrayList<>();
+        List<HandshakeMessageType> container = new ArrayList<>();
         container.add(msgType.transform());
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>(container);
+        return new ConstantVariable<HandshakeMessageType>(container);
     }
 
     @Override
     public Variable constant(maude.CipherSuite... ciphers) {
-        List<de.rub.nds.tlsattacker.core.constants.CipherSuite> container = new ArrayList<>();
+        List<CipherSuite> container = new ArrayList<>();
         for(maude.CipherSuite cipher: ciphers){
             container.add(cipher.transform());
         }
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CipherSuite>(container);
+        return new ConstantVariable<CipherSuite>(container);
     }
 
     @Override
     public Variable constant(maude.CompressionMethod... methods) {
-        List<de.rub.nds.tlsattacker.core.constants.CompressionMethod> container = new ArrayList<>();
+        List<CompressionMethod> container = new ArrayList<>();
         for(maude.CompressionMethod method : methods){
             container.add(method.transform());
         }
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CompressionMethod>(container);
+        return new ConstantVariable<CompressionMethod>(container);
     }
 
     @Override
-    public Variable constant(maude.MessageSize size) {
+    public Variable constant(MessageSize size) {
         List<Boolean> container = new ArrayList<>();
-        container.add(size.equals(maude.MessageSize.VALID));
+        container.add(size.equals(MessageSize.VALID));
         return new ConstantVariable<Boolean>(container);
     }
 
     @Override
-    public Variable constant(maude.Random random) {
+    public Variable constant(Random random) {
         List<byte[]> container = new ArrayList<>();
         if(random == Random.EMPTY){
             container.add(new byte[]{});
@@ -271,16 +296,16 @@ public class TLSSession implements Protocol {
 
     @Override
     public Variable constant(maude.AlertLevel level) {
-        List<de.rub.nds.tlsattacker.core.constants.AlertLevel> container = new ArrayList<>();
+        List<AlertLevel> container = new ArrayList<>();
         container.add(level.transform());
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.AlertLevel>(container);
+        return new ConstantVariable<AlertLevel>(container);
     }
 
     @Override
     public Variable constant(maude.AlertDescription description) {
-        List<de.rub.nds.tlsattacker.core.constants.AlertDescription> container = new ArrayList<>();
+        List<AlertDescription> container = new ArrayList<>();
         container.add(description.transform());
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.AlertDescription>(container);
+        return new ConstantVariable<AlertDescription>(container);
     }
 
     @Override
@@ -298,9 +323,9 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable constant(maude.SupportedVersion... supportedVersions) {
+    public Variable constant(SupportedVersion... supportedVersions) {
         List<ProtocolVersion> container = new ArrayList<>();
-        for(maude.SupportedVersion version : supportedVersions){
+        for(SupportedVersion version : supportedVersions){
             container.add(version.transform());
         }
         return new ConstantVariable<ProtocolVersion>(container);
@@ -309,8 +334,8 @@ public class TLSSession implements Protocol {
     @Override
     public Variable getContentType(Variable msg){
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType>(container,
+        List<ProtocolMessageType> container = new ArrayList<>();
+        FieldAction action = new FieldAction<ProtocolMessageType>(container,
                 () -> {
                     if(!((MessageVariable) msg).getRecordMessages().isEmpty()){
                         Record record = ((MessageVariable) msg).getRecordMessages().get(0);
@@ -319,30 +344,30 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType>(container);
+        return new ConstantVariable<ProtocolMessageType>(container);
     }
 
     @Override
     public Variable getRecordVersion(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container,
+        List<ProtocolVersion> container = new ArrayList<>();
+        FieldAction action = new FieldAction<ProtocolVersion>(container,
                 () -> {
                     if(!((MessageVariable) msg).getRecordMessages().isEmpty()){
                         Record record = ((MessageVariable) msg).getRecordMessages().get(0);
-                        return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.getProtocolVersion(record.getProtocolVersion().getValue());
+                        return ProtocolVersion.getProtocolVersion(record.getProtocolVersion().getValue());
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container);
+        return new ConstantVariable<ProtocolVersion>(container);
     }
 
     @Override
     public Variable getHandshakeMessageType(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>(container,
+        List<HandshakeMessageType> container = new ArrayList<>();
+        FieldAction action = new FieldAction<HandshakeMessageType>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         HandshakeMessage handshakeMessage = (HandshakeMessage) ((MessageVariable) msg).getProtocolMessages().get(0);
@@ -351,117 +376,179 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.HandshakeMessageType>(container);
+        return new ConstantVariable<HandshakeMessageType>(container);
     }
 
     @Override
     public Variable getProtocolVersion(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container,
+        List<ProtocolVersion> container = new ArrayList<>();
+        FieldAction action = new FieldAction<ProtocolVersion>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof ClientHelloMessage){
-                            return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.getProtocolVersion(((ClientHelloMessage) message).getProtocolVersion().getValue());
+                            return ProtocolVersion.getProtocolVersion(((ClientHelloMessage) message).getProtocolVersion().getValue());
                         }
                         else if (message instanceof ServerHelloMessage){
-                            return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.getProtocolVersion(((ServerHelloMessage) message).getProtocolVersion().getValue());
+                            return ProtocolVersion.getProtocolVersion(((ServerHelloMessage) message).getProtocolVersion().getValue());
                         }
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container);
+        return new ConstantVariable<ProtocolVersion>(container);
     }
 
     @Override
     public Variable getCipherSuite(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.CipherSuite> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.CipherSuite>(container,
+        List<CipherSuite> container = new ArrayList<>();
+        FieldAction action = new FieldAction<CipherSuite>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof ClientHelloMessage){
                             ClientHelloMessage clientHelloMessage = (ClientHelloMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.CipherSuite.getCipherSuite(clientHelloMessage.getCipherSuites().getValue());
+                            return CipherSuite.getCipherSuite(clientHelloMessage.getCipherSuites().getValue());
                         } else if (message instanceof ServerHelloMessage){
                             ServerHelloMessage serverHelloMessage = (ServerHelloMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.CipherSuite.getCipherSuite(serverHelloMessage.getSelectedCipherSuite().getValue());
+                            return CipherSuite.getCipherSuite(serverHelloMessage.getSelectedCipherSuite().getValue());
                         }
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CipherSuite>(container);
+        return new ConstantVariable<CipherSuite>(container);
+    }
+
+    @Override
+    public Variable getRandom(Variable msg) {
+        MessageVariable messageVariable = (MessageVariable) msg;
+        List<byte[]> container = new ArrayList<>();
+        FieldAction action = new FieldAction<byte[]>(container,
+                () -> {
+                    if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
+                        ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
+                        if(message instanceof ClientHelloMessage){
+                            ClientHelloMessage clientHelloMessage = (ClientHelloMessage) message;
+                            LOGGER.info("ClientRandom: " + Arrays.toString(clientHelloMessage.getRandom().getValue()));
+                            return clientHelloMessage.getRandom().getValue();
+                        } else if (message instanceof ServerHelloMessage){
+                            ServerHelloMessage serverHelloMessage = (ServerHelloMessage) message;
+                            LOGGER.info("ServerRandom: " + Arrays.toString(serverHelloMessage.getRandom().getValue()));
+                            return serverHelloMessage.getRandom().getValue();
+                        }
+                    }
+                    return null;
+                });
+        trace.addTlsAction(action);
+        return new ConstantVariable<byte[]>(container);
     }
 
     @Override
     public Variable getCompressionMethod(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.CompressionMethod> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.CompressionMethod>(container,
+        List<CompressionMethod> container = new ArrayList<>();
+        FieldAction action = new FieldAction<CompressionMethod>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof ClientHelloMessage){
                             ClientHelloMessage clientHelloMessage = (ClientHelloMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.CompressionMethod.getCompressionMethod(clientHelloMessage.getCompressions().getValue()[0]);
+                            return CompressionMethod.getCompressionMethod(clientHelloMessage.getCompressions().getValue()[0]);
                         } else if (message instanceof ServerHelloMessage){
                             ServerHelloMessage serverHelloMessage = (ServerHelloMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.CompressionMethod.getCompressionMethod(serverHelloMessage.getSelectedCompressionMethod().getValue());
+                            return CompressionMethod.getCompressionMethod(serverHelloMessage.getSelectedCompressionMethod().getValue());
                         }
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.CompressionMethod>(container);
+        return new ConstantVariable<CompressionMethod>(container);
+    }
+
+    @Override
+    public Variable getCertificate(Variable msg){
+        MessageVariable messageVariable = (MessageVariable) msg;
+        List<CertificateEntry> container = new ArrayList<>();
+        FieldAction action = new FieldAction<CertificateEntry>(container,
+                () -> {
+                    if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
+                        ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
+                        if(message instanceof CertificateMessage){
+                            return ((CertificateMessage) message).getCertificateEntryList().get(0);
+                        }
+                    }
+                    return null;
+                });
+        trace.addTlsAction(action);
+        return new CertificateVariable(container);
+    }
+
+    @Override
+    public Variable getPublicKeyFromCertificate(Variable msg) {
+        CertificateVariable certificateVariable = (CertificateVariable) msg;
+        List<PublicKeyContent> container = new ArrayList<>();
+        FieldAction action = new FieldAction<PublicKeyContent>(container,
+                () -> {
+                    CertificateEntry entry = certificateVariable.getValue().get(0);
+                    X509Certificate certificate = entry.getX509certificate();
+                    PublicKeyContent publicKey = certificate.getPublicKey();
+                    if(publicKey instanceof X509EcdhEcdsaPublicKey){
+                        return publicKey;
+                    } else if (publicKey instanceof X509RsaPublicKey) {
+                       return publicKey;
+                    }
+                    return null;
+                });
+        trace.addTlsAction(action);
+        return new ConstantVariable<PublicKeyContent>(container);
     }
 
     @Override
     public Variable getAlertLevel(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.AlertLevel> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.AlertLevel>(container,
+        List<AlertLevel> container = new ArrayList<>();
+        FieldAction action = new FieldAction<AlertLevel>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof AlertMessage){
                             AlertMessage alertMessage = (AlertMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.AlertLevel.getAlertLevel(alertMessage.getLevel().getValue());
+                            return AlertLevel.getAlertLevel(alertMessage.getLevel().getValue());
                         }
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.AlertLevel>(container);
+        return new ConstantVariable<AlertLevel>(container);
     }
 
     @Override
     public Variable getAlertDescription(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.AlertDescription> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.AlertDescription>(container,
+        List<AlertDescription> container = new ArrayList<>();
+        FieldAction action = new FieldAction<AlertDescription>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof AlertMessage){
                             AlertMessage alertMessage = (AlertMessage) message;
-                            return de.rub.nds.tlsattacker.core.constants.AlertDescription.getAlertDescription(alertMessage.getDescription().getValue());
+                            return AlertDescription.getAlertDescription(alertMessage.getDescription().getValue());
                         }
                     }
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.AlertDescription>(container);
+        return new ConstantVariable<AlertDescription>(container);
     }
 
     @Override
     public Variable getSupportedVersion(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container,
+        List<ProtocolVersion> container = new ArrayList<>();
+        FieldAction action = new FieldAction<ProtocolVersion>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
@@ -469,7 +556,7 @@ public class TLSSession implements Protocol {
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
                                 if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.SUPPORTED_VERSIONS){
-                                    return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.getProtocolVersion(extMsg.getExtensionContent().getValue());
+                                    return ProtocolVersion.getProtocolVersion(extMsg.getExtensionContent().getValue());
                                 }
                             }
                         }
@@ -477,14 +564,14 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>(container);
+        return new ConstantVariable<ProtocolVersion>(container);
     }
 
     @Override
     public Variable getSignatureAndHashAlgorithm(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm>(container,
+        List<SignatureAndHashAlgorithm> container = new ArrayList<>();
+        FieldAction action = new FieldAction<SignatureAndHashAlgorithm>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
@@ -492,7 +579,7 @@ public class TLSSession implements Protocol {
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
                                 if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.SIGNATURE_AND_HASH_ALGORITHMS){
-                                    return de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extMsg.getExtensionContent().getValue());
+                                    return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extMsg.getExtensionContent().getValue());
                                 }
                             }
                         }
@@ -500,14 +587,14 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm>(container);
+        return new ConstantVariable<SignatureAndHashAlgorithm>(container);
     }
 
     @Override
     public Variable getNamedGroupFromKeyShares(Variable keyShares){
         ConstantVariable<List<KeyShareEntry>> fieldVariable = (ConstantVariable<List<KeyShareEntry>>) keyShares;
-        List<de.rub.nds.tlsattacker.core.constants.NamedGroup> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.NamedGroup>(container,
+        List<NamedGroup> container = new ArrayList<>();
+        FieldAction action = new FieldAction<NamedGroup>(container,
                 ()->{
                     if(!(fieldVariable.getValue().isEmpty())){
                         KeyShareEntry entry = fieldVariable.getValue().get(0).get(0);
@@ -516,15 +603,14 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.NamedGroup>(container);
+        return new ConstantVariable<NamedGroup>(container);
     }
-
 
     @Override
     public Variable getNamedGroup(Variable msg) {
         MessageVariable messageVariable = (MessageVariable) msg;
-        List<de.rub.nds.tlsattacker.core.constants.NamedGroup> container = new ArrayList<>();
-        FieldAction action = new FieldAction<de.rub.nds.tlsattacker.core.constants.NamedGroup>(container,
+        List<NamedGroup> container = new ArrayList<>();
+        FieldAction action = new FieldAction<NamedGroup>(container,
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
@@ -532,7 +618,7 @@ public class TLSSession implements Protocol {
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
                                 if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.ELLIPTIC_CURVES){
-                                    return de.rub.nds.tlsattacker.core.constants.NamedGroup.getNamedGroup(extMsg.getExtensionContent().getValue());
+                                    return NamedGroup.getNamedGroup(extMsg.getExtensionContent().getValue());
                                 }
                             }
                         }
@@ -540,7 +626,7 @@ public class TLSSession implements Protocol {
                     return null;
                 });
         trace.addTlsAction(action);
-        return new ConstantVariable<de.rub.nds.tlsattacker.core.constants.NamedGroup>(container);
+        return new ConstantVariable<NamedGroup>(container);
     }
 
     @Override
@@ -583,6 +669,32 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable getHandshakeBody(Variable msg){
+        MessageVariable messageVariable = (MessageVariable) msg;
+        List<ProtocolMessage> container = new ArrayList<>();
+        FieldAction action = new FieldAction<ProtocolMessage>(container,
+                () -> messageVariable.getProtocolMessages().get(0));
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable getRSAPreMasterSecret(String alias, Variable msg, Variable privateKey){
+        List<byte[]> container = new ArrayList<>();
+
+        MessageVariable messageVariable = (MessageVariable) msg;
+
+        GetPreMasterSecretAction getMasterSecretAction = new GetPreMasterSecretAction(alias, container);
+        getMasterSecretAction.setMessage_container(messageVariable.getProtocolMessages());
+        getMasterSecretAction.setPrivateKey_container((List<byte[]>) privateKey.getValue());
+        trace.addTlsAction(getMasterSecretAction);
+
+        return new ConstantVariable<byte[]>(container);
+    }
+
+
+
+    @Override
     public Variable buildMessage(Variable record, Variable protocol_message){
         return new MessageVariable(
                 (List<Record>) record.getValue(),
@@ -595,8 +707,8 @@ public class TLSSession implements Protocol {
         List<Record> container = new ArrayList<>();
 
         BuildRecordAction action = new BuildRecordAction(container);
-        action.setProtocolMessageType((List<de.rub.nds.tlsattacker.core.constants.ProtocolMessageType>) content_type.getValue());
-        action.setProtocolVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) record_version.getValue());
+        action.setProtocolMessageType((List<ProtocolMessageType>) content_type.getValue());
+        action.setProtocolVersion((List<ProtocolVersion>) record_version.getValue());
         action.setProtocolMessage((List<ProtocolMessage>) message.getValue());
 
         trace.addTlsAction(action);
@@ -609,11 +721,11 @@ public class TLSSession implements Protocol {
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildClientHelloAction action = new BuildClientHelloAction(alias, container);
-        action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) versions.getValue());
-        action.setCipherSuites((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) ciphers.getValue());
+        action.setVersion((List<ProtocolVersion>) versions.getValue());
+        action.setCipherSuites((List<CipherSuite>) ciphers.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
-        action.setCompressions((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) methods.getValue());
+        action.setCompressions((List<CompressionMethod>) methods.getValue());
         trace.addTlsAction(action);
 
         return new ProtocolMessageVariable(container);
@@ -624,11 +736,11 @@ public class TLSSession implements Protocol {
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildServerHelloAction action = new BuildServerHelloAction(alias, container);
-        action.setVersion((List<de.rub.nds.tlsattacker.core.constants.ProtocolVersion>) version.getValue());
-        action.setCipherSuite((List<de.rub.nds.tlsattacker.core.constants.CipherSuite>) suite.getValue());
+        action.setVersion((List<ProtocolVersion>) version.getValue());
+        action.setCipherSuite((List<CipherSuite>) suite.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
-        action.setCompression((List<de.rub.nds.tlsattacker.core.constants.CompressionMethod>) compression.getValue());
+        action.setCompression((List<CompressionMethod>) compression.getValue());
         trace.addTlsAction(action);
 
         return new ProtocolMessageVariable(container);
@@ -756,11 +868,11 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable changeCertificate(Variable variable, Variable before_certificate, Variable after_certificate) {
+    public Variable changeCertificate(Variable variable, Variable after_certificate, String alias) {
         MessageVariable messageVariable = (MessageVariable) variable;
-        CertificateVariable before_variable = (CertificateVariable) before_certificate;
         CertificateVariable after_variable = (CertificateVariable) after_certificate;
-        ChangeCertificateAction action = new ChangeCertificateAction(messageVariable.getProtocolMessages(), before_variable.getValue(), after_variable.getValue());
+        ChangeCertificateAction action = new ChangeCertificateAction(alias, messageVariable.getProtocolMessages(), messageVariable.getRecordMessages());
+        action.setAfter_entries(after_variable.getValue());
 
         trace.addTlsAction(action);
 
@@ -768,10 +880,46 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public void updateDigest(Variable msg){
-        UpdateDigestAction action = new UpdateDigestAction(alias, (List<ProtocolMessage>)msg.getValue());
+    public Variable changeVerifyData(Variable message, Variable masterSecret, String alias){
+        MessageVariable messageVariable = (MessageVariable) message;
+        ChangeVerifyDataAction action = new ChangeVerifyDataAction(alias, messageVariable.getProtocolMessages(), messageVariable.getRecordMessages());
+        action.setMasterSecret_container((List<byte[]>) masterSecret.getValue());
+
         trace.addTlsAction(action);
+
+        return message;
     }
 
+    @Override
+    public Variable calculateMasterSecret(String clientAlias, String serverAlias, Variable preMasterSecret, Variable clientRandom, Variable serverRandom){
+        List<byte[]> masterSecret = new ArrayList<>();
+
+        CalculateMasterSecret action = new CalculateMasterSecret(clientAlias, serverAlias, masterSecret);
+        action.setPreMasterSecret_container((List<byte[]>) preMasterSecret.getValue());
+        action.setClientRandom_container((List<byte[]>) clientRandom.getValue());
+        action.setServerRandom_container((List<byte[]>) serverRandom.getValue());
+
+        trace.addTlsAction(action);
+
+        return new ConstantVariable<byte[]>(masterSecret);
+    }
+
+    @Override
+    public Variable reEncryptRSAClientKeyExchange(Variable msg, Variable premasterSecret, Variable encryptKey, String alias){
+        MessageVariable messageVariable = (MessageVariable) msg;
+
+        ReEncryptRSAClientKeyExchange reEncryptRSAClientKeyExchange = new ReEncryptRSAClientKeyExchange(alias, messageVariable.getProtocolMessages(), messageVariable.getRecordMessages());
+        reEncryptRSAClientKeyExchange.setEncryptKey_container((List<PublicKeyContent>) encryptKey.getValue());
+        reEncryptRSAClientKeyExchange.setPreMasterSecret_container((List<byte[]>) premasterSecret.getValue());
+        trace.addTlsAction(reEncryptRSAClientKeyExchange);
+
+        return msg;
+    }
+
+    @Override
+    public void updateContext(String alias, Variable msg, boolean isSent){
+        UpdateContextAction action = new UpdateContextAction(alias, (List<ProtocolMessage>)msg.getValue(), isSent);
+        trace.addTlsAction(action);
+    }
 
 }

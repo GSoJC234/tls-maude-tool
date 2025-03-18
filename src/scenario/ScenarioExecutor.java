@@ -1,5 +1,7 @@
 package scenario;
 
+import config.ConfigData;
+import config.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,12 +21,9 @@ public class ScenarioExecutor {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private String currentDir;
-    private String scenario;
-    private List<String> currentIPs;
-    private List<Integer> currentPorts;
-    private List<String> serverIPs;
-    private List<Integer> serverPorts;
+    private final String currentDir;
+    private final String scenario;
+    private Map<String, NodeInfo> nodeInfo;
 
     public ScenarioExecutor(String scenario) {
         this.scenario = scenario;
@@ -32,27 +31,11 @@ public class ScenarioExecutor {
 
     }
 
-    public void setCurrentIPs(List<String> IPs){
-        this.currentIPs = IPs;
-    }
-
-    public void setCurrentPorts(List<Integer> ports){
-        this.currentPorts = ports;
-    }
-
-    public void setServerIPs(List<String> IPs){
-        this.serverIPs = IPs;
-    }
-
-    public void setServerPorts(List<Integer> ports){
-        this.serverPorts = ports;
+    public void setNodeInfo(Map<String, NodeInfo> nodeInfo) {
+        this.nodeInfo = nodeInfo;
     }
 
     public void execute(){
-        // change connect or accept to include target IP address and port.
-        scenario = processScenario(scenario, "accept", currentIPs, currentPorts);
-        scenario = processScenario(scenario, "connect", serverIPs, serverPorts);
-
         // Java source code
         String classTemplate = "import maude.*;\n" +
                                "import protocol.*;\n" +
@@ -108,34 +91,6 @@ public class ScenarioExecutor {
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-    private static String processScenario(String scenario, String keyword, List<String> ips, List<Integer> ports) {
-        // 정규식
-        String regex = keyword + "\\(\"(N\\d+ \\. \\w+)\"\\)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(scenario);
-
-        StringBuilder result = new StringBuilder();
-        while (matcher.find()) {
-            String matchedGroup = matcher.group(1);
-
-            // ID 추출
-            String idStr = matchedGroup.split(" ")[0].substring(1); // "N1" -> "1"
-            int id = Integer.parseInt(idStr);
-
-            // 리스트에서 값 가져오기
-            String ip = ips.get(id - 1); // 리스트는 0부터 시작하므로 -1
-            int port = ports.get(id - 1);
-
-            // 새 문자열 생성
-            String replacement = keyword + "(\"" + matchedGroup + "\", \"" + ip + "\", " + port + ")";
-            matcher.appendReplacement(result, replacement);
-        }
-        matcher.appendTail(result);
-
-        return result.toString();
     }
 
     private static String getClasspathWithJars(String jarDirPath) {

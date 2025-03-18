@@ -1,5 +1,7 @@
 package scenario;
 
+import config.ConfigData;
+import config.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,26 +10,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScenarioGenerator implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private String currentDir;
-    private String maudePath = "/Users/gsojc234/tools/maude-3.5/maude";
-    private String requirementDirectory;
-    private int requirementNum = 0;
     private String scenario = "";
+    private final ConfigData configData;
+    private final String requirementDirectory;
+    private final String currentDirectory;
 
-    public ScenarioGenerator(int requirementNum) {
-        this.requirementNum = requirementNum;
-        this.currentDir = Paths.get("").toAbsolutePath().toString();
-        this.requirementDirectory = this.currentDir + "/maude/requirements/";
+    public ScenarioGenerator(ConfigData configData) {
+        this.configData = configData;
+        this.currentDirectory = Paths.get("").toAbsolutePath().toString();
+        this.requirementDirectory = this.currentDirectory + "/maude/requirements/";
     }
 
     @Override
     public void run() {
-        String command = maudePath + " " + requirementDirectory + "requirement" + requirementNum + ".maude";
+        String maudePath = "/Users/gsojc234/tools/maude-3.5/maude";
+        String command = maudePath + " " + requirementDirectory + "requirement" + configData.getRequirement() + ".maude";
         LOGGER.info("Command for Maude process = {}", command);
         String result = executeMaudeCommand(command);
         if(result.equals(" ;")){
@@ -77,12 +81,18 @@ public class ScenarioGenerator implements Runnable {
         pre_defined_functions.add("getNamedGroup");
         pre_defined_functions.add("getAlertLevel");
         pre_defined_functions.add("getAlertDescription");
+        pre_defined_functions.add("getCertificate");
+        pre_defined_functions.add("getPublicKeyFromCertificate");
+        pre_defined_functions.add("getRandom");
+        pre_defined_functions.add("getHandshakeBody");
+        pre_defined_functions.add("getRSAPreMasterSecret");
+        pre_defined_functions.add("calculateMasterSecret");
         pre_defined_functions.add("buildKeyShareEntry");
         pre_defined_functions.add("addKeyShareExtension");
         pre_defined_functions.add("addSupportedVersionExtension");
         pre_defined_functions.add("addSignatureAndHashAlgorithmExtension");
         pre_defined_functions.add("addSupportedGroupExtension");
-        pre_defined_functions.add("updateDigest");
+        pre_defined_functions.add("updateContext");
         pre_defined_functions.add("send");
         pre_defined_functions.add("recv");
         pre_defined_functions.add("buildClientHello");
@@ -92,6 +102,11 @@ public class ScenarioGenerator implements Runnable {
         pre_defined_functions.add("buildCertificateVerify");
         pre_defined_functions.add("buildFinished");
         pre_defined_functions.add("buildRecord");
+        pre_defined_functions.add("genCertificatePrivateKey");
+        pre_defined_functions.add("genCertificate");
+        pre_defined_functions.add("changeCertificate");
+        pre_defined_functions.add("reEncryptRSAClientKeyExchange");
+        pre_defined_functions.add("changeVerifyData");
         pre_defined_functions.add("encrypt");
         pre_defined_functions.add("decrypt");
 
@@ -141,7 +156,35 @@ public class ScenarioGenerator implements Runnable {
         result = result.replaceAll("unexpected-message", "AlertDescription.UNEXPECTED_MESSAGE");
         result = result.replaceAll("decode-error", "AlertDescription.DECODE_ERROR");
 
+        // 9. change connect or accept to include target IP address and port.
+        result = convertConnectCommand(result, "accept");
+        result = convertConnectCommand(result, "connect");
+
+        // 10. change pre-defined constructor
+
+        result = result.replaceAll("prvkey-path", "\"" + this.currentDirectory + "/" + configData.getPrivateKeyPath() + "\"");
+        result = result.replaceAll("cert-path", "\"" + this.currentDirectory + "/" + configData.getCertificatePath() + "\"");
         return result;
+    }
+
+    private String convertConnectCommand(String scenario, String keyword) {
+        Pattern connectPattern = Pattern.compile(keyword + "\\(\"(.+?)\"\\)");
+        Matcher matcher = connectPattern.matcher(scenario);
+
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String id = matcher.group(1).trim(); // ID 추출 후 공백 제거
+            NodeInfo info = configData.getNodeInfo().get(id); // ID 기반으로 IP, PORT 조회
+
+            if (info != null) {
+                String replacement = String.format("%s(\"%s\", \"%s\", %d)", keyword, info.getId(), info.getIp(), info.getPort());
+                matcher.appendReplacement(result, replacement); // 문자열 변경
+            }
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
     private String executeMaudeCommand(String command) {
