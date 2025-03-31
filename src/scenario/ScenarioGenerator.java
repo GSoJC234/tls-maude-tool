@@ -65,6 +65,7 @@ public class ScenarioGenerator implements Runnable {
 
         // 4. pre-defined function -> session . pre-defined function
         Set<String> pre_defined_functions = new HashSet<>();
+        pre_defined_functions.add("checkConnection");
         pre_defined_functions.add("connect");
         pre_defined_functions.add("accept");
         pre_defined_functions.add("assertEqual");
@@ -100,12 +101,14 @@ public class ScenarioGenerator implements Runnable {
         pre_defined_functions.add("buildEncryptedExtension");
         pre_defined_functions.add("buildEmptyCertificate");
         pre_defined_functions.add("buildCertificateVerify");
+        pre_defined_functions.add("buildChangeCipher");
         pre_defined_functions.add("buildFinished");
         pre_defined_functions.add("buildRecord");
         pre_defined_functions.add("genCertificatePrivateKey");
         pre_defined_functions.add("genCertificate");
         pre_defined_functions.add("changeCertificate");
         pre_defined_functions.add("reEncryptRSAClientKeyExchange");
+        pre_defined_functions.add("buildInvalidPaddingRSAClientKeyExchange");
         pre_defined_functions.add("changeVerifyData");
         pre_defined_functions.add("encrypt");
         pre_defined_functions.add("decrypt");
@@ -121,7 +124,7 @@ public class ScenarioGenerator implements Runnable {
         result = result.replaceAll(regex, "session.constant(Random.EMPTY)");
 
         // 6. N1 . CI -> "N1 . CI"
-        regex = "(N\\d+)\\s\\.\\s(\\w+)";
+        regex = "(N\\d+)\\s+\\.\\s+(\\w+)";
         result = result.replaceAll(regex, "\"$1 . $2\"");
 
         // 7. c[T] -> session.constant(T)
@@ -131,23 +134,25 @@ public class ScenarioGenerator implements Runnable {
         // 8. Constant T Mapping
         result = result.replaceAll("handshake", "ProtocolMessageType.HANDSHAKE");
         result = result.replaceAll("alert", "ProtocolMessageType.ALERT");
+        result = result.replaceAll("change-cipher-spec", "ProtocolMessageType.CHANGE_CIPHER_SPEC");
 
         result = result.replaceAll("TLS-11", "ProtocolVersion.TLS11");
         result = result.replaceAll("TLS-12", "ProtocolVersion.TLS12");
         result = result.replaceAll("TLS-13", "ProtocolVersion.TLS13");
 
         result = result.replaceAll("client-hello", "HandshakeMessageType.CLIENT_HELLO");
+        result = result.replaceAll("server-hello-done", "HandshakeMessageType.SERVER_HELLO_DONE");
         result = result.replaceAll("server-hello", "HandshakeMessageType.SERVER_HELLO");
         result = result.replaceAll("encrypted-extension", "HandshakeMessageType.ENCRYPTED_EXTENSION");
         result = result.replaceAll("certificate-request", "HandshakeMessageType.CERTIFICATE_REQUEST");
         result = result.replaceAll("certificate-verify", "HandshakeMessageType.CERTIFICATE_VERIFY");
         result = result.replaceAll("certificate", "HandshakeMessageType.CERTIFICATE");
         result = result.replaceAll("server-key-exchange", "HandshakeMessageType.SERVER_KEY_EXCHANGE");
-        result = result.replaceAll("server-hello-done", "HandshakeMessageType.SERVER_HELLO_DONE");
         result = result.replaceAll("client-key-exchange", "HandshakeMessageType.CLIENT_KEY_EXCHANGE");
         result = result.replaceAll("finished", "HandshakeMessageType.FINISHED");
 
         result = result.replaceAll("TLS-AES-128-CCM-SHA256", "CipherSuite.TLS_AES_128_CCM_SHA256");
+        result = result.replaceAll("TLS-RSA-WITH-AES-128-CBC-SHA256", "CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA_256");
         result = result.replaceAll("no-compression", "CompressionMethod.NO_COMPRESSION");
         result = result.replaceAll("ecdsa-secp256r1-sha256", "SignatureAndHashAlgorithm.ECDSA_SHA256");
         result = result.replaceAll("dsa-sha256", "SignatureAndHashAlgorithm.DSA_SHA256");
@@ -155,6 +160,8 @@ public class ScenarioGenerator implements Runnable {
         result = result.replaceAll("fatal", "AlertLevel.FATAL");
         result = result.replaceAll("unexpected-message", "AlertDescription.UNEXPECTED_MESSAGE");
         result = result.replaceAll("decode-error", "AlertDescription.DECODE_ERROR");
+        result = result.replaceAll("bad-record-mac", "AlertDescription.BAD_RECORD_MAC");
+
 
         // 9. change connect or accept to include target IP address and port.
         result = convertConnectCommand(result, "accept");

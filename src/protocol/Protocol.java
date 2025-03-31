@@ -11,6 +11,7 @@ public interface Protocol {
     Variable recv(String alias);
     void send(Variable msg);
     void send(String alias, Variable msg);
+    void checkConnection(String alias);
     Variable encrypt(String alias, Variable message);
     Variable encrypt(Variable message, Variable key);
     Variable decrypt(Variable message);
@@ -62,8 +63,10 @@ public interface Protocol {
     Variable buildCertificate(Variable certificate);
     Variable buildEmptyCertificate();
     Variable buildEncryptedExtension();
+    Variable buildInvalidPaddingRSAClientKeyExchange(Variable publicKey, Variable serverRandom, Variable clientRandom, Variable nonce, String alias);
     Variable buildCertificateRequest(Variable certificate_context);
     Variable buildCertificateVerify(Variable signatureHashAlgorithm);
+    Variable buildChangeCipher();
     Variable buildFinished();
 
     Variable buildKeyShareEntry(Variable group);

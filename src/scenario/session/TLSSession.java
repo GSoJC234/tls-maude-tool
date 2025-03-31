@@ -1,6 +1,5 @@
 package scenario.session;
 
-import com.sun.jdi.Field;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
@@ -135,6 +134,12 @@ public class TLSSession implements Protocol {
         MessageVariable messageVariable = (MessageVariable) variable;
         SendAction action = new SendAction(alias, messageVariable.getProtocolMessages());
         action.setConfiguredRecords(messageVariable.getRecordMessages());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void checkConnection(String alias) {
+        CheckConnectionAction action = new CheckConnectionAction(alias);
         trace.addTlsAction(action);
     }
 
@@ -805,6 +810,20 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable buildInvalidPaddingRSAClientKeyExchange(Variable publicKey, Variable serverRandom, Variable clientRandom, Variable nonce, String alias) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildInvalidPaddingRSAClientKeyExchangeAction action = new BuildInvalidPaddingRSAClientKeyExchangeAction(alias, container);
+        action.setPublicKeyContainer((List<PublicKeyContent>) publicKey.getValue());
+        action.setServerRandom((List<byte[]>) serverRandom.getValue());
+        action.setClientRandom((List<byte[]>) clientRandom.getValue());
+        action.setNonce((List<byte[]>) nonce.getValue());
+
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
     public Variable buildCertificateRequest(Variable certificate_context) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateRequestAction action = new BuildCertificateRequestAction(alias, container);
@@ -819,6 +838,15 @@ public class TLSSession implements Protocol {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateVerifyAction action = new BuildCertificateVerifyAction(alias, container);
         action.setSignature_and_hash_algorithm_container((List<SignatureAndHashAlgorithm>)signatureHashAlgorithm.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildChangeCipher() {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildChangeCipherSpecAction action = new BuildChangeCipherSpecAction(alias, container);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
