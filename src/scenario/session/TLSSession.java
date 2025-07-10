@@ -1,5 +1,6 @@
 package scenario.session;
 
+import de.rub.nds.protocol.constants.SignatureAlgorithm;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.connection.InboundConnection;
 import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
@@ -106,27 +107,11 @@ public class TLSSession implements Protocol {
     public void close() { }
 
     @Override
-    public Variable recv() {
-        List<ProtocolMessage> protocolMessages = new ArrayList<>();
-        List<Record> recordMessages = new ArrayList<>();
-        trace.addTlsAction(new ReceiveOneAction(alias, recordMessages, protocolMessages));
-        return new MessageVariable(recordMessages, protocolMessages);
-    }
-
-    @Override
     public Variable recv(String alias) {
         List<ProtocolMessage> protocolMessages = new ArrayList<>();
         List<Record> recordMessages = new ArrayList<>();
         trace.addTlsAction(new ReceiveOneAction(alias, recordMessages, protocolMessages));
         return new MessageVariable(recordMessages, protocolMessages);
-    }
-
-    @Override
-    public void send(Variable variable) {
-        MessageVariable messageVariable = (MessageVariable) variable;
-        SendAction action = new SendAction(alias, messageVariable.getProtocolMessages());
-        action.setConfiguredRecords(messageVariable.getRecordMessages());
-        trace.addTlsAction(action);
     }
 
     @Override
@@ -167,7 +152,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable decrypt(Variable message) {
+    public Variable decrypt(String alias, Variable message) {
         MessageVariable messageVariable = (MessageVariable) message;
         return messageVariable;
     }
@@ -406,7 +391,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getCipherSuite(Variable msg) {
+    public Variable getCipherSuite(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<CipherSuite> container = new ArrayList<>();
         FieldAction action = new FieldAction<CipherSuite>(container,
@@ -415,7 +400,8 @@ public class TLSSession implements Protocol {
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
                         if(message instanceof ClientHelloMessage){
                             ClientHelloMessage clientHelloMessage = (ClientHelloMessage) message;
-                            return CipherSuite.getCipherSuite(clientHelloMessage.getCipherSuites().getValue());
+                            byte[] cipherSuites = clientHelloMessage.getCipherSuites().getValue();
+                            return CipherSuite.getCipherSuite(extractPair(cipherSuites, idx - 1));
                         } else if (message instanceof ServerHelloMessage){
                             ServerHelloMessage serverHelloMessage = (ServerHelloMessage) message;
                             return CipherSuite.getCipherSuite(serverHelloMessage.getSelectedCipherSuite().getValue());
@@ -425,6 +411,16 @@ public class TLSSession implements Protocol {
                 });
         trace.addTlsAction(action);
         return new ConstantVariable<CipherSuite>(container);
+    }
+
+    private byte[] extractPair(byte[] input, int n) {
+        if (input == null)
+            throw new IllegalArgumentException("Input byte array cannot be null.");
+        int start = 2 * n;
+        if (start + 1 >= input.length) {
+            throw new IndexOutOfBoundsException("Requested pair exceeds byte array bounds.");
+        }
+        return new byte[] { input[start], input[start + 1] };
     }
 
     @Override
@@ -452,7 +448,31 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getCompressionMethod(Variable msg) {
+    public Variable getSessionId(Variable msg) {
+        MessageVariable messageVariable = (MessageVariable) msg;
+        List<byte[]> container = new ArrayList<>();
+        FieldAction action = new FieldAction<byte[]>(container,
+                () -> {
+                    if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
+                        ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
+                        if(message instanceof ClientHelloMessage){
+                            ClientHelloMessage clientHelloMessage = (ClientHelloMessage) message;
+                            LOGGER.info("ClientSessionId: " + Arrays.toString(clientHelloMessage.getSessionId().getValue()));
+                            return clientHelloMessage.getSessionId().getValue();
+                        } else if (message instanceof ServerHelloMessage){
+                            ServerHelloMessage serverHelloMessage = (ServerHelloMessage) message;
+                            LOGGER.info("ServerSessionId: " + Arrays.toString(serverHelloMessage.getSessionId().getValue()));
+                            return serverHelloMessage.getSessionId().getValue();
+                        }
+                    }
+                    return null;
+                });
+        trace.addTlsAction(action);
+        return new ConstantVariable<byte[]>(container);
+    }
+
+    @Override
+    public Variable getCompressionMethod(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<CompressionMethod> container = new ArrayList<>();
         FieldAction action = new FieldAction<CompressionMethod>(container,
@@ -550,7 +570,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getSupportedVersion(Variable msg) {
+    public Variable getSupportedVersion(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<ProtocolVersion> container = new ArrayList<>();
         FieldAction action = new FieldAction<ProtocolVersion>(container,
@@ -560,8 +580,10 @@ public class TLSSession implements Protocol {
                         if(message instanceof HelloMessage){
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.SUPPORTED_VERSIONS){
-                                    return ProtocolVersion.getProtocolVersion(extMsg.getExtensionContent().getValue());
+                                if(extMsg instanceof SupportedVersionsExtensionMessage){
+                                    SupportedVersionsExtensionMessage svExtMsg = (SupportedVersionsExtensionMessage) extMsg;
+                                    byte[] versions = svExtMsg.getSupportedVersions().getValue();
+                                    return ProtocolVersion.getProtocolVersion(extractPair(versions, idx - 1 ));
                                 }
                             }
                         }
@@ -573,7 +595,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getSignatureAndHashAlgorithm(Variable msg) {
+    public Variable getSignatureAndHashAlgorithm(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<SignatureAndHashAlgorithm> container = new ArrayList<>();
         FieldAction action = new FieldAction<SignatureAndHashAlgorithm>(container,
@@ -583,8 +605,10 @@ public class TLSSession implements Protocol {
                         if(message instanceof HelloMessage){
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.SIGNATURE_AND_HASH_ALGORITHMS){
-                                    return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extMsg.getExtensionContent().getValue());
+                                if(extMsg instanceof SignatureAndHashAlgorithmsExtensionMessage){
+                                    SignatureAndHashAlgorithmsExtensionMessage sahExtMsg = (SignatureAndHashAlgorithmsExtensionMessage) extMsg;
+                                    byte[] signatureAlgorithms = sahExtMsg.getSignatureAndHashAlgorithms().getValue();
+                                    return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extractPair(signatureAlgorithms, idx - 1 ));
                                 }
                             }
                         }
@@ -596,7 +620,12 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getNamedGroupFromKeyShares(Variable keyShares){
+    public Variable getSignatureAlgorithm(Variable msg, int idx) {
+        return getSignatureAndHashAlgorithm(msg, idx);
+    }
+
+    @Override
+    public Variable getNamedGroupFromKeyShare(Variable keyShares){
         ConstantVariable<List<KeyShareEntry>> fieldVariable = (ConstantVariable<List<KeyShareEntry>>) keyShares;
         List<NamedGroup> container = new ArrayList<>();
         FieldAction action = new FieldAction<NamedGroup>(container,
@@ -612,7 +641,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getNamedGroup(Variable msg) {
+    public Variable getNamedGroup(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<NamedGroup> container = new ArrayList<>();
         FieldAction action = new FieldAction<NamedGroup>(container,
@@ -622,8 +651,10 @@ public class TLSSession implements Protocol {
                         if(message instanceof HelloMessage){
                             HelloMessage helloMessage = (HelloMessage) message;
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.ELLIPTIC_CURVES){
-                                    return NamedGroup.getNamedGroup(extMsg.getExtensionContent().getValue());
+                                if(extMsg instanceof EllipticCurvesExtensionMessage){
+                                    EllipticCurvesExtensionMessage ecExtMsg = (EllipticCurvesExtensionMessage) extMsg;
+                                    byte[] namedGruops = ecExtMsg.getSupportedGroups().getValue();
+                                    return NamedGroup.getNamedGroup(extractPair(namedGruops, idx - 1 ));
                                 }
                             }
                         }
@@ -635,7 +666,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getKeyShareEntries(Variable msg) {
+    public Variable getKeyShareEntry(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<List<KeyShareEntry>> container = new ArrayList<>();
         FieldAction action = new FieldAction<List<KeyShareEntry>>(container,
@@ -647,7 +678,7 @@ public class TLSSession implements Protocol {
                             for(ExtensionMessage extMsg : helloMessage.getExtensions()){
                                 if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.KEY_SHARE){
                                     KeyShareExtensionMessage keyShareExtensionMessage = (KeyShareExtensionMessage) extMsg;
-                                    return keyShareExtensionMessage.getKeyShareList();
+                                    return keyShareExtensionMessage.getKeyShareList().subList(idx-1, idx);
                                 }
                             }
                         }
@@ -697,18 +728,8 @@ public class TLSSession implements Protocol {
         return new ConstantVariable<byte[]>(container);
     }
 
-
-
     @Override
-    public Variable buildMessage(Variable record, Variable protocol_message){
-        return new MessageVariable(
-                (List<Record>) record.getValue(),
-                (List<ProtocolMessage>) protocol_message.getValue()
-        );
-    }
-
-    @Override
-    public Variable buildRecord(Variable content_type, Variable record_version, Variable message) {
+    public Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable message) {
         List<Record> container = new ArrayList<>();
 
         BuildRecordAction action = new BuildRecordAction(container);
@@ -722,7 +743,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildClientHello(Variable versions, Variable ciphers, Variable random, Variable sessionId, Variable methods){
+    public Variable buildClientHello(String alias, Variable versions, Variable ciphers, Variable random, Variable sessionId, Variable methods){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildClientHelloAction action = new BuildClientHelloAction(alias, container);
@@ -737,7 +758,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildServerHello(Variable version, Variable suite, Variable random, Variable sessionId, Variable compression){
+    public Variable buildServerHello(String alias, Variable version, Variable suite, Variable random, Variable sessionId, Variable compression){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildServerHelloAction action = new BuildServerHelloAction(alias, container);
@@ -752,35 +773,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public void addSupportedVersionExtension(Variable handshake_message, Variable supported_versions){
-        AddSupportedVersionAction action = new AddSupportedVersionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        action.setExtensions((List<ProtocolVersion>) supported_versions.getValue());
-        trace.addTlsAction(action);
-    }
-
-    @Override
-    public void addSignatureAndHashAlgorithmExtension(Variable handshake_message, Variable algorithms){
-        AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
-        trace.addTlsAction(action);
-    }
-
-    @Override
-    public void addSupportedGroupExtension(Variable handshake_message, Variable supported_groups){
-        AddSupportedGroupAction action = new AddSupportedGroupAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        action.setExtensions((List<NamedGroup>) supported_groups.getValue());
-        trace.addTlsAction(action);
-    }
-
-    @Override
-    public void addKeyShareExtension(Variable handshake_message, Variable key_shares){
-        AddKeyShareAction action = new AddKeyShareAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        action.setExtensions((List<KeyShareEntry>) key_shares.getValue());
-        trace.addTlsAction(action);
-    }
-
-    @Override
-    public Variable buildCertificate(Variable certificate) {
+    public Variable buildCertificate(String alias, Variable certificate) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateAction action = new BuildCertificateAction(alias, container);
         action.setCertificate((List<CertificateEntry>) certificate.getValue());
@@ -790,7 +783,7 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildEmptyCertificate(){
+    public Variable buildCertificate(String alias){
         List<ProtocolMessage> container = new ArrayList<>();
         BuildCertificateAction action = new BuildCertificateAction(alias, container);
         List<CertificateEntry> emptyCertificate = new ArrayList<>();
@@ -801,13 +794,97 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildEncryptedExtension() {
+    public Variable buildEncryptedExtension(String alias) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
     }
+
+    @Override
+    public Variable buildCertificateRequest(String alias, Variable certificate_context) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildCertificateRequestAction action = new BuildCertificateRequestAction(alias, container);
+        action.setCertificateRequestContext((List<byte[]>) certificate_context.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildCertificateVerify(String alias, Variable signatureHashAlgorithm, Variable certificate_private_key) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildCertificateVerifyAction action = new BuildCertificateVerifyAction(alias, container);
+        action.setSignature_and_hash_algorithm_container((List<SignatureAndHashAlgorithm>)signatureHashAlgorithm.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildChangeCipher(String alias) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildChangeCipherSpecAction action = new BuildChangeCipherSpecAction(alias, container);
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildFinished(String alias) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildFinishedAction action = new BuildFinishedAction(alias, container);
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildAlert(String alias, Variable level, Variable description) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildAlertAction action = new BuildAlertAction(alias, container);
+        action.setAlertLevel((List<AlertLevel>) level.getValue());
+        action.setAlertDescription((List<AlertDescription>) description.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public void addSupportedVersionExtension(String alias, Variable handshake_message, Variable supported_versions){
+        AddSupportedVersionAction action = new AddSupportedVersionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<ProtocolVersion>) supported_versions.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addSignatureAndHashAlgorithmExtension(String alias, Variable handshake_message, Variable algorithms){
+        AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addSupportedGroupExtension(String alias, Variable handshake_message, Variable supported_groups){
+        AddSupportedGroupAction action = new AddSupportedGroupAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<NamedGroup>) supported_groups.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addKeyShareExtension(String alias, Variable handshake_message, Variable named_group, Variable private_key){
+        List<KeyShareEntry> keyshareEntryList = new ArrayList<>();
+        BuildKeyShareEntryAction keyShareEntryAction = new BuildKeyShareEntryAction(alias, keyshareEntryList);
+        keyShareEntryAction.setNamedGroup((List<NamedGroup>) named_group.getValue());
+        keyShareEntryAction.setPrivateKey((List<byte[]>) private_key.getValue());
+        trace.addTlsAction(keyShareEntryAction);
+
+        AddKeyShareAction action = new AddKeyShareAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions((List<KeyShareEntry>) keyshareEntryList);
+        trace.addTlsAction(action);
+    }
+
 
     @Override
     public Variable buildInvalidPaddingRSAClientKeyExchange(Variable publicKey, Variable serverRandom, Variable clientRandom, Variable nonce, String alias) {
@@ -818,44 +895,6 @@ public class TLSSession implements Protocol {
         action.setClientRandom((List<byte[]>) clientRandom.getValue());
         action.setNonce((List<byte[]>) nonce.getValue());
 
-
-        trace.addTlsAction(action);
-        return new ProtocolMessageVariable(container);
-    }
-
-    @Override
-    public Variable buildCertificateRequest(Variable certificate_context) {
-        List<ProtocolMessage> container = new ArrayList<>();
-        BuildCertificateRequestAction action = new BuildCertificateRequestAction(alias, container);
-        action.setCertificateRequestContext((List<byte[]>) certificate_context.getValue());
-
-        trace.addTlsAction(action);
-        return new ProtocolMessageVariable(container);
-    }
-
-    @Override
-    public Variable buildCertificateVerify(Variable signatureHashAlgorithm) {
-        List<ProtocolMessage> container = new ArrayList<>();
-        BuildCertificateVerifyAction action = new BuildCertificateVerifyAction(alias, container);
-        action.setSignature_and_hash_algorithm_container((List<SignatureAndHashAlgorithm>)signatureHashAlgorithm.getValue());
-
-        trace.addTlsAction(action);
-        return new ProtocolMessageVariable(container);
-    }
-
-    @Override
-    public Variable buildChangeCipher() {
-        List<ProtocolMessage> container = new ArrayList<>();
-        BuildChangeCipherSpecAction action = new BuildChangeCipherSpecAction(alias, container);
-
-        trace.addTlsAction(action);
-        return new ProtocolMessageVariable(container);
-    }
-
-    @Override
-    public Variable buildFinished() {
-        List<ProtocolMessage> container = new ArrayList<>();
-        BuildFinishedAction action = new BuildFinishedAction(alias, container);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
@@ -946,7 +985,8 @@ public class TLSSession implements Protocol {
 
     @Override
     public void updateContext(String alias, Variable msg, boolean isSent){
-        UpdateContextAction action = new UpdateContextAction(alias, (List<ProtocolMessage>)msg.getValue(), isSent);
+        MessageVariable messageVariable = (MessageVariable) msg;
+        UpdateContextAction action = new UpdateContextAction(alias, ((List<ProtocolMessage>) messageVariable.getProtocolMessages()), isSent);
         trace.addTlsAction(action);
     }
 

@@ -1,27 +1,33 @@
 package main;
 
-import config.ConfigData;
-import config.ConfigParser;
-import config.NodeInfo;
-import scenario.ScenarioExecutor;
-import scenario.ScenarioGenerator;
+import config.ConfigManager;
 
 import java.nio.file.Paths;
-import java.util.Map;
 
 public class Main {
 
-    public static void main(String[] args){
-        Main main = new Main();
-        String requirement = args[0];
-        String requirementPath = Paths.get("").toAbsolutePath().toString() + "/resources/config/" + requirement + ".cfg";
-        ConfigData data = ConfigParser.parseConfigFile(requirementPath);
+    private static final String CONFIG_BASE_PATH = "resources/config";
 
-        ScenarioGenerator generator = new ScenarioGenerator(data);
-        generator.run();
-        String scenario = generator.getScenario();
-        ScenarioExecutor executor = new ScenarioExecutor(scenario);
-        executor.setNodeInfo(data.getNodeInfo());
-        executor.execute();
+    public static void main(String[] args) {
+        if (args.length == 0 || args[0].trim().isEmpty()) {
+            System.err.println("Usage: java Main <configName>");
+            System.exit(1);
+        }
+
+        String configFile = args[0].trim() + ".json";
+        String configPath = Paths.get("")
+                .toAbsolutePath()
+                .resolve(CONFIG_BASE_PATH)
+                .resolve(configFile)
+                .toString();
+
+        ConfigManager manager = new ConfigManager();
+        manager.loadFromJson(configPath);
+
+        try {
+            new RunnerEngine(manager).run();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

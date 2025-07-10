@@ -1,0 +1,27 @@
+{
+  "scenario": [2],
+  "nodes": [
+    {
+      "id": "N2 . SI",
+      "ip": "127.0.0.1",
+      "port": 4433,
+      "role": "tester",
+      "mode": "server",
+      "caCertificatePath": "resources/cert/ca_cert.pem",
+      "certificatePath": "resources/cert/server_cert.pem",
+      "privateKeyPath": "resources/cert/server_key.pem"
+    },
+    {
+      "id": "N1 . CI",
+      "ip": "127.0.0.1",
+      "port": 4433,
+      "role": "target",
+      "target": "wolfssl",
+      "mode": "client",
+      "targetPath": "/Users/gsojc234/git/test_target/wolfssl-v5.7.6/my-test/client",
+      "caCertificatePath": "/Users/gsojc234/git/test_target/wolfssl-v5.7.6/my-test/certs/ca-cert.pem",
+      "certificatePath": "resources/cert/client_cert.pem",
+      "privateKeyPath": "resources/cert/client_key.pem"
+    }
+  ]
+}

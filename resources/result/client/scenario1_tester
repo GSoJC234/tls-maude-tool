@@ -1,0 +1,123 @@
+Received message: ClientHelloMessage:
+  Protocol Version: TLS12
+  Client Unix Time: Tue Jun 25 10:56:32 KST 1991
+  Client Random: 
+28 66 A2 D0 41 11 4F DE  F0 07 C5 4F AD A9 27 6D
+4E AC CC 8F A0 0C 0A 9F  25 A8 0B 7E 21 4A E8 F6
+  Session ID: 
+  Supported Cipher Suites: 13 04
+  Supported Compression Methods: 00
+  Extensions: 
+    Extension type: 00 2D
+    Extension length: 3
+
+    Extension type: 00 33
+    Extension length: 71
+
+    Extension type: 00 2B
+    Extension length: 3
+
+    Extension type: 00 0D
+    Extension length: 4
+
+    Extension type: 00 0A
+    Extension length: 4
+
+Assertion pass: value1 -> [HANDSHAKE], value2 -> [HANDSHAKE]
+Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+Assertion pass: value1 -> [CLIENT_HELLO], value2 -> [CLIENT_HELLO]
+Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+Assertion pass: value1 -> [TLS_AES_128_CCM_SHA256], value2 -> [TLS_AES_128_CCM_SHA256]
+Assertion pass: value1 -> [NULL], value2 -> [NULL]
+Assertion pass: value1 -> [TLS13], value2 -> [TLS13]
+Assertion pass: value1 -> [ECDSA_SHA256], value2 -> [ECDSA_SHA256]
+Assertion pass: value1 -> [SECP256R1], value2 -> [SECP256R1]
+Assertion pass: value1 -> [SECP256R1], value2 -> [SECP256R1]
+ServerHello: HandshakeMessage:
+  Type: 2
+  Length: 
+  Length: 38
+  Protocol Version: TLS12
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Random: 
+15 2C AD B0 33 E8 A9 CC  2C 41 AA C3 52 71 25 C9
+34 94 90 C3 80 32 1B E9  82 27 24 4C 19 EA 94 D1
+  Session ID: 
+  Selected Cipher Suite: TLS_AES_128_CCM_SHA256
+  Selected Compression Method: NULL
+  Extensions: null
+KeyShareExtension: 
+    Extension type: 00 33
+    Extension length: 69
+SupportedVersionExtension: 
+    Extension type: 00 2B
+    Extension length: 2
+BuildRecord: HandshakeMessage:
+  Type: 2
+  Length: 
+  Length: 119
+  Protocol Version: TLS12
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Random: 
+15 2C AD B0 33 E8 A9 CC  2C 41 AA C3 52 71 25 C9
+34 94 90 C3 80 32 1B E9  82 27 24 4C 19 EA 94 D1
+  Session ID: 
+  Selected Cipher Suite: TLS_AES_128_CCM_SHA256
+  Selected Compression Method: NULL
+  Extensions: 
+    Extension type: 00 33
+    Extension length: 69
+    Extension type: 00 2B
+    Extension length: 2
+EncryptedExtension: EncryptedExtensionMessage:
+  Extensions: null
+SupportedGroupExtension: 
+    Extension type: 00 0A
+    Extension length: 4
+BuildRecord: EncryptedExtensionMessage:
+  Extensions: 
+    Extension type: 00 0A
+    Extension length: 4
+Certificate: CertificateMessage:
+  Certificates Length: 0
+  Certificate:
+
+BuildRecord: CertificateMessage:
+  Certificates Length: 0
+  Certificate:
+
+CertificateVerify: CertificateVerifyMessage:
+  SignatureAndHashAlgorithm: 04 03
+  Signature Length: 71
+  Signature: 
+30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
+4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
+1C 4F 1F B4 02 21 00 E9  96 A3 29 E5 38 CB 71 99
+55 B6 6B D9 87 44 1C 56  A9 6C 5B 23 7F 86 30 25
+41 88 EB 52 1A C8 42
+BuildRecord: CertificateVerifyMessage:
+  SignatureAndHashAlgorithm: 04 03
+  Signature Length: 71
+  Signature: 
+30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
+4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
+1C 4F 1F B4 02 21 00 E9  96 A3 29 E5 38 CB 71 99
+55 B6 6B D9 87 44 1C 56  A9 6C 5B 23 7F 86 30 25
+41 88 EB 52 1A C8 42
+Finished: FinishedMessage:
+  Verify Data: 
+2A 77 B4 38 38 0B DA 9F  2D 70 D6 A1 01 97 9D 76
+8E 05 B6 CA 36 2C 8D 80  D9 FB 30 5A 14 F8 1A 72
+BuildRecord: FinishedMessage:
+  Verify Data: 
+2A 77 B4 38 38 0B DA 9F  2D 70 D6 A1 01 97 9D 76
+8E 05 B6 CA 36 2C 8D 80  D9 FB 30 5A 14 F8 1A 72
+Received message: AlertMessage:
+  Level: AlertLevel{value=FATAL}
+  Description: AlertDescription{value=DECODE_ERROR}
+Assertion pass: value1 -> [ALERT], value2 -> [ALERT]
+Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+Assertion pass: value1 -> [AlertLevel{value=FATAL}], value2 -> [AlertLevel{value=FATAL}]
+Assertion pass: value1 -> [AlertDescription{value=DECODE_ERROR}], value2 -> [AlertDescription{value=DECODE_ERROR}]

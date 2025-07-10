@@ -1,7 +1,5 @@
 package mode;
 
-import runner.MaudeRunner2;
-
 import java.io.IOException;
 import java.net.*;
 
@@ -65,7 +63,7 @@ public class VisualMode implements RunningMode {
                 case RECV_NODE_INFO:
                     result = recvReqInfo();
                     if(result){
-                        runMaudeVerification();
+                        //runMaudeVerification();
                         mode = NetworkState.RECV_REQ_INFO;
                     }
                     break;
@@ -194,16 +192,4 @@ public class VisualMode implements RunningMode {
         }
     }
 
-    private void runMaudeVerification(){
-        MaudeRunner2 runner = new MaudeRunner2(requirementInfo, requirementLength);
-        Thread thread = new Thread(runner);
-        thread.start();
-        try {
-            System.out.println("Waiting for maude verification...");
-            thread.join();
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted exception: " + e.getMessage());
-        }
-        System.out.println("Maude verification complete");
-    }
 }

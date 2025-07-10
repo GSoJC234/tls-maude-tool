@@ -1,0 +1,33 @@
+TargetConfiguration
+[signaturealgorithms, ecdsa-secp256r1-sha256], [supportedversions, TLS-13], [supportedversions, TLS-13], [supportedgroups, secp256r1], [supportedgroups, secp256r1]
+TestStart
+connect(N2 . SI) ;
+(v[0] := genCertificate(cert-path)) ;
+(v[1] := genCertificatePrivateKey(prvkey-path)) ;
+(v[2] := generateRandom(nonce(N1 . CI, 2))) ;
+(v[3] := generateRandom(noNonce)) ;
+(v[4] := buildClientHello(N2 . SI, c[TLS-12], c[TLS-AES-128-CCM-SHA256], v[2], v[3], c[no-compression])) ;
+(v[5] := generateRandom(nonce(N1 . CI, 1))) ;
+addKeyShareExtension(N2 . SI, v[4], c[secp256r1], v[5]) ;
+addSupportedVersionExtension(N2 . SI, v[4], c[TLS-13]) ;
+addSupportedGroupExtension(N2 . SI, v[4], c[secp256r1]) ;
+addSignatureAndHashAlgorithmExtension(N2 . SI, v[4], c[ecdsa-secp256r1-sha256]) ;
+(v[7] := buildRecord(N2 . SI, c[handshake], c[TLS-12], v[4])) ;
+updateContext(N2 . SI, v[7], true) ;
+send(N2 . SI, v[7]) ;
+(v[8] := recv(N2 . SI)) ;
+(v[9] := recv(N2 . SI)) ;
+(v[10] := recv(N2 . SI)) ;
+(v[11] := recv(N2 . SI)) ;
+(v[12] := recv(N2 . SI)) ;
+(v[13] := buildAlert(N2 . SI, c[fatal], c[decode-error])) ;
+(v[14] := buildRecord(N2 . SI, c[alert], c[TLS-12], v[13])) ;
+updateContext(N2 . SI, v[14], true) ;
+send(N2 . SI, v[14]) ;
+(v[15] := recv(N2 . SI)) ;
+updateContext(N2 . SI, v[15], false) ;
+assertEqual(c[alert], getContentType(v[15])) ;
+assertEqual(c[TLS-12], getRecordVersion(v[15])) ;
+assertEqual(c[fatal], getAlertLevel(v[15])) ;
+assertEqual(c[unexpected-message], getAlertDescription(v[15]))
+TestEnd

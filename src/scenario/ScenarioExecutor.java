@@ -1,7 +1,5 @@
 package scenario;
 
-import config.ConfigData;
-import config.NodeInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,8 +12,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ScenarioExecutor {
 
@@ -23,7 +19,11 @@ public class ScenarioExecutor {
 
     private final String currentDir;
     private final String scenario;
-    private Map<String, NodeInfo> nodeInfo;
+    private String redirectionPath = null;
+
+    public void setRedirectionFile(String redirectionPath) {
+        this.redirectionPath = redirectionPath;
+    }
 
     public ScenarioExecutor(String scenario) {
         this.scenario = scenario;
@@ -31,19 +31,28 @@ public class ScenarioExecutor {
 
     }
 
-    public void setNodeInfo(Map<String, NodeInfo> nodeInfo) {
-        this.nodeInfo = nodeInfo;
-    }
-
     public void execute(){
+        String redirectionCode = "";
+        if(this.redirectionPath != null){
+            redirectionCode =
+                    "    try {\n" +
+                    "            System.setOut(new PrintStream(new File(\"" + this.redirectionPath +"\")));\n" +
+                    "        } catch (FileNotFoundException e) {\n" +
+                    "            throw new RuntimeException(e);\n" +
+                    "        }\n";
+        }
+
         // Java source code
         String classTemplate = "import maude.*;\n" +
                                "import protocol.*;\n" +
                                "import scenario.TLSAttacker;\n" +
                                "import scenario.session.TLSSession;\n"+
-
+                               "import java.io.File;\n"+
+                               "import java.io.PrintStream;\n"+
+                               "import java.io.FileNotFoundException;\n"+
                                "public class ScenarioTest {\n" +
                                "  public static void main(String[] args) {\n" +
+                               redirectionCode +
                                "    TLSAttacker protocol = new TLSAttacker(\"" + this.currentDir + "/resources/default_config3.xml\");\n" +
                                "    TLSSession session = new TLSSession();\n" +
                                "    session.setExecutor(protocol);\n" +
