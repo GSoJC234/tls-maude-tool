@@ -1,9 +1,9 @@
 TargetConfiguration
-[sigalgs -> ecdsa-secp256r1-sha256], [version -> TLS-13], [groups -> secp256r1], [ciphersuites -> TLS-AES-128-CCM-SHA256]
-TestStart
-accept(N1 . CI) ;
+[version -> TLS-13]
+ScenarioStart
 (v[0] := genCertificate(cert-path)) ;
 (v[1] := genCertificatePrivateKey(prvkey-path)) ;
+accept(N1 . CI) ;
 (v[2] := recv(N1 . CI)) ;
 updateContext(N1 . CI, v[2], false) ;
 assertEqual(c[handshake], getContentType(v[2])) ;
@@ -13,15 +13,15 @@ assertEqual(c[TLS-12], getProtocolVersion(v[2])) ;
 assertEqual(c[TLS-AES-128-CCM-SHA256], getCipherSuite(v[2], 1)) ;
 assertEqual(c[no-compression], getCompressionMethod(v[2], 1)) ;
 assertEqual(c[TLS-13], getSupportedVersion(v[2], 1)) ;
-assertEqual(c[ecdsa-secp256r1-sha256], getSignatureAlgorithm(v[2], 1)) ;
-assertEqual(c[secp256r1], getNamedGroupFromKeyShare(getKeyShareEntry(v[2], 1))) ;
+assertEqual(c[{ecdsa, sha256}], getSignatureAlgorithm(v[2], 1)) ;
+assertEqual(c[secp256r1], getKeyShareNamedGroup(getKeyShareEntry(v[2], 1))) ;
 assertEqual(c[secp256r1], getNamedGroup(v[2], 1)) ;
 (v[3] := getRandom(v[2])) ;
 (v[4] := getSessionId(v[2])) ;
-(v[5] := generateRandom(nonce(N2 . SI, 3))) ;
+(v[5] := generateRandom(nonce(N2 . SI, 2))) ;
 (v[6] := buildServerHello(N1 . CI, c[TLS-12], c[TLS-AES-128-CCM-SHA256], v[5], v[4], c[no-compression])) ;
-(v[7] := generateRandom(nonce(N2 . SI, 1))) ;
-addKeyShareExtension(N1 . CI, v[6], c[secp256r1], v[7]) ;
+(v[7] := generateRandom(nonce(N2 . SI, 2))) ;
+addKeyShareExtension(N1 . CI, v[6], c[ffdhe8192], v[7]) ;
 addSupportedVersionExtension(N1 . CI, v[6], c[TLS-13]) ;
 (v[9] := buildRecord(N1 . CI, c[handshake], c[TLS-12], v[6])) ;
 updateContext(N1 . CI, v[9], true) ;
@@ -30,11 +30,11 @@ addSupportedGroupExtension(N1 . CI, v[10], c[secp256r1]) ;
 (v[11] := buildRecord(N1 . CI, c[handshake], c[TLS-12], v[10])) ;
 updateContext(N1 . CI, v[11], true) ;
 (v[12] := encrypt(N1 . CI, v[11])) ;
-(v[13] := buildCertificate(N1 . CI)) ;
+(v[13] := buildCertificate(N1 . CI, v[0])) ;
 (v[14] := buildRecord(N1 . CI, c[handshake], c[TLS-12], v[13])) ;
 updateContext(N1 . CI, v[14], true) ;
 (v[15] := encrypt(N1 . CI, v[14])) ;
-(v[16] := buildCertificateVerify(N1 . CI, c[ecdsa-secp256r1-sha256], v[1])) ;
+(v[16] := buildCertificateVerify(N1 . CI, c[{ecdsa, sha256}], v[1])) ;
 (v[17] := buildRecord(N1 . CI, c[handshake], c[TLS-12], v[16])) ;
 updateContext(N1 . CI, v[17], true) ;
 (v[18] := encrypt(N1 . CI, v[17])) ;
@@ -48,10 +48,9 @@ send(N1 . CI, v[15]) ;
 send(N1 . CI, v[18]) ;
 send(N1 . CI, v[21]) ;
 (v[22] := recv(N1 . CI)) ;
-(v[23] := decrypt(N1 . CI, v[22])) ;
-updateContext(N1 . CI, v[23], false) ;
-assertEqual(c[alert], getContentType(v[23])) ;
-assertEqual(c[TLS-12], getRecordVersion(v[23])) ;
-assertEqual(c[fatal], getAlertLevel(v[23])) ;
-assertEqual(c[decode-error], getAlertDescription(v[23]))
-TestEnd
+updateContext(N1 . CI, v[22], false) ;
+assertEqual(c[alert], getContentType(v[22])) ;
+assertEqual(c[TLS-12], getRecordVersion(v[22])) ;
+assertEqual(c[fatal], getAlertLevel(v[22])) ;
+assertEqual(c[illegal-parameter], getAlertDescription(v[22]))
+ScenarioEnd

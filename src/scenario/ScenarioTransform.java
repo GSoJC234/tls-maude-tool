@@ -61,7 +61,7 @@ public class ScenarioTransform {
         pre_defined_functions.add("getSignatureAndHashAlgorithm");
         pre_defined_functions.add("getSignatureAlgorithm");
         pre_defined_functions.add("getKeyShareEntry");
-        pre_defined_functions.add("getNamedGroupFromKeyShare");
+        pre_defined_functions.add("getKeyShareNamedGroup");
         pre_defined_functions.add("getNamedGroup");
         pre_defined_functions.add("getAlertLevel");
         pre_defined_functions.add("getAlertDescription");
@@ -223,6 +223,9 @@ public class ScenarioTransform {
         result = result.replaceAll("no-compression", "CompressionMethod.NO_COMPRESSION");
         result = result.replaceAll("ecdsa-secp256r1-sha256", "SignatureAndHashAlgorithm.ECDSA_SHA256");
         result = result.replaceAll("dsa-sha256", "SignatureAndHashAlgorithm.DSA_SHA256");
+        result = result.replaceAll("\\{ecdsa, sha256\\}", "SignatureAndHashAlgorithm.ECDSA_SHA256");
+
+
         result = result.replaceAll("secp160k1", "NamedGroup.SECP160K1");
         result = result.replaceAll("secp160r1", "NamedGroup.SECP160R1");
         result = result.replaceAll("secp160r2", "NamedGroup.SECP160R2");

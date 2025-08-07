@@ -40,7 +40,7 @@ public class ScenarioManager {
     public Map<String, String> getConfiguration() {
         Map<String, String> configMap = new HashMap<>();
         int start = scenarioContent.indexOf("TargetConfiguration");
-        int end = scenarioContent.indexOf("TestStart");
+        int end = scenarioContent.indexOf("ScenarioStart");
 
         if (start == -1 || end == -1 || end <= start) {
             return configMap;  // Return empty if structure is invalid
@@ -66,13 +66,13 @@ public class ScenarioManager {
      * Extracts the test script between 'TestStart' and 'TestEnd'.
      */
     public String getScenario() {
-        int start = scenarioContent.indexOf("TestStart");
-        int end = scenarioContent.indexOf("TestEnd");
+        int start = scenarioContent.indexOf("ScenarioStart");
+        int end = scenarioContent.indexOf("ScenarioEnd");
 
         if (start == -1 || end == -1 || end <= start) {
             return "";
         }
 
-        return scenarioContent.substring(start + "TestStart".length(), end).trim();
+        return scenarioContent.substring(start + "ScenarioStart".length(), end).trim();
     }
 }

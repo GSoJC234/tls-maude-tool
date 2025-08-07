@@ -48,7 +48,7 @@ public interface Protocol {
     Variable getNamedGroup(Variable msg, int idx);
     Variable getKeyShareEntry(Variable msg, int idx);
     Variable getPublicKeyFromKeyShare(Variable msg);
-    Variable getNamedGroupFromKeyShare(Variable keyShares);
+    Variable getKeyShareNamedGroup(Variable keyShares);
     Variable getHandshakeBody(Variable msg);
     Variable getCertificate(Variable msg);
     Variable getPublicKeyFromCertificate(Variable msg);

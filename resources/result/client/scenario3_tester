@@ -1,0 +1,169 @@
+Received message: ClientHelloMessage:
+  Protocol Version: TLS12
+  Client Unix Time: Mon Jun 24 02:35:10 KST 2024
+  Client Random: 
+66 78 5C CE 56 08 0D B1  73 09 41 68 F9 B5 CA 63
+59 2F 19 CA 4B B9 19 4F  1D 80 BD 4E 3B 51 41 08
+  Session ID: 
+  Supported Cipher Suites: 13 04 13 05
+  Supported Compression Methods: 00
+  Extensions: 
+    Extension type: 00 2B
+    Extension length: 3
+
+    Extension type: 00 33
+    Extension length: 71
+
+    Extension type: 00 0A
+    Extension length: 4
+
+    Extension type: 00 0D
+    Extension length: 4
+
+Assertion pass: value1 -> [HANDSHAKE], value2 -> [HANDSHAKE]
+Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+Assertion pass: value1 -> [CLIENT_HELLO], value2 -> [CLIENT_HELLO]
+Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+Assertion pass: value1 -> [TLS_AES_128_CCM_SHA256], value2 -> [TLS_AES_128_CCM_SHA256]
+Assertion pass: value1 -> [NULL], value2 -> [NULL]
+Assertion pass: value1 -> [TLS13], value2 -> [TLS13]
+Assertion pass: value1 -> [ECDSA_SHA256], value2 -> [ECDSA_SHA256]
+Assertion pass: value1 -> [SECP256R1], value2 -> [SECP256R1]
+Assertion pass: value1 -> [SECP256R1], value2 -> [SECP256R1]
+ServerHello: HandshakeMessage:
+  Type: 2
+  Length: 
+  Length: 38
+  Protocol Version: TLS12
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Random: 
+33 8D BE F5 03 CD 11 FD  7D 66 3F 81 31 B0 1C BE
+BC FD 95 EA 1A F8 DB 78  47 5C 0D AA EA 0B 53 6F
+  Session ID: 
+  Selected Cipher Suite: TLS_AES_128_CCM_SHA256
+  Selected Compression Method: NULL
+  Extensions: null
+KeyShareExtension: 
+    Extension type: 00 33
+    Extension length: 69
+SupportedVersionExtension: 
+    Extension type: 00 2B
+    Extension length: 2
+BuildRecord: HandshakeMessage:
+  Type: 2
+  Length: 
+  Length: 119
+  Protocol Version: TLS12
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Unix Time: Thu Jan 01 09:00:00 KST 1970
+  Server Random: 
+33 8D BE F5 03 CD 11 FD  7D 66 3F 81 31 B0 1C BE
+BC FD 95 EA 1A F8 DB 78  47 5C 0D AA EA 0B 53 6F
+  Session ID: 
+  Selected Cipher Suite: TLS_AES_128_CCM_SHA256
+  Selected Compression Method: NULL
+  Extensions: 
+    Extension type: 00 33
+    Extension length: 69
+    Extension type: 00 2B
+    Extension length: 2
+EncryptedExtension: EncryptedExtensionMessage:
+  Extensions: null
+SupportedGroupExtension: 
+    Extension type: 00 0A
+    Extension length: 4
+BuildRecord: EncryptedExtensionMessage:
+  Extensions: 
+    Extension type: 00 0A
+    Extension length: 4
+Certificate: CertificateMessage:
+  Certificates Length: 440
+  Certificate:
+
+00 01 B5 30 82 01 B1 30  82 01 57 A0 03 02 01 02
+02 09 00 A9 C1 47 00 71  42 C0 E3 30 09 06 07 2A
+86 48 CE 3D 04 01 30 21  31 0B 30 09 06 03 55 04
+06 13 02 4B 52 31 12 30  10 06 03 55 04 03 0C 09
+6C 6F 63 61 6C 68 6F 73  74 30 1E 17 0D 32 35 30
+31 33 30 30 36 34 36 35  37 5A 17 0D 32 36 30 31
+33 30 30 36 34 36 35 37  5A 30 21 31 0B 30 09 06
+03 55 04 06 13 02 4B 52  31 12 30 10 06 03 55 04
+03 0C 09 6C 6F 63 61 6C  68 6F 73 74 30 59 30 13
+06 07 2A 86 48 CE 3D 02  01 06 08 2A 86 48 CE 3D
+03 01 07 03 42 00 04 02  47 95 C7 B1 02 52 1A 51
+37 4E 4F 75 CE 6D EE 1C  FC 7D A4 F4 F1 4A 43 12
+1F 24 7E 0D 47 61 5D 87  97 07 48 29 1A 5E BD 54
+93 24 13 3C 95 A7 C2 56  9A 89 19 A2 28 51 40 09
+59 C8 F2 F7 22 D7 3C A3  79 30 77 30 38 06 03 55
+1D 11 04 31 30 2F 82 0B  65 78 61 6D 70 6C 65 2E
+63 6F 6D 82 0F 77 77 77  2E 65 78 61 6D 70 6C 65
+2E 63 6F 6D 82 09 6C 6F  63 61 6C 68 6F 73 74 87
+04 7F 00 00 01 30 0C 06  03 55 1D 13 01 01 FF 04
+02 30 00 30 0E 06 03 55  1D 0F 01 01 FF 04 04 03
+02 05 A0 30 1D 06 03 55  1D 25 04 16 30 14 06 08
+2B 06 01 05 05 07 03 01  06 08 2B 06 01 05 05 07
+03 02 30 09 06 07 2A 86  48 CE 3D 04 01 03 49 00
+30 46 02 21 00 FD E1 22  54 04 B3 0F 47 0F 05 8D
+91 B8 F3 4D 0C 2F FC B3  A4 A8 91 4F 86 B4 32 32
+6D 23 12 6C 68 02 21 00  D0 2E EC 8D 7F C5 61 ED
+AF DF 4F 3D 1C 6E 56 EF  5E 56 CB 32 70 46 CA F3
+01 31 26 9E 01 37 E0 D6
+BuildRecord: CertificateMessage:
+  Certificates Length: 440
+  Certificate:
+
+00 01 B5 30 82 01 B1 30  82 01 57 A0 03 02 01 02
+02 09 00 A9 C1 47 00 71  42 C0 E3 30 09 06 07 2A
+86 48 CE 3D 04 01 30 21  31 0B 30 09 06 03 55 04
+06 13 02 4B 52 31 12 30  10 06 03 55 04 03 0C 09
+6C 6F 63 61 6C 68 6F 73  74 30 1E 17 0D 32 35 30
+31 33 30 30 36 34 36 35  37 5A 17 0D 32 36 30 31
+33 30 30 36 34 36 35 37  5A 30 21 31 0B 30 09 06
+03 55 04 06 13 02 4B 52  31 12 30 10 06 03 55 04
+03 0C 09 6C 6F 63 61 6C  68 6F 73 74 30 59 30 13
+06 07 2A 86 48 CE 3D 02  01 06 08 2A 86 48 CE 3D
+03 01 07 03 42 00 04 02  47 95 C7 B1 02 52 1A 51
+37 4E 4F 75 CE 6D EE 1C  FC 7D A4 F4 F1 4A 43 12
+1F 24 7E 0D 47 61 5D 87  97 07 48 29 1A 5E BD 54
+93 24 13 3C 95 A7 C2 56  9A 89 19 A2 28 51 40 09
+59 C8 F2 F7 22 D7 3C A3  79 30 77 30 38 06 03 55
+1D 11 04 31 30 2F 82 0B  65 78 61 6D 70 6C 65 2E
+63 6F 6D 82 0F 77 77 77  2E 65 78 61 6D 70 6C 65
+2E 63 6F 6D 82 09 6C 6F  63 61 6C 68 6F 73 74 87
+04 7F 00 00 01 30 0C 06  03 55 1D 13 01 01 FF 04
+02 30 00 30 0E 06 03 55  1D 0F 01 01 FF 04 04 03
+02 05 A0 30 1D 06 03 55  1D 25 04 16 30 14 06 08
+2B 06 01 05 05 07 03 01  06 08 2B 06 01 05 05 07
+03 02 30 09 06 07 2A 86  48 CE 3D 04 01 03 49 00
+30 46 02 21 00 FD E1 22  54 04 B3 0F 47 0F 05 8D
+91 B8 F3 4D 0C 2F FC B3  A4 A8 91 4F 86 B4 32 32
+6D 23 12 6C 68 02 21 00  D0 2E EC 8D 7F C5 61 ED
+AF DF 4F 3D 1C 6E 56 EF  5E 56 CB 32 70 46 CA F3
+01 31 26 9E 01 37 E0 D6
+CertificateVerify: CertificateVerifyMessage:
+  SignatureAndHashAlgorithm: 04 03
+  Signature Length: 71
+  Signature: 
+30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
+4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
+1C 4F 1F B4 02 21 00 85  63 33 A7 0B 0D 61 F7 E7
+94 48 BE 73 C5 CF 0F A4  0F A4 A6 B1 B7 B5 21 54
+8E 8D C1 DE 2C 85 01
+BuildRecord: CertificateVerifyMessage:
+  SignatureAndHashAlgorithm: 04 03
+  Signature Length: 71
+  Signature: 
+30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
+4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
+1C 4F 1F B4 02 21 00 85  63 33 A7 0B 0D 61 F7 E7
+94 48 BE 73 C5 CF 0F A4  0F A4 A6 B1 B7 B5 21 54
+8E 8D C1 DE 2C 85 01
+Finished: FinishedMessage:
+  Verify Data: E4 6C B4 7C B7 86 6F C0 37 F7 CF 9C
+BuildRecord: FinishedMessage:
+  Verify Data: E4 6C B4 7C B7 86 6F C0 37 F7 CF 9C
+Assertion fails: value1 -> [ALERT], value2 -> [null]
+Assertion fails: value1 -> [TLS12], value2 -> [null]
+Assertion fails: value1 -> [AlertLevel{value=FATAL}], value2 -> [null]
+Assertion fails: value1 -> [AlertDescription{value=ILLEGAL_PARAMETER}], value2 -> [null]

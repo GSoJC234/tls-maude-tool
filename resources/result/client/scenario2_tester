@@ -1,26 +1,23 @@
 Received message: ClientHelloMessage:
   Protocol Version: TLS12
-  Client Unix Time: Mon Jul 28 22:00:16 KST 1975
+  Client Unix Time: Mon Jun 24 02:35:29 KST 2024
   Client Random: 
-0A 7A 41 E0 6E E7 41 24  F2 77 84 B2 4D 66 05 7C
-AF E1 C6 B3 CC A0 87 B3  40 B4 6E B0 EA E9 77 7D
+66 78 5C E1 A1 C9 23 8A  A3 F5 C9 39 D8 9A F5 61
+69 24 2B 1C 7E 03 34 AE  39 02 D7 85 51 3E 4F B8
   Session ID: 
-  Supported Cipher Suites: 13 04
+  Supported Cipher Suites: 13 04 13 05
   Supported Compression Methods: 00
   Extensions: 
-    Extension type: 00 2D
+    Extension type: 00 2B
     Extension length: 3
 
     Extension type: 00 33
     Extension length: 71
 
-    Extension type: 00 2B
-    Extension length: 3
-
-    Extension type: 00 0D
+    Extension type: 00 0A
     Extension length: 4
 
-    Extension type: 00 0A
+    Extension type: 00 0D
     Extension length: 4
 
 Assertion pass: value1 -> [HANDSHAKE], value2 -> [HANDSHAKE]
@@ -41,8 +38,8 @@ ServerHello: HandshakeMessage:
   Server Unix Time: Thu Jan 01 09:00:00 KST 1970
   Server Unix Time: Thu Jan 01 09:00:00 KST 1970
   Server Random: 
-13 A9 2D FA 0E E0 44 EF  62 E2 E8 7C C0 C6 CF 30
-B1 23 A5 96 0E F2 86 96  87 7F 3B E5 07 88 42 17
+8C 36 CC 94 45 E4 4D 8E  70 0A 05 F7 58 2A F8 FF
+86 B0 20 83 09 4E 9F 01  9F CC 5F 63 0D 04 F5 B2
   Session ID: 
   Selected Cipher Suite: TLS_AES_256_GCM_SHA384
   Selected Compression Method: NULL
@@ -61,8 +58,8 @@ BuildRecord: HandshakeMessage:
   Server Unix Time: Thu Jan 01 09:00:00 KST 1970
   Server Unix Time: Thu Jan 01 09:00:00 KST 1970
   Server Random: 
-13 A9 2D FA 0E E0 44 EF  62 E2 E8 7C C0 C6 CF 30
-B1 23 A5 96 0E F2 86 96  87 7F 3B E5 07 88 42 17
+8C 36 CC 94 45 E4 4D 8E  70 0A 05 F7 58 2A F8 FF
+86 B0 20 83 09 4E 9F 01  9F CC 5F 63 0D 04 F5 B2
   Session ID: 
   Selected Cipher Suite: TLS_AES_256_GCM_SHA384
   Selected Compression Method: NULL
@@ -150,31 +147,29 @@ CertificateVerify: CertificateVerifyMessage:
   Signature: 
 30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
 4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
-1C 4F 1F B4 02 21 00 96  44 8E 67 B7 74 C1 7F FB
-F6 9E 28 43 69 AD 8B 8C  62 CA 54 AE F8 07 02 42
-45 55 02 B6 84 C7 71
+1C 4F 1F B4 02 21 00 8B  39 1A 83 D5 F0 3E 22 A4
+D6 99 F0 39 EE 41 77 D1  EB CF B9 2F D7 9C DC 99
+B0 1D CE C3 F4 E9 82
 BuildRecord: CertificateVerifyMessage:
   SignatureAndHashAlgorithm: 04 03
   Signature Length: 71
   Signature: 
 30 45 02 20 5F C0 EF 3C  86 13 F7 B8 93 23 2A 3D
 4C 10 36 AB 65 70 47 B9  41 6F CF 64 C3 69 D7 88
-1C 4F 1F B4 02 21 00 96  44 8E 67 B7 74 C1 7F FB
-F6 9E 28 43 69 AD 8B 8C  62 CA 54 AE F8 07 02 42
-45 55 02 B6 84 C7 71
+1C 4F 1F B4 02 21 00 8B  39 1A 83 D5 F0 3E 22 A4
+D6 99 F0 39 EE 41 77 D1  EB CF B9 2F D7 9C DC 99
+B0 1D CE C3 F4 E9 82
 Finished: FinishedMessage:
   Verify Data: 
-99 6D D3 78 32 64 E7 F5  02 F3 7D 54 6A 20 D1 F5
-E7 34 73 65 ED 6A EF 5E  EE FB 7C 16 A1 17 25 B1
-04 BC BA 22 69 77 03 BF  27 7D B7 43 75 4F 46 81
+17 43 66 EA 07 68 D8 E8  75 D5 B6 24 13 F5 7E 2C
+5D 15 7E 4F 53 E6 EB A5  6E F0 B8 F2 30 91 8B B3
+81 D4 F5 81 E3 85 CD 8E  CB CF A4 42 B7 A8 18 06
 BuildRecord: FinishedMessage:
   Verify Data: 
-99 6D D3 78 32 64 E7 F5  02 F3 7D 54 6A 20 D1 F5
-E7 34 73 65 ED 6A EF 5E  EE FB 7C 16 A1 17 25 B1
-04 BC BA 22 69 77 03 BF  27 7D B7 43 75 4F 46 81
-Received message: UnknownMessage:
-  Data: 02 28
-Assertion pass: value1 -> [ALERT], value2 -> [ALERT]
-Assertion pass: value1 -> [TLS12], value2 -> [TLS12]
+17 43 66 EA 07 68 D8 E8  75 D5 B6 24 13 F5 7E 2C
+5D 15 7E 4F 53 E6 EB A5  6E F0 B8 F2 30 91 8B B3
+81 D4 F5 81 E3 85 CD 8E  CB CF A4 42 B7 A8 18 06
+Assertion fails: value1 -> [ALERT], value2 -> [null]
+Assertion fails: value1 -> [TLS12], value2 -> [null]
 Assertion fails: value1 -> [AlertLevel{value=FATAL}], value2 -> [null]
 Assertion fails: value1 -> [AlertDescription{value=ILLEGAL_PARAMETER}], value2 -> [null]

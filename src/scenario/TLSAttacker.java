@@ -80,6 +80,8 @@ public class TLSAttacker {
         }else if(isClient){
             config.setDefaultRunningMode(RunningModeType.CLIENT);
         }
+        config.getDefaultClientConnection().setTimeout(30000);
+        config.getDefaultServerConnection().setTimeout(30000);
 
         state = new State(config, trace);
         executor = new DefaultWorkflowExecutor(state);

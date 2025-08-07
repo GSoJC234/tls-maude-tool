@@ -1,6 +1,5 @@
 package runner;
 
-import docker.DockerRun;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +33,7 @@ public abstract class RunTLSLibrary {
 
     private int runWithDockerOrExec(String arguments, boolean isClient) {
         if (useDocker) {
-            return (int) new DockerRun().run(TLSLibraryName(), arguments, isClient);
+            return 0;
         } else {
             String execPath = isClient ? clientExecPath : serverExecPath;
             if (execPath == null) {

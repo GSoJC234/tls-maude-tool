@@ -625,22 +625,6 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable getNamedGroupFromKeyShare(Variable keyShares){
-        ConstantVariable<List<KeyShareEntry>> fieldVariable = (ConstantVariable<List<KeyShareEntry>>) keyShares;
-        List<NamedGroup> container = new ArrayList<>();
-        FieldAction action = new FieldAction<NamedGroup>(container,
-                ()->{
-                    if(!(fieldVariable.getValue().isEmpty())){
-                        KeyShareEntry entry = fieldVariable.getValue().get(0).get(0);
-                        return entry.getGroupConfig();
-                    }
-                    return null;
-                });
-        trace.addTlsAction(action);
-        return new ConstantVariable<NamedGroup>(container);
-    }
-
-    @Override
     public Variable getNamedGroup(Variable msg, int idx) {
         MessageVariable messageVariable = (MessageVariable) msg;
         List<NamedGroup> container = new ArrayList<>();
@@ -687,6 +671,22 @@ public class TLSSession implements Protocol {
                 });
         trace.addTlsAction(action);
         return new ConstantVariable<List<KeyShareEntry>>(container);
+    }
+
+    @Override
+    public Variable getKeyShareNamedGroup(Variable keyShares){
+        ConstantVariable<List<KeyShareEntry>> fieldVariable = (ConstantVariable<List<KeyShareEntry>>) keyShares;
+        List<NamedGroup> container = new ArrayList<>();
+        FieldAction action = new FieldAction<NamedGroup>(container,
+                ()->{
+                    if(!(fieldVariable.getValue().isEmpty())){
+                        KeyShareEntry entry = fieldVariable.getValue().get(0).get(0);
+                        return entry.getGroupConfig();
+                    }
+                    return null;
+                });
+        trace.addTlsAction(action);
+        return new ConstantVariable<NamedGroup>(container);
     }
 
     @Override

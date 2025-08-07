@@ -22,21 +22,20 @@ public class RunnerEngine {
 
     public void run() throws InterruptedException {
         for(int i = 0; i < manager.getScenarioNumbers().size() ; i ++){
-            int num1 = manager.getScenarioNumbers().get(i), num2 = manager.getScenarioNumbers().get(i);
+            int num1 = manager.getScenarioNumbers().get(i);
             Thread scenarioThread = new Thread(() -> runScenario(num1));
-            Thread tlsThread = new Thread(() -> runLibrary(num2));
 
             if (manager.isClientTarget()) {
                 scenarioThread.start();
                 Thread.sleep(5000);
-                tlsThread.start();
+                //tlsThread.start();
             } else {
-                tlsThread.start();
+                //tlsThread.start();
                 Thread.sleep(5000);
                 scenarioThread.start();
             }
             scenarioThread.join();
-            tlsThread.join();
+            //tlsThread.join();
         }
 
 
