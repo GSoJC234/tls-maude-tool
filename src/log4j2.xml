@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <File name="MAIN" fileName="${sys:logFilePath}" append="false" createOnDemand="true">
+            <PatternLayout pattern="%m%n"/>
+            <MarkerFilter marker="VISUAL" onMatch="ACCEPT" onMismatch="DENY"/>
+        </File>
+        <Console name="DEBUG_CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%t] %p %c - %m%n"/>
+            <Filters>
+                <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="NEUTRAL" onMismatch="DENY"/>
+                <MarkerFilter marker="TEST" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="MAIN" level="INFO"/>
+            <AppenderRef ref="DEBUG_CONSOLE" level="DEBUG"/>
+        </Root>
+    </Loggers>
+</Configuration>

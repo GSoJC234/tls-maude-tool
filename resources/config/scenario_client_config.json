@@ -1,0 +1,13 @@
+{
+    "nodes": [
+        {
+            "mode": "client",
+            "id": "N1 . CI",
+            "ip": "127.0.0.1",
+            "port": 4433,
+            "caCertificatePath": "/Users/gsojc234/git/maude-tls-attacker/resources/cert/custom/ca-cert.pem",
+            "certificatePath": "/Users/gsojc234/git/maude-tls-attacker/resources/cert/custom/client-ecc-cert.pem",
+            "privateKeyPath": "/Users/gsojc234/git/maude-tls-attacker/resources/cert/custom/client-ecc-key.pem"
+        }
+    ]
+}

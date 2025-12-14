@@ -1,0 +1,2 @@
+Do not remove this file.
+This dummy file ensures that the log directory is included in the classpath so the library can access it.
