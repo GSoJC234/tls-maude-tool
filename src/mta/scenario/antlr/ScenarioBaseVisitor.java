@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/mta.maude-tls-attacker/src/mta.scenario/antlr/Scenario.g4 by ANTLR 4.13.2
+// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/scenario/antlr/Scenario.g4 by ANTLR 4.13.2
 package mta.scenario.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

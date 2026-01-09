@@ -78,7 +78,7 @@ alert_description:
     'close-notify' | 'unexpected-message' | 'bad-record-mac' | 'record-overflow' | 'decompression-failure'
     | 'handshake-failure' | 'no-certificate' | 'bad-certificate' | 'unsupported-certificate' | 'certificate-revoked'
     | 'certificate-expired' | 'certificate-unknown' | 'illegal-parameter' | 'unknown-ca' | 'access-denied'
-    | 'decode-error' | 'decrypt-error' | 'mta.protocol-version' | 'insufficient-security' | 'internal-error'
+    | 'decode-error' | 'decrypt-error' | 'protocol-version' | 'insufficient-security' | 'internal-error'
     | 'inappropriate-fallback' | 'user-canceled' | 'no-renegotiation' | 'unsupported-extension' | 'missing-extension'
     ;
 
@@ -91,13 +91,10 @@ protocol_version_constant:
     ;
 
 handshake_type_constant:
-    'client-hello-v2' | 'server-hello-v2' | 'server-certificate-v2' | 'client-certificate-v2' | 'server-key-exchange-v2'
-    | 'certificate-request-v2' | 'server-hello-done-v2' | 'client-key-exchange-v2'
-    | 'client-certificate-verify-v2' | 'server-finished-v2' | 'client-finished-v2'
-    | 'client-hello-v3' | 'server-hello-v3' | 'server-certificate-v3' | 'client-certificate-v3' | 'server-key-exchange-v3'
-    | 'certificate-request-v3' | 'server-hello-done-v3' | 'client-key-exchange-v3' | 'server-certificate-verify-v3'
-    | 'client-certificate-verify-v3' | 'server-finished-v3' | 'client-finished-v3' | 'hello-retry-request-v3'
-    | 'encrypted-extension-v3' | 'new-session-ticket-v3'
+    'client-hello' | 'server-hello' |'certificate' | 'server-key-exchange'
+    | 'certificate-request' | 'server-hello-done' | 'client-key-exchange'
+    | 'certificate-verify' | 'finished'
+    | 'hello-retry-request' | 'encrypted-extension' | 'new-session-ticket' | 'key-update-request'
     ;
 
 ciphersuite_constant:

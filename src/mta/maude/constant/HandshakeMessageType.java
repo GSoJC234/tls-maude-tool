@@ -13,6 +13,7 @@ public enum HandshakeMessageType {
     FINISHED,
     HELLO_REQUEST,
     NEW_SESSION_TICKET,
+    KEY_UPDATE_REQUEST,
     UNKNOWN;
 
     public static String title(){
@@ -33,6 +34,7 @@ public enum HandshakeMessageType {
             case FINISHED: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.FINISHED;
             case HELLO_REQUEST: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.HELLO_REQUEST;
             case NEW_SESSION_TICKET: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.NEW_SESSION_TICKET;
+            case KEY_UPDATE_REQUEST: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.KEY_UPDATE;
             case UNKNOWN: return de.rub.nds.tlsattacker.core.constants.HandshakeMessageType.UNKNOWN;
             default: throw new IllegalArgumentException("Unknown handshake message type: " + this);
         }

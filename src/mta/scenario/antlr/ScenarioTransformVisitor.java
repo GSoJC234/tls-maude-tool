@@ -195,7 +195,7 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             case "access-denied": return AlertDescription.title() + "." + AlertDescription.ACCESS_DENIED.name();
             case "decode-error": return AlertDescription.title() + "." + AlertDescription.DECODE_ERROR.name();
             case "decrypt-error": return AlertDescription.title() + "." + AlertDescription.DECRYPT_ERROR.name();
-            case "mta.protocol-version": return AlertDescription.title() + "." + AlertDescription.PROTOCOL_VERSION.name();
+            case "protocol-version": return AlertDescription.title() + "." + AlertDescription.PROTOCOL_VERSION.name();
             case "insufficient-security": return AlertDescription.title() + "." + AlertDescription.INSUFFICIENT_SECURITY.name();
             case "internal-error": return AlertDescription.title() + "." + AlertDescription.INTERNAL_ERROR.name();
             case "inappropriate-fallback": return AlertDescription.title() + "." + AlertDescription.INAPPROPRIATE_FALLBACK.name();
@@ -231,34 +231,19 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     @Override
     public String visitHandshake_type_constant(ScenarioParser.Handshake_type_constantContext ctx) {
         switch (ctx.getText()){
-            case "client-hello-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_HELLO.name();
-            case "server-hello-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
-            case "server-certificate-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE.name();
-            case "client-certificate-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE.name();
-            case "server-key-exchange-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_KEY_EXCHANGE.name();
-            case "certificate-request-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_REQUEST.name();
-            case "server-hello-done-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO_DONE.name();
-            case "client-key-exchange-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_KEY_EXCHANGE.name();
-            case "client-certificate-verify-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_VERIFY.name();
-            case "server-finished-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.FINISHED.name();
-            case "client-finished-v2": return HandshakeMessageType.title() + "." + HandshakeMessageType.FINISHED.name();
-
-            case "client-hello-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_HELLO.name();
-            case "server-hello-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
-            case "server-certificate-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE.name();
-            case "client-certificate-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE.name();
-            case "server-key-exchange-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_KEY_EXCHANGE.name();
-            case "client-key-exchange-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_KEY_EXCHANGE.name();
-            case "certificate-request-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_REQUEST.name();
-            case "server-hello-done-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO_DONE.name();
-            case "server-certificate-verify-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_VERIFY.name();
-            case "client-certificate-verify-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_VERIFY.name();
-            case "server-finished-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.FINISHED.name();
-            case "client-finished-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.FINISHED.name();
-            case "hello-request-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.HELLO_REQUEST.name();
-            case "hello-retry-request-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
-            case "encrypted-extension-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.ENCRYPTED_EXTENSION.name();
-            case "new-session-ticket-v3": return HandshakeMessageType.title() + "." + HandshakeMessageType.NEW_SESSION_TICKET.name();
+            case "client-hello": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_HELLO.name();
+            case "server-hello": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
+            case "certificate": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE.name();
+            case "server-key-exchange": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_KEY_EXCHANGE.name();
+            case "certificate-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_REQUEST.name();
+            case "server-hello-done": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO_DONE.name();
+            case "client-key-exchange": return HandshakeMessageType.title() + "." + HandshakeMessageType.CLIENT_KEY_EXCHANGE.name();
+            case "certificate-verify": return HandshakeMessageType.title() + "." + HandshakeMessageType.CERTIFICATE_VERIFY.name();
+            case "finished": return HandshakeMessageType.title() + "." + HandshakeMessageType.FINISHED.name();
+            case "hello-retry-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
+            case "encrypted-extension": return HandshakeMessageType.title() + "." + HandshakeMessageType.ENCRYPTED_EXTENSION.name();
+            case "new-session-ticket": return HandshakeMessageType.title() + "." + HandshakeMessageType.NEW_SESSION_TICKET.name();
+            case "key-udpate-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.KEY_UPDATE_REQUEST.name();
             default : return "";
         }
     }
