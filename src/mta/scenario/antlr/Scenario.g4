@@ -49,7 +49,7 @@ function_name:
     | 'getCertificate' | 'getPublicKeyFromCertificate' | 'getRandom' | 'getSessionId' | 'getHandshakeBody' | 'getAlertLevel' | 'getPskExchangeMode' | 'getTicket'
     | 'getRSAPreMasterSecret' | 'calculateMasterSecret' | 'buildEmptyKeyShareEntryList' | 'addKeyShareEntry' | 'addKeyShareExtension' | 'addHRRKeyShareExtension'
     | 'addSupportedVersionExtension' | 'addSignatureAlgorithmExtension' | 'addSupportedGroupExtension' | 'addPSKExchangeModeExtension' | 'addCHPreSharedKeyExtension' | 'addSHPreSharedKeyExtension'
-    | 'addExtensionLen' | 'addHandshakeLen' | 'addSupportedSignatureAlgorithmExtension' | 'addNamedCurvesExtension'
+    | 'addExtensionLen' | 'addHandshakeLen' | 'addSupportedSignatureAlgorithmExtension' | 'addNamedCurvesExtension' | 'addPostHandshakeAuthExtension'
     | 'updateContext' | 'send' | 'recv' | 'buildClientHello' | 'buildServerHello' | 'buildEncryptedExtension' | 'buildECDHEServerKeyExchange' | 'buildECDHClientKeyExchange'
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
@@ -161,7 +161,7 @@ certificate_type_constant:
     ;
 
 other_constant:
-    'prvkey-path' | 'cert-path'
+    'prvkey-path' | 'cert-path' | 'ca-names'
     ;
 
 long_constant:

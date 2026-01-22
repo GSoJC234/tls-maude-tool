@@ -100,6 +100,7 @@ public interface Protocol {
     void addPSKExchangeModeExtension(String alias, Variable extension_len, Variable handshake_message, Variable psk_exchange_modes);
     void addCHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
     void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
+    void addPostHandshakeAuthExtension(String alias, Variable extension_len, Variable handshake_message);
 
 
     Variable buildEmptyKeyShareEntryList();

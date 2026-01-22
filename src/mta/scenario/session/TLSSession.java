@@ -856,9 +856,11 @@ public class TLSSession implements Protocol {
         List<NamedGroup> container = new ArrayList<>();
         FieldAction action = new FieldAction<NamedGroup>(container,
                 ()->{
-                    if(!(fieldVariable.getValue().isEmpty())){
-                        KeyShareEntry entry = fieldVariable.getValue().get(0).get(0);
-                        return entry.getGroupConfig();
+                    if(fieldVariable != null && fieldVariable.getValue() != null && !(fieldVariable.getValue().isEmpty())){
+                        List<KeyShareEntry> entryList = fieldVariable.getValue().get(0);
+                        if (entryList != null && !entryList.isEmpty()){
+                            return entryList.get(0).getGroupConfig();
+                        }
                     }
                     return null;
                 });
@@ -1263,6 +1265,13 @@ public class TLSSession implements Protocol {
     public void addHRRKeyShareExtension(String alias, Variable extension_len, Variable handshake_message, Variable named_group) {
         AddHRRKeyShareAction action = new AddHRRKeyShareAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensions((List<NamedGroup>) named_group.getValue());
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addPostHandshakeAuthExtension(String alias, Variable extension_len, Variable handshake_message) {
+        AddPostHandshakeAuthAction action = new AddPostHandshakeAuthAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
         trace.addTlsAction(action);
     }

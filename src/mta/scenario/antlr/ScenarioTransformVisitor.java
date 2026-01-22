@@ -455,6 +455,8 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             return "\"" + nodeList.get(0).getPrivateKeyPath() + "\"";
         } else if(ctx.getText().equals("cert-path")){
             return "\"" + nodeList.get(0).getCertificatePath() + "\"";
+        } else if (ctx.getText().equals("ca-names")) {
+            return "\"" + nodeList.get(0).getCertificatePath() + "\"";
         } else {
             return "";
         }
