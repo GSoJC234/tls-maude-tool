@@ -34,6 +34,7 @@ import mta.maude.constant.SupportedVersion;
 import mta.maude.constant.MessageSize;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.crypto.tls.CertificateRequest;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import mta.protocol.Protocol;
@@ -661,6 +662,9 @@ public class TLSSession implements Protocol {
                     if(message instanceof CertificateMessage){
                         return ((CertificateMessage) message).getRequestContext().getValue();
                     }
+                    if(message instanceof CertificateRequestMessage){
+                        return ((CertificateRequestMessage) message).getCertificateRequestContext().getValue();
+                    }
                 }
                 return null;
             });
@@ -1251,6 +1255,20 @@ public class TLSSession implements Protocol {
         keyShareEntryAction.setNamedGroup((List<NamedGroup>) named_group.getValue());
         keyShareEntryAction.setPrivateKey((List<byte[]>) nonce.getValue());
         trace.addTlsAction(keyShareEntryAction);
+    }
+
+    @Override
+    public void addEarlyDataExtension(String alias, Variable extension_len, Variable handshake_message) {
+        AddEarlyDataAction action = new AddEarlyDataAction(alias, (List<ProtocolMessage>) extension_len.getValue());
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addPostHandshakeExtension(String alias, Variable extension_len, Variable handshake_message) {
+        AddPostHandshakeAuthAction action = new AddPostHandshakeAuthAction(alias, (List<ProtocolMessage>) extension_len.getValue());
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
     }
 
     @Override

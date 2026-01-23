@@ -105,6 +105,8 @@ public interface Protocol {
 
     Variable buildEmptyKeyShareEntryList();
     void addKeyShareEntry(String alias, Variable entry_list, Variable nonce, Variable named_group);
+    void addEarlyDataExtension(String alias, Variable extension_len, Variable handshake_message);
+    void addPostHandshakeExtension(String alias, Variable extension_len, Variable handshake_message);
     void addKeyShareExtension(String alias, Variable extension_len, Variable handshake_message, Variable key_share_entry_list);
     void addHRRKeyShareExtension(String alias, Variable extension_len, Variable handshake_message, Variable named_group);
     void addExtensionLen(String alias, Variable extension_len, Variable handshake_message);
