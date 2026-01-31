@@ -1259,14 +1259,14 @@ public class TLSSession implements Protocol {
 
     @Override
     public void addEarlyDataExtension(String alias, Variable extension_len, Variable handshake_message) {
-        AddEarlyDataAction action = new AddEarlyDataAction(alias, (List<ProtocolMessage>) extension_len.getValue());
+        AddEarlyDataAction action = new AddEarlyDataAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
         trace.addTlsAction(action);
     }
 
     @Override
     public void addPostHandshakeExtension(String alias, Variable extension_len, Variable handshake_message) {
-        AddPostHandshakeAuthAction action = new AddPostHandshakeAuthAction(alias, (List<ProtocolMessage>) extension_len.getValue());
+        AddPostHandshakeAuthAction action = new AddPostHandshakeAuthAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
         trace.addTlsAction(action);
     }

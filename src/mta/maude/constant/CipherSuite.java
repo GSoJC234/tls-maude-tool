@@ -110,7 +110,7 @@ public enum CipherSuite {
             case TLS_RSA_WITH_NULL_MD5: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_RSA_WITH_NULL_MD5;
             case TLS_RSA_WITH_NULL_SHA: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_RSA_WITH_NULL_SHA;
             case TLS_PSK_WITH_AES_256_CBC_SHA: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA;
-            case TLS_PSK_WITH_AES_128_CBC_SHA256: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
+            case TLS_PSK_WITH_AES_128_CBC_SHA256: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA256;
             case TLS_PSK_WITH_AES_256_CBC_SHA384: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA384;
             case TLS_PSK_WITH_AES_128_CBC_SHA: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_AES_128_CBC_SHA;
             case TLS_PSK_WITH_NULL_SHA256: return de.rub.nds.tlsattacker.core.constants.CipherSuite.TLS_PSK_WITH_NULL_SHA256;
