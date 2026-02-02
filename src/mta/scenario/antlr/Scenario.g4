@@ -64,7 +64,7 @@ maude_constant_list:
 
 maude_constant:
       alert_constant | protocol_type_constant | protocol_version_constant | handshake_type_constant | ciphersuite_constant | certificate_type_constant
-    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant
+    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant
     ;
 
 alert_constant:
@@ -163,6 +163,10 @@ certificate_type_constant:
 
 other_constant:
     'prvkey-path' | 'cert-path' | 'ca-names'
+    ;
+
+number_constant:
+    NAT
     ;
 
 long_constant:

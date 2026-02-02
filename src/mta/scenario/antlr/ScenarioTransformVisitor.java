@@ -450,6 +450,11 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     }
 
     @Override
+    public String visitNumber_constant(ScenarioParser.Number_constantContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
     public String visitOther_constant(ScenarioParser.Other_constantContext ctx) {
         if(ctx.getText().equals("prvkey-path")){
             return "\"" + nodeList.get(0).getPrivateKeyPath() + "\"";

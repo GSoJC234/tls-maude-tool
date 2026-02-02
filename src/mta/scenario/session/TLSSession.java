@@ -301,6 +301,12 @@ public class TLSSession implements Protocol {
         trace.addTlsAction(action);
     }
 
+    public Variable constant(int n) {
+        List<Integer> container = new ArrayList<>();
+        container.add(n);
+        return new ConstantVariable<Integer>(container);
+    }
+
     @Override
     public Variable constant(mta.maude.constant.ProtocolMessageType msgType) {
         List<ProtocolMessageType> container = new ArrayList<>();
@@ -1235,9 +1241,9 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket) {
+    public void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable selected_identity) {
         AddSHPreSharedKeyAction action = new AddSHPreSharedKeyAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        action.setExtensions((List<SessionTicket>) ticket.getValue());
+        action.setExtensions((List<Integer>) selected_identity.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
         trace.addTlsAction(action);
     }
