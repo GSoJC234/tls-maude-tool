@@ -750,7 +750,11 @@ public class TLSSession implements Protocol {
                                 if(extMsg instanceof SupportedVersionsExtensionMessage){
                                     SupportedVersionsExtensionMessage svExtMsg = (SupportedVersionsExtensionMessage) extMsg;
                                     byte[] versions = svExtMsg.getSupportedVersions().getValue();
-                                    return ProtocolVersion.getProtocolVersion(extractPair(versions, idx - 1 ));
+                                    try {
+                                        return ProtocolVersion.getProtocolVersion(extractPair(versions, idx - 1 ));
+                                    } catch (IndexOutOfBoundsException ex) {
+
+                                    }
                                 }
                             }
                         }
@@ -775,7 +779,11 @@ public class TLSSession implements Protocol {
                                 if(extMsg instanceof SignatureAndHashAlgorithmsExtensionMessage){
                                     SignatureAndHashAlgorithmsExtensionMessage sahExtMsg = (SignatureAndHashAlgorithmsExtensionMessage) extMsg;
                                     byte[] signatureAlgorithms = sahExtMsg.getSignatureAndHashAlgorithms().getValue();
-                                    return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extractPair(signatureAlgorithms, idx - 1 ));
+                                    try {
+                                        return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extractPair(signatureAlgorithms, idx - 1 ));
+                                    } catch (IndexOutOfBoundsException ex) {
+                                        return null;
+                                    }
                                 }
                             }
                         }
@@ -800,7 +808,11 @@ public class TLSSession implements Protocol {
                                 if(extMsg instanceof EllipticCurvesExtensionMessage){
                                     EllipticCurvesExtensionMessage ecExtMsg = (EllipticCurvesExtensionMessage) extMsg;
                                     byte[] namedGruops = ecExtMsg.getSupportedGroups().getValue();
-                                    return NamedGroup.getNamedGroup(extractPair(namedGruops, idx - 1 ));
+                                    try {
+                                        return NamedGroup.getNamedGroup(extractPair(namedGruops, idx - 1 ));
+                                    } catch (IndexOutOfBoundsException ex) {
+                                        return null;
+                                    }
                                 }
                             }
                         }
