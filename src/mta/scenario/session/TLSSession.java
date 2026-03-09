@@ -75,6 +75,10 @@ public class TLSSession implements Protocol {
         executor.executeWorkflow();
     }
 
+    public void exit() {
+        executor.closeServerSockets();
+    }
+
     @Override
     public void setRandomPrivateKey(String group) {
         byte[] privateKey;

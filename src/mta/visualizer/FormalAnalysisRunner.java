@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +163,7 @@ public class FormalAnalysisRunner {
             int scenCount = entry.getValue();
             Configuration cfg = configurations.get((byte) reqIdx);
 
-            for (int scenIdx = 0; scenIdx < 1; scenIdx++) {
+            for (int scenIdx = 0; scenIdx < scenCount; scenIdx++) {
                 URL logDirectory = FormalAnalysisRunner.class.getClassLoader()
                         .getResource("log");
                 if (logDirectory == null) {
@@ -200,7 +201,11 @@ public class FormalAnalysisRunner {
                     throw new RuntimeException("Scenario execution failed (reqIdx=" +
                             reqIdx + ", scenario=" + scenIdx + ")", e);
                 }
-
+                try {
+                    Thread.sleep(10000); // for port resource deallocation
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -218,7 +223,7 @@ public class FormalAnalysisRunner {
             FormalVisualizer fv = new FormalVisualizer("requirement", List.of("client", "server"));
             RealVisualizer rv = new RealVisualizer("requirement", List.of("client", "server"));
 
-            for (int scenIdx = 0; scenIdx < 1; scenIdx++) {
+            for (int scenIdx = 0; scenIdx < scenCount; scenIdx++) {
                 System.out.println("Visualizer Scenario: " + scenIdx);
                 String formal = getVisualScenario(reqIdx, scenIdx, cfg).replace("\n", "").replace("\t", "");
                 fv.makeJSON(formal, resultDirectory + "/" + buildFileName(reqIdx, scenIdx, true));
