@@ -106,7 +106,7 @@ VERSION                     : 'version';
 RECORDLEN                   : 'recordLen';
 HANDSHAKETYPE               : 'handshakeType';
 HANDSHAKELEN                : 'handshakeLen';
-PROTOCOL                    : 'mta.protocol';
+PROTOCOL                    : 'protocol';
 CIPHERSUITES                : 'cipherSuites';
 CIPHERSUITESLEN             : 'cipherSuitesLen';
 RANDOM                      : 'random';

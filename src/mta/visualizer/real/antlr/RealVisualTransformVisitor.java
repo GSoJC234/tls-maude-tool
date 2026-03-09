@@ -134,6 +134,9 @@ public class RealVisualTransformVisitor extends RealVisualBaseVisitor<Object> {
 
     private String deriveLabel(Map<String, Object> content) {
         Object contentValue = content.get("contentType");
+        if (contentValue == null){
+            return "NoReceivedMessage";
+        }
         // handshake type or encrypted handshake (a.k.a application type)
         if (contentValue.equals("0x16") || contentValue.equals("0x17")){
             Object hexValue = content.get("handshakeType");

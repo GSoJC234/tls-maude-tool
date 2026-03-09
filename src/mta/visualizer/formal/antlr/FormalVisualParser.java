@@ -1,10 +1,13 @@
-// Generated from /home/jaehun/git/mta.maude-tls-attacker/src/mta.visualizer/formal/antlr/FormalVisual.g4 by ANTLR 4.13.2
+// Generated from /home/jaehun/git/maude-tls-attacker-tool/src/mta/visualizer/formal/antlr/FormalVisual.g4 by ANTLR 4.13.2
 package mta.visualizer.formal.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class FormalVisualParser extends Parser {
@@ -41,7 +44,7 @@ public class FormalVisualParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'send'", "'extension'", "'certificate'", "'contentType'", "'version'", 
-			"'recordLen'", "'handshakeType'", "'handshakeLen'", "'mta.protocol'", "'cipherSuites'",
+			"'recordLen'", "'handshakeType'", "'handshakeLen'", "'protocol'", "'cipherSuites'", 
 			"'cipherSuitesLen'", "'random'", "'sessionID'", "'sessionIDLen'", "'compression'", 
 			"'compressionLen'", "'supported-versions'", "'supported-versions-len'", 
 			"'signature-algorithms'", "'signature-algorithms-len'", "'key-shares'", 

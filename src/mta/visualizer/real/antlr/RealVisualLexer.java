@@ -1,10 +1,13 @@
-// Generated from /home/jaehun/git/mta.maude-tls-attacker/src/mta.visualizer/real/antlr/RealVisual.g4 by ANTLR 4.13.2
+// Generated from /home/jaehun/git/maude-tls-attacker-tool/src/mta/visualizer/real/antlr/RealVisual.g4 by ANTLR 4.13.2
 package mta.visualizer.real.antlr;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class RealVisualLexer extends Lexer {
@@ -62,7 +65,7 @@ public class RealVisualLexer extends Lexer {
 		return new String[] {
 			null, "'Received messages'", "'Sending messages'", "'LayerType'", "'MESSAGE'", 
 			"'RECORD'", "'true'", "'false'", "'null'", "'expected'", "'fails'", "'Assertion'", 
-			"'actual'", "'handshakeType'", "'handshakeLen'", "'mta.protocol'", "'random'",
+			"'actual'", "'handshakeType'", "'handshakeLen'", "'protocol'", "'random'", 
 			"'sessionID'", "'sessionIDLen'", "'cipherSuites'", "'cipherSuitesLen'", 
 			"'compression'", "'compressionLen'", "'extension'", "'extensionLen'", 
 			"'psk-key-exchange-modes'", "'psk-key-exchange-modes-len'", "'key-shares'", 

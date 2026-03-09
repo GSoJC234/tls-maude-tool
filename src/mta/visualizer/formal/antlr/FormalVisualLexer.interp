@@ -8,7 +8,7 @@ null
 'recordLen'
 'handshakeType'
 'handshakeLen'
-'mta.protocol'
+'protocol'
 'cipherSuites'
 'cipherSuitesLen'
 'random'

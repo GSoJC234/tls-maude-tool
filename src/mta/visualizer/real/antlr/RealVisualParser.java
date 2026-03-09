@@ -1,10 +1,13 @@
-// Generated from /home/jaehun/git/mta.maude-tls-attacker/src/mta.visualizer/real/antlr/RealVisual.g4 by ANTLR 4.13.2
+// Generated from /home/jaehun/git/maude-tls-attacker-tool/src/mta/visualizer/real/antlr/RealVisual.g4 by ANTLR 4.13.2
 package mta.visualizer.real.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class RealVisualParser extends Parser {
@@ -45,7 +48,7 @@ public class RealVisualParser extends Parser {
 		return new String[] {
 			null, "'Received messages'", "'Sending messages'", "'LayerType'", "'MESSAGE'", 
 			"'RECORD'", "'true'", "'false'", "'null'", "'expected'", "'fails'", "'Assertion'", 
-			"'actual'", "'handshakeType'", "'handshakeLen'", "'mta.protocol'", "'random'",
+			"'actual'", "'handshakeType'", "'handshakeLen'", "'protocol'", "'random'", 
 			"'sessionID'", "'sessionIDLen'", "'cipherSuites'", "'cipherSuitesLen'", 
 			"'compression'", "'compressionLen'", "'extension'", "'extensionLen'", 
 			"'psk-key-exchange-modes'", "'psk-key-exchange-modes-len'", "'key-shares'", 

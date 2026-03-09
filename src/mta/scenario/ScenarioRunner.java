@@ -14,6 +14,8 @@ import mta.scenario.antlr.ScenarioParser;
 import mta.scenario.antlr.ScenarioTransformVisitor;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -26,9 +28,15 @@ public class ScenarioRunner {
     private String scenario;
 
     public ScenarioRunner(String sceanrio, Path testerConfigPath, Path outputDir) {
-        this.scenario = scenario;
+        this.scenario = sceanrio;
         this.testerConfigPath = testerConfigPath;
-        this.tlsAttackerConfigPath = Path.of(ScenarioRunner.class.getResource("default_config.xml").getPath());
+        URL url = ScenarioRunner.class.getResource("/tls-attacker/default_config.xml");
+        if (url == null) throw new RuntimeException("default_config.xml not found!");
+        try {
+            this.tlsAttackerConfigPath = Path.of(url.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         this.outputDir = outputDir;
     }
     public ScenarioRunner(Path sceanrioPath, Path testerConfigPath, Path tlsAttackerConfigPath, Path outputDir) {
@@ -69,6 +77,7 @@ public class ScenarioRunner {
     }
 
     private String scenarioTransform(String input, List<Node> nodeList) {
+        System.out.println("Debug: " + input);
         CharStream charStream = CharStreams.fromString(input);
         ScenarioLexer lexer = new ScenarioLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

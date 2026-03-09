@@ -110,25 +110,25 @@ public class FormalAnalysisRunner {
     }
 
     public void run(InfoRecord info){
-        // Step 1. Validate and load mta.scenario counts for each requirement.
+        // Step 1. Validate and load scenario counts for each requirement.
         // For every requirement and its corresponding configuration, check whether
-        // matching scenarios exist in the mta.scenario database. If any requirement has
+        // matching scenarios exist in the scenario database. If any requirement has
         // zero matching scenarios, terminate the process by throwing an exception.
         Requirement requirement = info.getRequirement();
         Map<Byte, Configuration> configurations = info.getConfigurations();
         Map<Integer, Integer> scenarioCount = loadScenarioCounts(requirement, configurations);
 
         // Step 2. Execute all required scenarios.
-        // For each (requirement, mta.scenario index) pair, run the formal tester
+        // For each (requirement, scenario index) pair, run the formal tester
         // (Maude TLS Attacker via ScenarioRunner) and the actual TLS target library.
         // The execution order depends on whether the requirement expects a client-side
         // or server-side tester, and both processes are coordinated to interact properly.
         executeScenarios(info, scenarioCount, configurations);
 
         // Step 3. Parse and visualize the execution results.
-        // For each executed mta.scenario, generate both formal (.fsc) and real (.rsc)
+        // For each executed scenario, generate both formal (.fsc) and real (.rsc)
         // result files following the naming format: requirement_N_M_timestamp.fsc/.rsc.
-        // The mta.visualizer components convert the raw mta.scenario data into JSON files,
+        // The visualizer components convert the raw scenario data into JSON files,
         // which are saved into the specified result directory.
         visualizeResults(scenarioCount, configurations);
 
@@ -145,7 +145,7 @@ public class FormalAnalysisRunner {
             int count = getScenarioCount(reqIdx, cfg);
             if (count == 0) {
                 analysisResult = false;
-                throw new IllegalStateException("No matched mta.scenario found for requirement " + reqIdx);
+                throw new IllegalStateException("No matched scenario found for requirement " + reqIdx);
             }
             result.put(reqIdx, count);
         }
@@ -198,7 +198,7 @@ public class FormalAnalysisRunner {
                     task1.get();
                 } catch (Exception e) {
                     throw new RuntimeException("Scenario execution failed (reqIdx=" +
-                            reqIdx + ", mta.scenario=" + scenIdx + ")", e);
+                            reqIdx + ", scenario=" + scenIdx + ")", e);
                 }
 
             }
@@ -246,7 +246,7 @@ public class FormalAnalysisRunner {
             }
             return sb.toString();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read mta.scenario file: " + resourceName, e);
+            throw new RuntimeException("Failed to read scenario file: " + resourceName, e);
         }
     }
 
@@ -328,10 +328,9 @@ public class FormalAnalysisRunner {
                 pstmt.setString(8, bytesToCommaSeparatedInts(configuration.getConfigurationValues("certificateRequests")));
                 pstmt.setString(9, bytesToCommaSeparatedInts(configuration.getConfigurationValues("keyShareGroups")));
 
+
                 ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    return rs.getString("TesterScenario");
-                }
+                return rs.getString("TesterScenario");
             }
 
         } catch (Exception e) {
@@ -370,9 +369,7 @@ public class FormalAnalysisRunner {
                 pstmt.setString(9, bytesToCommaSeparatedInts(configuration.getConfigurationValues("keyShareGroups")));
 
                 ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    return rs.getString("VisualScenario");
-                }
+                return rs.getString("VisualScenario");
             }
 
         } catch (Exception e) {
@@ -407,9 +404,7 @@ public class FormalAnalysisRunner {
                 pstmt.setString(8, bytesToCommaSeparatedInts(configuration.getConfigurationValues("keyShareGroups")));
 
                 ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
+                return rs.getInt(1);
             }
 
         } catch (Exception e) {

@@ -77,7 +77,7 @@ ACTUAL: 'actual';
 // Key
 HANDSHAKETYPE: 'handshakeType';
 HANDSHAKELEN: 'handshakeLen';
-PROTOCOL: 'mta.protocol';
+PROTOCOL: 'protocol';
 RANDOM: 'random';
 SESSIONID: 'sessionID';
 SESSIONIDLEN: 'sessionIDLen';

@@ -1,4 +1,4 @@
-// Generated from /home/jaehun/git/mta.maude-tls-attacker/src/mta.visualizer/formal/antlr/FormalVisual.g4 by ANTLR 4.13.2
+// Generated from /home/jaehun/git/maude-tls-attacker-tool/src/mta/visualizer/formal/antlr/FormalVisual.g4 by ANTLR 4.13.2
 package mta.visualizer.formal.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

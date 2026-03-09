@@ -14,7 +14,7 @@ null
 'actual'
 'handshakeType'
 'handshakeLen'
-'mta.protocol'
+'protocol'
 'random'
 'sessionID'
 'sessionIDLen'
