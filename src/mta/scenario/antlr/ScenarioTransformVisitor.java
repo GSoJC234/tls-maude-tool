@@ -243,7 +243,7 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             case "hello-retry-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.SERVER_HELLO.name();
             case "encrypted-extension": return HandshakeMessageType.title() + "." + HandshakeMessageType.ENCRYPTED_EXTENSION.name();
             case "new-session-ticket": return HandshakeMessageType.title() + "." + HandshakeMessageType.NEW_SESSION_TICKET.name();
-            case "key-udpate-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.KEY_UPDATE_REQUEST.name();
+            case "key-update-request": return HandshakeMessageType.title() + "." + HandshakeMessageType.KEY_UPDATE_REQUEST.name();
             default : return "";
         }
     }
