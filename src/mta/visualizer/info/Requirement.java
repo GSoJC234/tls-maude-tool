@@ -25,7 +25,7 @@ public class Requirement {
 
     public boolean isValid(){
         for (Integer requirementIdx : requirements) {
-            if (requirementIdx > 0x36){
+            if (requirementIdx > 0x44){
                 return false;
             }
         }
