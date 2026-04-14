@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +49,10 @@ public class FormalAnalysisRunner {
             Map.entry(11, true),
             Map.entry(12, true),
             Map.entry(13, true),
-            Map.entry(14, false),
+            Map.entry(14, true),
             Map.entry(15, true),
             Map.entry(16, true),
-            Map.entry(17, false),
+            Map.entry(17, true),
             Map.entry(18, true),
             Map.entry(19, false),
             Map.entry(20, true),
@@ -81,9 +82,9 @@ public class FormalAnalysisRunner {
             Map.entry(44, false),
             Map.entry(45, false),
             Map.entry(46, false),
-            Map.entry(47, false),
+            Map.entry(47, true),
             Map.entry(48, false),
-            Map.entry(49, false),
+            Map.entry(49, true),
             Map.entry(50, true),
             Map.entry(51, false),
             Map.entry(52, false),
@@ -200,7 +201,11 @@ public class FormalAnalysisRunner {
                     throw new RuntimeException("Scenario execution failed (reqIdx=" +
                             reqIdx + ", scenario=" + scenIdx + ")", e);
                 }
-
+                try {
+                    Thread.sleep(10000); // for port resource deallocation
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 

@@ -76,7 +76,7 @@ public class RealVisualTransformVisitor extends RealVisualBaseVisitor<Object> {
             content.remove(key);
             content.put("expected_value(" + key + ")", "0x" + expected);
             content.put("error_value(" + key + ")", "0x" + error);
-        } else if (((Map<String, Object>) content.get("extension")).containsKey(key)) {
+        } else if (((Map<String, Object>) content.get("extension")) != null && ((Map<String, Object>) content.get("extension")).containsKey(key)) {
             Map<String, Object> extensionContent = (Map<String, Object>) content.get("extension");
             extensionContent.remove(key);
             extensionContent.put("expected_value(" + key + ")", "0x" + expected);

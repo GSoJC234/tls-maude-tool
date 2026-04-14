@@ -76,7 +76,7 @@ public class TLSSession implements Protocol {
     }
 
     public void exit() {
-        executor.closeConnection();
+        executor.closeServerSockets();
     }
 
     @Override
