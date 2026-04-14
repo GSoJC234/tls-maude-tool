@@ -34,6 +34,7 @@ public class ScenarioExecutor {
                                "    TLSSession session = new TLSSession(\"" + this.tlsAttackerConfigPath + "\");\n" +
                                     this.scenario + "\n" +
                                "    session.execute();\n" +
+                               "    session.exit();\n" +
                                "  }\n" +
                                "}\n";
 
