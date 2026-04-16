@@ -2,6 +2,9 @@ package mta.main;
 
 import mta.maude.MaudeRunner;
 import mta.scenario.ScenarioRunner;
+import mta.user.scenario.ScenarioSpec;
+import mta.user.scenario.ScenarioSpecLoader;
+import mta.user.scenario.ScenarioSpecParser;
 import mta.visualizer.VisualizerConnector;
 
 import java.nio.file.Path;
@@ -26,26 +29,27 @@ public class Main {
     }
 
     private static void generateScenario(String[] args) {
-        if (args.length < 6) {
-            System.err.println("Usage: --generate [maude executable path] [module path] [requirement TLS version] [requirement index] [output file directory]");
+        if (args.length < 4) {
+            System.err.println("Usage: --generate [maude executable path] [module path] [scenario_spec path] [output directory]");
             System.exit(1);
         }
 
         String maudePath = args[1];
         String modulePath = args[2];
-        int requirementTLSVersion = Integer.parseInt(args[3]);
-        int requirementIdx = Integer.parseInt(args[4]);
-        String outputDir = args[5];
+        String scenarioPath = args[3];
+        String outputDir = args[4];
 
         System.out.println("   Maude analysis:");
         System.out.println("   Maude executable path : " + maudePath);
         System.out.println("   Maude module path : " + modulePath);
-        System.out.println("   Requirement TLS version(2, 3) : " + requirementTLSVersion);
-        System.out.println("   Requirement index : " + requirementIdx);
+        System.out.println("   Scenario spec path: " + scenarioPath);
         System.out.println("   Output directory: " + outputDir);
 
+        ScenarioSpecLoader loader = new ScenarioSpecLoader();
+        ScenarioSpec scenSpec = loader.loadTLSProfile(scenarioPath);
+
         MaudeRunner maudeRunner = new MaudeRunner(maudePath);
-        maudeRunner.execute(Path.of(modulePath), requirementIdx, requirementTLSVersion, Path.of(outputDir));
+        maudeRunner.execute(Path.of(modulePath), scenSpec, Path.of(outputDir));
     }
 
     private static void runScenario(String[] args) {

@@ -25,7 +25,7 @@ public interface Protocol {
     Variable constant(CurveType curveType);
     Variable constant(MessageSize size);
     Variable constant(NamedGroup... groups);
-    Variable constant(SignatureAndHashAlgorithm... signatureAndHashAlgorithms);
+    Variable constant(SignatureAlgorithm... signatureAlgorithms);
     Variable constant(AlertDescription description);
     Variable constant(SupportedVersion... supportedVersions);
     Variable constant(PskKeyExchangeMode... pskKeyExchangeModes);
@@ -34,7 +34,7 @@ public interface Protocol {
     Variable longConstant(CipherSuite... cipherSuites);
     Variable longConstant(ProtocolVersion... versions);
     Variable longConstant(NamedGroup... groups);
-    Variable longConstant(SignatureAndHashAlgorithm... signatureAndHashAlgorithms);
+    Variable longConstant(SignatureAlgorithm... signatureAlgorithms);
 
     Variable getCertificate(String path);
     Variable genCertificatePrivateKey(String privateKeyPath);

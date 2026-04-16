@@ -350,36 +350,36 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     @Override
     public String visitSignature_and_hash_algorithm_constant(ScenarioParser.Signature_and_hash_algorithm_constantContext ctx) {
         switch (ctx.getText()) {
-            case "{anon,sha}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_SHA.name();
-            case "{anon,sha224}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_SHA224.name();
-            case "{anon,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_SHA256.name();
-            case "{anon,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_SHA384.name();
-            case "{anon,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_SHA512.name();
-            case "{anon,md5}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ANON_MD5.name();
-            case "{rsa-pkcs,sha}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_SHA1.name();
-            case "{rsa-pkcs,sha224}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_SHA224.name();
-            case "{rsa-pkcs,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_SHA256.name();
-            case "{rsa-pkcs,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_SHA384.name();
-            case "{rsa-pkcs,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_SHA512.name();
-            case "{rsa-pkcs,md5}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_MD5.name();
-            case "{rsa-pss-rsae,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_RSAE_SHA256.name();
-            case "{rsa-pss-rsae,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_RSAE_SHA384.name();
-            case "{rsa-pss-rsae,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_RSAE_SHA512.name();
-            case "{rsa-pss-pss,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA256.name();
-            case "{rsa-pss-pss,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA384.name();
-            case "{rsa-pss-pss,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA512.name();
-            case "{ecdsa,sha}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_SHA1.name();
-            case "{ecdsa,sha224}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_SHA224.name();
-            case "{ecdsa,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_SHA256.name();
-            case "{ecdsa,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_SHA384.name();
-            case "{ecdsa,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_SHA512.name();
-            case "{ecdsa,md5}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.ECDSA_MD5.name();
-            case "{dsa,sha}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_SHA1.name();
-            case "{dsa,sha224}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_SHA224.name();
-            case "{dsa,sha256}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_SHA256.name();
-            case "{dsa,sha384}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_SHA384.name();
-            case "{dsa,sha512}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_SHA512.name();
-            case "{dsa,md5}": return SignatureAndHashAlgorithm.title() + "." + SignatureAndHashAlgorithm.DSA_MD5.name();
+            case "{anon,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA.name();
+            case "{anon,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA224.name();
+            case "{anon,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA256.name();
+            case "{anon,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA384.name();
+            case "{anon,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA512.name();
+            case "{anon,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_MD5.name();
+            case "{rsa-pkcs,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA1.name();
+            case "{rsa-pkcs,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA224.name();
+            case "{rsa-pkcs,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA256.name();
+            case "{rsa-pkcs,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA384.name();
+            case "{rsa-pkcs,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA512.name();
+            case "{rsa-pkcs,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_MD5.name();
+            case "{rsa-pss-rsae,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA256.name();
+            case "{rsa-pss-rsae,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA384.name();
+            case "{rsa-pss-rsae,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA512.name();
+            case "{rsa-pss-pss,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_PSS_SHA256.name();
+            case "{rsa-pss-pss,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_PSS_SHA384.name();
+            case "{rsa-pss-pss,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_PSS_SHA512.name();
+            case "{ecdsa,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_SHA1.name();
+            case "{ecdsa,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_SHA224.name();
+            case "{ecdsa,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_SHA256.name();
+            case "{ecdsa,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_SHA384.name();
+            case "{ecdsa,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_SHA512.name();
+            case "{ecdsa,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ECDSA_MD5.name();
+            case "{dsa,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_SHA1.name();
+            case "{dsa,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_SHA224.name();
+            case "{dsa,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_SHA256.name();
+            case "{dsa,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_SHA384.name();
+            case "{dsa,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_SHA512.name();
+            case "{dsa,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.DSA_MD5.name();
             default: return "";
         }    }
 

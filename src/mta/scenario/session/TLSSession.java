@@ -3,6 +3,15 @@ package mta.scenario.session;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.constants.*;
+import de.rub.nds.tlsattacker.core.constants.AlertDescription;
+import de.rub.nds.tlsattacker.core.constants.AlertLevel;
+import de.rub.nds.tlsattacker.core.constants.CipherSuite;
+import de.rub.nds.tlsattacker.core.constants.CompressionMethod;
+import de.rub.nds.tlsattacker.core.constants.HandshakeMessageType;
+import de.rub.nds.tlsattacker.core.constants.NamedGroup;
+import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
+import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
+import de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode;
 import de.rub.nds.tlsattacker.core.crypto.MessageDigestCollector;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.*;
@@ -28,13 +37,9 @@ import de.rub.nds.x509attacker.x509.model.X509Certificate;
 import de.rub.nds.x509attacker.x509.model.publickey.PublicKeyContent;
 import de.rub.nds.x509attacker.x509.model.publickey.X509EcdhEcdsaPublicKey;
 import de.rub.nds.x509attacker.x509.model.publickey.X509RsaPublicKey;
-import mta.maude.constant.CurveType;
-import mta.maude.constant.Random;
-import mta.maude.constant.SupportedVersion;
-import mta.maude.constant.MessageSize;
+import mta.maude.constant.*;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
-import org.bouncycastle.crypto.tls.CertificateRequest;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import mta.protocol.Protocol;
@@ -76,7 +81,7 @@ public class TLSSession implements Protocol {
     }
 
     public void exit() {
-        executor.closeServerSockets();
+        executor.closeConnection();
     }
 
     @Override
@@ -394,10 +399,10 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable constant(mta.maude.constant.SignatureAndHashAlgorithm... signatureAndHashAlgorithms) {
+    public Variable constant(SignatureAlgorithm... signatureAlgorithms) {
         List<SignatureAndHashAlgorithm> container = new ArrayList<>();
-        for(mta.maude.constant.SignatureAndHashAlgorithm signatureAndHashAlgorithm: signatureAndHashAlgorithms){
-            container.add(signatureAndHashAlgorithm.transform());
+        for(SignatureAlgorithm signatureAlgorithm : signatureAlgorithms){
+            container.add(signatureAlgorithm.transform());
         }
         return new ConstantVariable<SignatureAndHashAlgorithm>(container);
     }
@@ -465,10 +470,10 @@ public class TLSSession implements Protocol {
     // Note: LongConstantVariable expands the last item
     // to the maximum allowed length as defined by the RFC specification.
     @Override
-    public Variable longConstant(mta.maude.constant.SignatureAndHashAlgorithm... signatureAndHashAlgorithms) {
+    public Variable longConstant(SignatureAlgorithm... signatureAlgorithms) {
         List<SignatureAndHashAlgorithm> container = new ArrayList<>();
-        for(mta.maude.constant.SignatureAndHashAlgorithm signatureAndHashAlgorithm: signatureAndHashAlgorithms){
-            container.add(signatureAndHashAlgorithm.transform());
+        for(SignatureAlgorithm signatureAlgorithm : signatureAlgorithms){
+            container.add(signatureAlgorithm.transform());
         }
         return new LongConstantVariable(container);
     }
