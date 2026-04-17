@@ -41,6 +41,24 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNodesSection(ScenarioSpecParser.NodesSectionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkSection}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLinkSection(ScenarioSpecParser.LinkSectionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkedIdentifiers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantsSection}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -58,6 +76,12 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConstantSet(ScenarioSpecParser.ConstantSetContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstantValue(ScenarioSpecParser.ConstantValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionsSection}.
 	 * @param ctx the parse tree
@@ -107,6 +131,18 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#oneOfExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionValue(ScenarioSpecParser.ActionValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertiesSection}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -118,6 +154,12 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkQualifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#nodeBinding}.
 	 * @param ctx the parse tree
@@ -178,4 +220,10 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#hexLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitHexLiteral(ScenarioSpecParser.HexLiteralContext ctx);
 }

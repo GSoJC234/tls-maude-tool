@@ -77,27 +77,13 @@ delayModification
     ;
 
 modificationValue
-    : functionCall
-    | operandValue
+    : operandValue
+    | hexLiteral
     ;
 
 targetRef
     : parameterRef
     | identifierValue
-    ;
-
-functionCall
-    : ONEOF LPAREN parameterRef RPAREN
-    | BYTES LPAREN hexLiteral RPAREN
-    ;
-
-argumentList
-    : argumentValue (COMMA argumentValue)*
-    ;
-
-argumentValue
-    : functionCall
-    | operandValue
     ;
 
 operandValue
@@ -139,14 +125,6 @@ SKIP_KW
 
 DELAY
     : 'delay'
-    ;
-
-ONEOF
-    : 'oneOf'
-    ;
-
-BYTES
-    : 'bytes'
     ;
 
 VALUE

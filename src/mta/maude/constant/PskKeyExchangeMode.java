@@ -8,10 +8,18 @@ public enum PskKeyExchangeMode {
     }
 
     public de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode transform(){
-        switch(this){
-            case PSK_KE: return de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode.PSK_KE;
-            case PSK_DHE_KE: return de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode.PSK_DHE_KE;
-            default: throw new IllegalArgumentException("Unknown PskKeyExchangeModes : " + this);
-        }
+        return switch (this) {
+            case PSK_KE -> de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode.PSK_KE;
+            case PSK_DHE_KE -> de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode.PSK_DHE_KE;
+            default -> throw new IllegalArgumentException("Unknown PskKeyExchangeModes : " + this);
+        };
+    }
+
+    public String maudeTerm() {
+        return switch (this) {
+            case PSK_KE -> "psk-ke";
+            case PSK_DHE_KE -> "psk-dhe-ke";
+            default -> throw new IllegalArgumentException("Unknown PskKeyExchangeModes : " + this);
+        };
     }
 }

@@ -8,6 +8,7 @@ scenarioItem
     : loadStatement
     | useStatement
     | nodesSection
+    | linkSection
     | constantsSection
     | statePropositionsSection
     | actionPropositionsSection
@@ -25,6 +26,18 @@ nodesSection
     : NODES COLON identifierValue (COMMA identifierValue)*
     ;
 
+linkSection
+    : LINKS COLON linkDeclaration (COMMA linkDeclaration)*
+    ;
+
+linkDeclaration
+    :  identifierValue EQ linkedIdentifiers
+    ;
+
+linkedIdentifiers
+    :  identifierValue LEFTRIGHTARROW identifierValue
+    ;
+
 constantsSection
     : CONSTANTS COLON constantDeclaration (COMMA? constantDeclaration)*
     ;
@@ -34,7 +47,12 @@ constantDeclaration
     ;
 
 constantSet
-    : LBRACE identifierValue (COMMA identifierValue)* RBRACE
+    : LBRACE constantValue (COMMA constantValue)* RBRACE
+    ;
+
+constantValue
+    : identifierValue
+    | hexLiteral
     ;
 
 statePropositionsSection
@@ -70,8 +88,17 @@ actionInvocation
     ;
 
 actionArgument
-    : constantRef
-    | identifierValue
+    : oneOfExpr
+    | actionValue
+    ;
+
+oneOfExpr
+    : ONEOF LPAREN constantRef RPAREN
+    ;
+
+actionValue
+    : identifierValue
+    | hexLiteral
     ;
 
 scenarioPropertiesSection
@@ -79,7 +106,11 @@ scenarioPropertiesSection
     ;
 
 scenarioPropertyDeclaration
-    : identifierValue LBRACK nodeBinding (COMMA nodeBinding)* RBRACK COLON propertyRelation
+    : identifierValue LBRACK nodeBinding (COMMA nodeBinding)* RBRACK linkQualifier COLON propertyRelation
+    ;
+
+linkQualifier
+    : VIA identifierValue (COMMA identifierValue)*
     ;
 
 nodeBinding
@@ -133,6 +164,10 @@ identifierValue
     : IDENTIFIER
     ;
 
+hexLiteral
+    : HEX
+    ;
+
 LOAD
     : 'load'
     ;
@@ -147,6 +182,10 @@ AS
 
 NODES
     : 'Nodes'
+    ;
+
+LINKS
+    : 'Links'
     ;
 
 CONSTANTS
@@ -171,6 +210,18 @@ SCENARIO_PROPERTIES
 
 VALUE
     : 'value'
+    ;
+
+ONEOF
+    : 'oneOf'
+    ;
+
+LEFTRIGHTARROW
+    : '<->'
+    ;
+
+VIA
+    : 'via'
     ;
 
 AND
@@ -259,6 +310,10 @@ RBRACE
 
 CONSTANT_REF
     : '#' [A-Za-z_] [A-Za-z0-9_-]*
+    ;
+
+HEX
+    : '0x' [0-9a-fA-F]+
     ;
 
 IDENTIFIER

@@ -34,7 +34,9 @@ import mta.user.scenario.state.StatePropositionTerm;
 
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,6 +102,31 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
             scenarioSpec.addNodeId(readIdentifier(identifierContext));
         }
         return null;
+    }
+
+    @Override
+    public Object visitLinkSection(ScenarioSpecParser.LinkSectionContext ctx) {
+        for (ScenarioSpecParser.LinkDeclarationContext declarationContext : ctx.linkDeclaration()) {
+            visit(declarationContext);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) {
+        scenarioSpec.addNodeLink(
+                readIdentifier(ctx.identifierValue()),
+                (NodeLink) visit(ctx.linkedIdentifiers())
+        );
+        return null;
+    }
+
+    @Override
+    public Object visitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) {
+        return new NodeLink(
+                readIdentifier(ctx.identifierValue(0)),
+                readIdentifier(ctx.identifierValue(1))
+        );
     }
 
     @Override
@@ -192,17 +219,30 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
         ActionProposition actionProposition = new ActionProposition();
         actionProposition.setActionId(readIdentifier(ctx.identifierValue()));
         for (ScenarioSpecParser.ActionArgumentContext argumentContext : ctx.actionArgument()) {
-            actionProposition.addArgument((String) visit(argumentContext));
+            actionProposition.addArgument((ActionArgument) visit(argumentContext));
         }
         return actionProposition;
     }
 
     @Override
     public Object visitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx) {
-        if (ctx.constantRef() != null) {
-            return readConstant(ctx.constantRef());
+        if (ctx.oneOfExpr() != null) {
+            return visit(ctx.oneOfExpr());
         }
-        return readIdentifier(ctx.identifierValue());
+        return visit(ctx.actionValue());
+    }
+
+    @Override
+    public Object visitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) {
+        return new ActionArgumentOneOf(readConstant(ctx.constantRef()));
+    }
+
+    @Override
+    public Object visitActionValue(ScenarioSpecParser.ActionValueContext ctx) {
+        if (ctx.hexLiteral() != null) {
+            return new ActionArgumentValue(readHexLiteral(ctx.hexLiteral()));
+        }
+        return new ActionArgumentValue(readIdentifier(ctx.identifierValue()));
     }
 
     @Override
@@ -221,11 +261,23 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
         for (ScenarioSpecParser.NodeBindingContext bindingContext : ctx.nodeBinding()) {
             scenarioProperty.addNodeBinding((NodeBinding) visit(bindingContext));
         }
+        for (String linkId : visitLinkQualifier(ctx.linkQualifier())) {
+            scenarioProperty.addLinkId(linkId);
+        }
 
         ConnectionStep propertyRoot = new ConnectionStep();
         propertyRoot.setPropertyRelation((PropertyRelation) visit(ctx.propertyRelation()));
         scenarioProperty.addStep(propertyRoot);
         return scenarioProperty;
+    }
+
+    @Override
+    public List<String> visitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) {
+        List<String> linkIds = new ArrayList<String>();
+        for (ScenarioSpecParser.IdentifierValueContext identifierContext : ctx.identifierValue()) {
+            linkIds.add(readIdentifier(identifierContext));
+        }
+        return linkIds;
     }
 
     @Override
@@ -354,18 +406,10 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
     private PropertyTerm readPropertyTerm(ScenarioSpecParser.IdentifierValueContext ctx) {
         String referenceId = readIdentifier(ctx);
         boolean isState = scenarioSpec.getStatePropositions().containsKey(referenceId);
-        boolean isAction = scenarioSpec.getActionPropositions().containsKey(referenceId);
-
-        if (isState && isAction) {
-            throw new IllegalArgumentException("Ambiguous property reference: " + referenceId);
-        }
-        if (isState) {
+        if (isState)
             return PropertyTerm.stateProposition(referenceId);
-        }
-        if (isAction) {
+        else
             return PropertyTerm.actionProposition(referenceId);
-        }
-        throw new IllegalArgumentException("Unknown property reference: " + referenceId);
     }
 
     private Path resolvePath(ScenarioSpecParser.StringLiteralContext ctx) {
@@ -378,10 +422,17 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
 
     private static Set<String> readConstantSet(ScenarioSpecParser.ConstantSetContext ctx) {
         Set<String> constants = new LinkedHashSet<String>();
-        for (ScenarioSpecParser.IdentifierValueContext valueContext : ctx.identifierValue()) {
-                constants.add(readIdentifier(valueContext));
+        for (ScenarioSpecParser.ConstantValueContext valueContext : ctx.constantValue()) {
+            constants.add(readConstantValue(valueContext));
         }
         return constants;
+    }
+
+    private static String readConstantValue(ScenarioSpecParser.ConstantValueContext ctx) {
+        if (ctx.hexLiteral() != null) {
+            return readHexLiteral(ctx.hexLiteral());
+        }
+        return readIdentifier(ctx.identifierValue());
     }
 
     private static String readConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx) {
@@ -400,6 +451,10 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
 
     private static String readIdentifier(ScenarioSpecParser.IdentifierValueContext ctx) {
         return ctx.IDENTIFIER().getText();
+    }
+
+    private static String readHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) {
+        return ctx.HEX().getText();
     }
 
     private static String stripQuotes(String raw) {

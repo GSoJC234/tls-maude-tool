@@ -1,4 +1,4 @@
-// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -138,27 +138,6 @@ public class BehaviorSpecBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitTargetRef(BehaviorSpecParser.TargetRefContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitFunctionCall(BehaviorSpecParser.FunctionCallContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitArgumentList(BehaviorSpecParser.ArgumentListContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

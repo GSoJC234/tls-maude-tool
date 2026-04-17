@@ -13,4 +13,11 @@ public enum CurveType {
             default: throw new IllegalArgumentException("Unsupported CurveType");
         }
     }
+
+    public String maudeTerm() {
+        switch (this) {
+            case NAMED_CURVE: return "namedcurve";
+            default: throw new IllegalArgumentException("Unsupported CurveType");
+        }
+    }
 }

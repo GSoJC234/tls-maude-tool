@@ -1,4 +1,4 @@
-// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -118,24 +118,6 @@ public interface BehaviorSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTargetRef(BehaviorSpecParser.TargetRefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BehaviorSpecParser#functionCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionCall(BehaviorSpecParser.FunctionCallContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BehaviorSpecParser#argumentList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArgumentList(BehaviorSpecParser.ArgumentListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BehaviorSpecParser#argumentValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BehaviorSpecParser#operandValue}.
 	 * @param ctx the parse tree

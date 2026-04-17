@@ -14,8 +14,6 @@ import mta.user.behavior.modification.item.BMRemove;
 import mta.user.behavior.modification.item.BMSet;
 import mta.user.behavior.modification.item.BMSkip;
 import mta.user.behavior.modification.item.BehaviorModificationItem;
-import mta.user.behavior.modification.item.value.BMFBytes;
-import mta.user.behavior.modification.item.value.BMFOneOf;
 import mta.user.behavior.modification.item.value.BehaviorModificationOperand;
 import mta.user.behavior.modification.item.value.BehaviorModificationValue;
 
@@ -169,17 +167,10 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
     }
 
     private static BehaviorModificationOperand readModificationOperand(BehaviorSpecParser.ModificationValueContext ctx) {
-        if (ctx.functionCall() != null) {
-            return readFunctionCallOperand(ctx.functionCall());
+        if (ctx.hexLiteral() != null) {
+            return new BehaviorModificationValue(readHexLiteral(ctx.hexLiteral()));
         }
         return new BehaviorModificationValue(readOperand(ctx.operandValue()));
-    }
-
-    private static BehaviorModificationOperand readFunctionCallOperand(BehaviorSpecParser.FunctionCallContext ctx) {
-        if (ctx.ONEOF() != null) {
-            return new BMFOneOf(readParameter(ctx.parameterRef()));
-        }
-        return new BMFBytes(ctx.hexLiteral().HEX().getText());
     }
 
     private static String readTarget(BehaviorSpecParser.TargetRefContext ctx) {
@@ -202,5 +193,9 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
 
     private static String readIdentifier(BehaviorSpecParser.IdentifierValueContext ctx) {
         return ctx.IDENTIFIER().getText();
+    }
+
+    private static String readHexLiteral(BehaviorSpecParser.HexLiteralContext ctx) {
+        return ctx.HEX().getText();
     }
 }

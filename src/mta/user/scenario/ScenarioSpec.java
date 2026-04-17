@@ -19,6 +19,7 @@ public class ScenarioSpec {
     private final Map<String, TLSProfile> profiles;
     private final List<BehaviorSpec> behaviorSpecs;
     private final List<String> nodeIds;
+    private final Map<String, NodeLink> nodeLinks;
     private final Map<String, Set<String>> constants;
     private final Map<String, StateProposition> statePropositions;
     private final Map<String, ActionProposition> actionPropositions;
@@ -28,6 +29,7 @@ public class ScenarioSpec {
         profiles = new LinkedHashMap<String, TLSProfile>();
         behaviorSpecs = new ArrayList<BehaviorSpec>();
         nodeIds = new ArrayList<String>();
+        nodeLinks = new LinkedHashMap<String, NodeLink>();
         constants = new LinkedHashMap<String, Set<String>>();
         statePropositions = new LinkedHashMap<String, StateProposition>();
         actionPropositions = new LinkedHashMap<String, ActionProposition>();
@@ -89,6 +91,35 @@ public class ScenarioSpec {
         if (nodeId != null) {
             this.nodeIds.add(nodeId);
         }
+    }
+
+    public Map<String, NodeLink> getNodeLinks() {
+        return Collections.unmodifiableMap(nodeLinks);
+    }
+
+    public void setNodeLinks(Map<String, NodeLink> nodeLinks) {
+        this.nodeLinks.clear();
+        if (nodeLinks != null) {
+            this.nodeLinks.putAll(nodeLinks);
+        }
+    }
+
+    public void addNodeLink(String linkId, NodeLink nodeLink) {
+        if (linkId != null && nodeLink != null) {
+            this.nodeLinks.put(linkId, nodeLink);
+        }
+    }
+
+    public void addNodeLink(String nodeId1, String nodeId2) {
+        throw new UnsupportedOperationException("Node links must be added with an id");
+    }
+
+    public void addNodeLink(String linkId, String nodeId1, String nodeId2) {
+        addNodeLink(linkId, new NodeLink(nodeId1, nodeId2));
+    }
+
+    public NodeLink getNodeLink(String linkId) {
+        return linkId != null ? nodeLinks.get(linkId) : null;
     }
 
     public Map<String, Set<String>> getConstants() {
@@ -204,6 +235,7 @@ public class ScenarioSpec {
         return Objects.equals(profiles, that.profiles)
                 && Objects.equals(behaviorSpecs, that.behaviorSpecs)
                 && Objects.equals(nodeIds, that.nodeIds)
+                && Objects.equals(nodeLinks, that.nodeLinks)
                 && Objects.equals(constants, that.constants)
                 && Objects.equals(statePropositions, that.statePropositions)
                 && Objects.equals(actionPropositions, that.actionPropositions)
@@ -212,7 +244,7 @@ public class ScenarioSpec {
 
     @Override
     public int hashCode() {
-        return Objects.hash(profiles, behaviorSpecs, nodeIds,
+        return Objects.hash(profiles, behaviorSpecs, nodeIds, nodeLinks,
                 constants, statePropositions, actionPropositions, scenarioProperties);
     }
 
@@ -222,10 +254,23 @@ public class ScenarioSpec {
                 + "profiles=" + profiles.keySet()
                 + ", behaviorSpecs=" + behaviorSpecs
                 + ", nodeIds=" + nodeIds
+                + ", nodeLinks=" + renderNodeLinks(nodeLinks)
                 + ", constants=" + constants
                 + ", statePropositions=" + statePropositions
                 + ", actionPropositions=" + actionPropositions
                 + ", scenarioProperties=" + scenarioProperties
                 + '}';
+    }
+
+    private static Map<String, String> renderNodeLinks(Map<String, NodeLink> nodeLinks) {
+        Map<String, String> rendered = new LinkedHashMap<String, String>();
+        for (Map.Entry<String, NodeLink> entry : nodeLinks.entrySet()) {
+            NodeLink nodeLink = entry.getValue();
+            rendered.put(
+                    entry.getKey(),
+                    nodeLink != null ? nodeLink.getNodeId1() + "<->" + nodeLink.getNodeId2() : "null"
+            );
+        }
+        return rendered;
     }
 }

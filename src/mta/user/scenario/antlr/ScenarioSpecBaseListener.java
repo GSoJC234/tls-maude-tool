@@ -77,6 +77,42 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterLinkSection(ScenarioSpecParser.LinkSectionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLinkSection(ScenarioSpecParser.LinkSectionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -108,6 +144,18 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitConstantSet(ScenarioSpecParser.ConstantSetContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterConstantValue(ScenarioSpecParser.ConstantValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstantValue(ScenarioSpecParser.ConstantValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -209,6 +257,30 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterActionValue(ScenarioSpecParser.ActionValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitActionValue(ScenarioSpecParser.ActionValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -228,6 +300,18 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -348,6 +432,18 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

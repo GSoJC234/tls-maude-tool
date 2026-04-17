@@ -8,12 +8,22 @@ public enum ProtocolVersion {
     }
 
     public de.rub.nds.tlsattacker.core.constants.ProtocolVersion transform(){
-        switch(this){
-            case SSLV2: return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.SSL2;
-            case TLS11: return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS11;
-            case TLS12: return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS12;
-            case TLS13: return de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS13;
-            default: throw new IllegalArgumentException("Unknown ProtocolVersion: " + this);
-        }
+        return switch (this) {
+            case SSLV2 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.SSL2;
+            case TLS11 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS11;
+            case TLS12 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS12;
+            case TLS13 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS13;
+            default -> throw new IllegalArgumentException("Unknown ProtocolVersion: " + this);
+        };
+    }
+
+    public String maudeTerm() {
+        return switch (this) {
+            case SSLV2 -> "TLS-10";
+            case TLS11 -> "TLS-11";
+            case TLS12 -> "TLS-12";
+            case TLS13 -> "TLS-13";
+            default -> throw new IllegalArgumentException("Unknown ProtocolVersion: " + this);
+        };
     }
 }

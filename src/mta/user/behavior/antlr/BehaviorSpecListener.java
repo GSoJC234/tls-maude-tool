@@ -1,4 +1,4 @@
-// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -187,36 +187,6 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTargetRef(BehaviorSpecParser.TargetRefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionCall(BehaviorSpecParser.FunctionCallContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#functionCall}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionCall(BehaviorSpecParser.FunctionCallContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#argumentList}.
-	 * @param ctx the parse tree
-	 */
-	void enterArgumentList(BehaviorSpecParser.ArgumentListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#argumentList}.
-	 * @param ctx the parse tree
-	 */
-	void exitArgumentList(BehaviorSpecParser.ArgumentListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#argumentValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#argumentValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#operandValue}.
 	 * @param ctx the parse tree

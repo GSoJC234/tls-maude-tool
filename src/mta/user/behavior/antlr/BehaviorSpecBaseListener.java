@@ -1,4 +1,4 @@
-// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -228,42 +228,6 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTargetRef(BehaviorSpecParser.TargetRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctionCall(BehaviorSpecParser.FunctionCallContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctionCall(BehaviorSpecParser.FunctionCallContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArgumentList(BehaviorSpecParser.ArgumentListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArgumentList(BehaviorSpecParser.ArgumentListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArgumentValue(BehaviorSpecParser.ArgumentValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

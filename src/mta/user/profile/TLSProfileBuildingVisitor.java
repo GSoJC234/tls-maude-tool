@@ -8,15 +8,14 @@ import mta.maude.constant.ProtocolVersion;
 import mta.maude.constant.PskKeyExchangeMode;
 import mta.maude.constant.SignatureAlgorithm;
 import mta.maude.constant.SupportedVersion;
+import mta.user.profile.TestRole;
 import mta.user.profile.antlr.TLSProfileBaseVisitor;
 import mta.user.profile.antlr.TLSProfileParser;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<TLSProfile> {
 

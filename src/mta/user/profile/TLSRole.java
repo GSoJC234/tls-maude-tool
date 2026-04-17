@@ -3,9 +3,9 @@ package mta.user.profile;
 import java.util.Locale;
 
 public enum TLSRole {
-    CLIENT,
-    SERVER,
-    MITM;
+    Client,
+    Server,
+    Mitm;
 
     public static TLSRole fromValue(String value) {
         if (value == null) {
@@ -13,9 +13,9 @@ public enum TLSRole {
         }
 
         return switch (value.trim().toUpperCase(Locale.ROOT)){
-            case "CLIENT" -> CLIENT;
-            case "SERVER" -> SERVER;
-            case "MITM" -> MITM;
+            case "CLIENT" -> Client;
+            case "SERVER" -> Server;
+            case "MITM" -> Mitm;
             default -> throw new IllegalArgumentException("Unknown role: " + value);
         };
     }

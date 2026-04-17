@@ -8,20 +8,28 @@ public enum AlertLevel {
     }
 
     public de.rub.nds.tlsattacker.core.constants.AlertLevel transform(){
-        switch(this){
-            case FATAL: return de.rub.nds.tlsattacker.core.constants.AlertLevel.FATAL;
-            case WARNING: return de.rub.nds.tlsattacker.core.constants.AlertLevel.WARNING;
-            case UNDEFINED: return de.rub.nds.tlsattacker.core.constants.AlertLevel.UNDEFINED;
-            default: throw new AssertionError();
-        }
+        return switch (this) {
+            case FATAL -> de.rub.nds.tlsattacker.core.constants.AlertLevel.FATAL;
+            case WARNING -> de.rub.nds.tlsattacker.core.constants.AlertLevel.WARNING;
+            case UNDEFINED -> de.rub.nds.tlsattacker.core.constants.AlertLevel.UNDEFINED;
+            default -> throw new IllegalArgumentException("Unknown alert level: " + this);
+        };
     }
 
     public static AlertLevel transform(de.rub.nds.tlsattacker.core.constants.AlertLevel alertLevel) {
-        switch (alertLevel){
-            case FATAL: return AlertLevel.FATAL;
-            case WARNING: return AlertLevel.WARNING;
-            case UNDEFINED: return AlertLevel.UNDEFINED;
-            default: throw new AssertionError();
-        }
+        return switch (alertLevel) {
+            case FATAL -> AlertLevel.FATAL;
+            case WARNING -> AlertLevel.WARNING;
+            case UNDEFINED -> AlertLevel.UNDEFINED;
+            default -> throw new IllegalArgumentException("Unknown alert level: " + alertLevel);
+        };
+    }
+
+    public String maudeTerm() {
+        return switch (this) {
+            case FATAL -> "fatal";
+            case WARNING -> "warning";
+            default -> throw new IllegalArgumentException("Unknown alert level: " + this);
+        };
     }
 }

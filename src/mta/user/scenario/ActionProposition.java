@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class ActionProposition {
 
-    private final List<String> arguments;
+    private final List<ActionArgument> arguments;
     private String actionId;
 
     public ActionProposition() {
-        this.arguments = new ArrayList<String>();
+        this.arguments = new ArrayList<ActionArgument>();
     }
 
     public void setActionId(String actionId) {
@@ -22,18 +22,18 @@ public class ActionProposition {
         return this.actionId;
     }
 
-    public List<String> getArguments() {
+    public List<ActionArgument> getArguments() {
         return Collections.unmodifiableList(arguments);
     }
 
-    public void setArguments(List<String> arguments) {
+    public void setArguments(List<ActionArgument> arguments) {
         this.arguments.clear();
         if (arguments != null) {
             this.arguments.addAll(arguments);
         }
     }
 
-    public void addArgument(String argument) {
+    public void addArgument(ActionArgument argument) {
         if (argument != null) {
             this.arguments.add(argument);
         }
