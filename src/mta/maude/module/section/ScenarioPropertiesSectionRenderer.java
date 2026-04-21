@@ -102,7 +102,7 @@ public class ScenarioPropertiesSectionRenderer implements ModuleSectionRenderer 
         if (term.getStatePropositionId() != null) {
             return term.getStatePropositionId();
         }
-        return "act(l('" + term.getActionPropositionId() + "))";
+        return term.getActionPropositionId();
     }
 
     private String renderPropertyOperator(PropertyRelation relation) {

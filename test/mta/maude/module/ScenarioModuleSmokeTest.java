@@ -1,12 +1,6 @@
 package mta.maude.module;
 
-import mta.maude.module.section.ActionPropositionsSectionRenderer;
-import mta.maude.module.section.ConstantsSectionRenderer;
-import mta.maude.module.section.InitialStateRender;
-import mta.maude.module.section.NodesSectionRenderer;
-import mta.maude.module.section.ProfilesSectionRenderer;
-import mta.maude.module.section.ScenarioPropertiesSectionRenderer;
-import mta.maude.module.section.StatePropositionsSectionRenderer;
+import mta.maude.module.section.*;
 import mta.user.scenario.ScenarioSpec;
 import mta.user.scenario.ScenarioSpecLoader;
 
@@ -30,6 +24,8 @@ public class ScenarioModuleSmokeTest {
                 .bind("constants", new ConstantsSectionRenderer().render(scenarioSpec))
                 .bind("statePropositions", new StatePropositionsSectionRenderer().render(scenarioSpec))
                 .bind("actionPropositions", new ActionPropositionsSectionRenderer().render(scenarioSpec))
+                .bind("parameterizedBehaviorInstances", new ParameterizedBehaviorInstanceSectionRenderer().render(scenarioSpec))
+                .bind("concreteBehaviorInstances", new ConcreteBehaviorInstanceSectionRenderer().render(scenarioSpec))
                 .bind("scenarioProperties", new ScenarioPropertiesSectionRenderer().render(scenarioSpec))
                 .render();
 

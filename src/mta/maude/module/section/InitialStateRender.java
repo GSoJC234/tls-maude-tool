@@ -103,9 +103,9 @@ public class InitialStateRender implements ModuleSectionRenderer {
                 + "              --- supported features" + System.lineSeparator()
                 + "              cipherSuites : nil," + System.lineSeparator()
                 + "              sessionId : noNonce," + System.lineSeparator()
-                + "              publicKey : empty," + System.lineSeparator()
-                + "              privateKey : empty," + System.lineSeparator()
-                + "              certificates : nil," + System.lineSeparator()
+                + "              publicKey : pubKey1(CA)," + System.lineSeparator()
+                + "              privateKey : prvKey1(" + nodeId + ")," + System.lineSeparator()
+                + "              certificates : cert1("+ nodeId + ")," + System.lineSeparator()
                 + "              compressions : nil," + System.lineSeparator()
                 + "              extensions : empty," + System.lineSeparator()
                 + "              pskInfo : nil," + System.lineSeparator()
@@ -114,13 +114,13 @@ public class InitialStateRender implements ModuleSectionRenderer {
                 + "              selectedVersion : noVersion," + System.lineSeparator()
                 + "              selectedCipherSuite : noSuite," + System.lineSeparator()
                 + "              selectedCompression : noComp," + System.lineSeparator()
-                + "                    selectedPSK : noNonce," + System.lineSeparator()
+                + "              selectedPSKInfo : noSelectedPSK," + System.lineSeparator()
                 + "              selectedExtensions : empty," + System.lineSeparator()
                 + "              serverRandom : noNonce," + System.lineSeparator()
                 + "              clientRandom : noNonce," + System.lineSeparator()
                 + "              sessionReadKey : noKey," + System.lineSeparator()
                 + "              sessionWriteKey : noKey," + System.lineSeparator()
-                + "                    peerCertificate : nil," + System.lineSeparator()
+                + "              peerCertificate : nil," + System.lineSeparator()
                 + System.lineSeparator()
                 + "              --- TLS 1.2-specific features" + System.lineSeparator()
                 + "              masterSecret : noNonce," + System.lineSeparator()
@@ -134,7 +134,6 @@ public class InitialStateRender implements ModuleSectionRenderer {
                 + System.lineSeparator()
                 + "              --- TLS 1.3-specific features" + System.lineSeparator()
                 + "              earlySecret : noNonce," + System.lineSeparator()
-                + "              sharedSecret : noNonce," + System.lineSeparator()
                 + "              handshakeSecret : noNonce," + System.lineSeparator()
                 + "              applicationSecret : noNonce," + System.lineSeparator()
                 + "              certificateRequestContext : noNonce," + System.lineSeparator()
@@ -151,14 +150,14 @@ public class InitialStateRender implements ModuleSectionRenderer {
     }
 
     private String renderClientSpecificSection() {
-        return "              --- client specific" + System.lineSeparator()
+           return "              --- client specific" + System.lineSeparator()
                 + "              clientState : VC-NONE," + System.lineSeparator()
                 + "              certificateRequested : false," + System.lineSeparator()
                 + "              newSessionTicketWait : false > .";
     }
 
     private String renderServerSpecificSection() {
-        return "              --- server specific" + System.lineSeparator()
+           return "              --- server specific" + System.lineSeparator()
                 + "              serverState : VS-NONE," + System.lineSeparator()
                 + "              clientCertificateReq : false," + System.lineSeparator()
                 + "              newSessionTicketReq : false," + System.lineSeparator()

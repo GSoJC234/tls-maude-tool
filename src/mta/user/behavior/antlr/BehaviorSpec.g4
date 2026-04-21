@@ -14,7 +14,7 @@ behaviorIdSection
     ;
 
 parametersSection
-    : 'Parameters' COLON parameterRef (COMMA parameterRef)*
+    : 'Parameters' COLON identifierValue (COMMA identifierValue)*
     ;
 
 eventTypeSection
@@ -32,7 +32,12 @@ conditionExpr
     ;
 
 conditionPredicate
-    : valueAccessor EQ operandValue
+    : fieldValueAccessor EQ valueAccessor
+    | valueAccessor EQ fieldValueAccessor
+    ;
+
+fieldValueAccessor
+    : FIELD_VALUE LPAREN identifierValue RPAREN
     ;
 
 valueAccessor
@@ -44,28 +49,23 @@ modificationSection
     ;
 
 modificationStatement
-    : addModification
-    | setModification
-    | removeModification
+    : setModification
+    | deleteModification
     | noCheckModification
     | skipModification
     | delayModification
     ;
 
-addModification
-    : ADD LPAREN targetRef COMMA modificationValue RPAREN
-    ;
-
 setModification
-    : SET LPAREN targetRef COMMA modificationValue RPAREN
+    : SET LPAREN identifierValue COMMA modificationValue RPAREN
     ;
 
-removeModification
-    : REMOVE LPAREN targetRef RPAREN
+deleteModification
+    : DELETE LPAREN identifierValue RPAREN
     ;
 
 noCheckModification
-    : NOCHECK LPAREN targetRef RPAREN
+    : NOCHECK LPAREN identifierValue RPAREN
     ;
 
 skipModification
@@ -73,26 +73,12 @@ skipModification
     ;
 
 delayModification
-    : DELAY LPAREN operandValue RPAREN
+    : DELAY LPAREN identifierValue RPAREN
     ;
 
 modificationValue
-    : operandValue
+    : identifierValue
     | hexLiteral
-    ;
-
-targetRef
-    : parameterRef
-    | identifierValue
-    ;
-
-operandValue
-    : parameterRef
-    | identifierValue
-    ;
-
-parameterRef
-    : PARAM_REF
     ;
 
 identifierValue
@@ -103,16 +89,12 @@ hexLiteral
     : HEX
     ;
 
-ADD
-    : 'add'
-    ;
-
 SET
     : 'set'
     ;
 
-REMOVE
-    : 'remove'
+DELETE
+    : 'delete'
     ;
 
 NOCHECK
@@ -129,6 +111,10 @@ DELAY
 
 VALUE
     : 'value'
+    ;
+
+FIELD_VALUE
+    : 'fieldValue'
     ;
 
 AND
@@ -149,6 +135,7 @@ NOT
 
 EQ
     : '=='
+    | '='
     ;
 
 COLON
@@ -165,10 +152,6 @@ LPAREN
 
 RPAREN
     : ')'
-    ;
-
-PARAM_REF
-    : '$' [A-Za-z_] [A-Za-z0-9_-]*
     ;
 
 HEX

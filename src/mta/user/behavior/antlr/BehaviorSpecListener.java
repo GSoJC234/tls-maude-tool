@@ -1,4 +1,4 @@
-// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -78,6 +78,16 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#fieldValueAccessor}.
+	 * @param ctx the parse tree
+	 */
+	void enterFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#fieldValueAccessor}.
+	 * @param ctx the parse tree
+	 */
+	void exitFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#valueAccessor}.
 	 * @param ctx the parse tree
 	 */
@@ -108,16 +118,6 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#addModification}.
-	 * @param ctx the parse tree
-	 */
-	void enterAddModification(BehaviorSpecParser.AddModificationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#addModification}.
-	 * @param ctx the parse tree
-	 */
-	void exitAddModification(BehaviorSpecParser.AddModificationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#setModification}.
 	 * @param ctx the parse tree
 	 */
@@ -128,15 +128,15 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitSetModification(BehaviorSpecParser.SetModificationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#removeModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#deleteModification}.
 	 * @param ctx the parse tree
 	 */
-	void enterRemoveModification(BehaviorSpecParser.RemoveModificationContext ctx);
+	void enterDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#removeModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#deleteModification}.
 	 * @param ctx the parse tree
 	 */
-	void exitRemoveModification(BehaviorSpecParser.RemoveModificationContext ctx);
+	void exitDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#noCheckModification}.
 	 * @param ctx the parse tree
@@ -177,36 +177,6 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitModificationValue(BehaviorSpecParser.ModificationValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#targetRef}.
-	 * @param ctx the parse tree
-	 */
-	void enterTargetRef(BehaviorSpecParser.TargetRefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#targetRef}.
-	 * @param ctx the parse tree
-	 */
-	void exitTargetRef(BehaviorSpecParser.TargetRefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#operandValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperandValue(BehaviorSpecParser.OperandValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#operandValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperandValue(BehaviorSpecParser.OperandValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterRef}.
-	 * @param ctx the parse tree
-	 */
-	void enterParameterRef(BehaviorSpecParser.ParameterRefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterRef}.
-	 * @param ctx the parse tree
-	 */
-	void exitParameterRef(BehaviorSpecParser.ParameterRefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#identifierValue}.
 	 * @param ctx the parse tree

@@ -2,14 +2,14 @@ package mta.user.behavior.modification.item;
 
 import java.util.Objects;
 
-public class BMRemove implements BehaviorModificationItem {
+public class BMDelete implements BehaviorModificationItem {
 
     private String target;
 
-    public BMRemove() {
+    public BMDelete() {
     }
 
-    public BMRemove(String target) {
+    public BMDelete(String target) {
         this.target = target;
     }
 
@@ -26,7 +26,7 @@ public class BMRemove implements BehaviorModificationItem {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BMRemove bmRemove)) {
+        if (!(o instanceof BMDelete bmRemove)) {
             return false;
         }
         return Objects.equals(target, bmRemove.target);

@@ -2,17 +2,17 @@ package mta.user.behavior.modification.item;
 
 import java.util.Objects;
 
-import mta.user.behavior.modification.item.value.BehaviorModificationOperand;
+import mta.user.behavior.modification.BehaviorModificationValue;
 
 public class BMSet implements BehaviorModificationItem {
 
     private String target;
-    private BehaviorModificationOperand value;
+    private BehaviorModificationValue value;
 
     public BMSet() {
     }
 
-    public BMSet(String target, BehaviorModificationOperand value) {
+    public BMSet(String target, BehaviorModificationValue value) {
         this.target = target;
         this.value = value;
     }
@@ -25,11 +25,11 @@ public class BMSet implements BehaviorModificationItem {
         this.target = target;
     }
 
-    public BehaviorModificationOperand getValue() {
+    public BehaviorModificationValue getValue() {
         return value;
     }
 
-    public void setValue(BehaviorModificationOperand value) {
+    public void setValue(BehaviorModificationValue value) {
         this.value = value;
     }
 

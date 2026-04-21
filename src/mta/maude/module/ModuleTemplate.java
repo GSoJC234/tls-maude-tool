@@ -22,6 +22,7 @@ public class ModuleTemplate {
                   protecting RUN-SCENARIO .
                   protecting INTERNAL-FORMAL-SCENARIO-GENERATOR .
                   protecting SCENARIO-BLOCK .
+                  protecting APPLY-BEHAVIOR-INSTANCE .
                   
                   --- Loaded TLS profiles
                 ${profiles}
@@ -40,6 +41,12 @@ public class ModuleTemplate {
 
                   --- Action propositions
                 ${actionPropositions}
+
+                  --- Parameterized Behavior Instances
+                ${parameterizedBehaviorInstances}
+
+                  --- Concrete Behavior Instances
+                ${concreteBehaviorInstances}
 
                   --- Scenario properties
                 ${scenarioProperties}

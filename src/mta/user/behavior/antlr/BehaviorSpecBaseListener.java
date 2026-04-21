@@ -1,4 +1,4 @@
-// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -101,6 +101,18 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterValueAccessor(BehaviorSpecParser.ValueAccessorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -137,18 +149,6 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAddModification(BehaviorSpecParser.AddModificationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAddModification(BehaviorSpecParser.AddModificationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterSetModification(BehaviorSpecParser.SetModificationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -161,13 +161,13 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRemoveModification(BehaviorSpecParser.RemoveModificationContext ctx) { }
+	@Override public void enterDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitRemoveModification(BehaviorSpecParser.RemoveModificationContext ctx) { }
+	@Override public void exitDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -216,42 +216,6 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitModificationValue(BehaviorSpecParser.ModificationValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTargetRef(BehaviorSpecParser.TargetRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTargetRef(BehaviorSpecParser.TargetRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterOperandValue(BehaviorSpecParser.OperandValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitOperandValue(BehaviorSpecParser.OperandValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParameterRef(BehaviorSpecParser.ParameterRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParameterRef(BehaviorSpecParser.ParameterRefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

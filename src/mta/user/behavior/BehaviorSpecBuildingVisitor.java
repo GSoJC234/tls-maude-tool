@@ -7,15 +7,13 @@ import mta.user.behavior.condition.BehaviorConditionExpr;
 import mta.user.behavior.condition.BehaviorConditionOpr;
 import mta.user.behavior.condition.BehaviorConditionTerm;
 import mta.user.behavior.modification.BehaviorModification;
-import mta.user.behavior.modification.item.BMAdd;
 import mta.user.behavior.modification.item.BMDelay;
 import mta.user.behavior.modification.item.BMNoCheck;
-import mta.user.behavior.modification.item.BMRemove;
+import mta.user.behavior.modification.item.BMDelete;
 import mta.user.behavior.modification.item.BMSet;
 import mta.user.behavior.modification.item.BMSkip;
 import mta.user.behavior.modification.item.BehaviorModificationItem;
-import mta.user.behavior.modification.item.value.BehaviorModificationOperand;
-import mta.user.behavior.modification.item.value.BehaviorModificationValue;
+import mta.user.behavior.modification.BehaviorModificationValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +45,8 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
     @Override
     public Object visitParametersSection(BehaviorSpecParser.ParametersSectionContext ctx) {
         List<String> parameters = new ArrayList<String>();
-        for (BehaviorSpecParser.ParameterRefContext parameterRefContext : ctx.parameterRef()) {
-            parameters.add(readParameter(parameterRefContext));
+        for (BehaviorSpecParser.IdentifierValueContext identifierValueContext : ctx.identifierValue()) {
+            parameters.add(readIdentifier(identifierValueContext));
         }
         return parameters;
     }
@@ -92,8 +90,8 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
     @Override
     public Object visitConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx) {
         return new BehaviorConditionTerm(
-                readIdentifier(ctx.valueAccessor().identifierValue()),
-                readOperand(ctx.operandValue())
+                readIdentifier(ctx.fieldValueAccessor().identifierValue()),
+                readIdentifier(ctx.valueAccessor().identifierValue())
         );
     }
 
@@ -108,14 +106,11 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
 
     @Override
     public Object visitModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx) {
-        if (ctx.addModification() != null) {
-            return visit(ctx.addModification());
-        }
         if (ctx.setModification() != null) {
             return visit(ctx.setModification());
         }
-        if (ctx.removeModification() != null) {
-            return visit(ctx.removeModification());
+        if (ctx.deleteModification() != null) {
+            return visit(ctx.deleteModification());
         }
         if (ctx.noCheckModification() != null) {
             return visit(ctx.noCheckModification());
@@ -127,23 +122,18 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
     }
 
     @Override
-    public Object visitAddModification(BehaviorSpecParser.AddModificationContext ctx) {
-        return new BMAdd(readTarget(ctx.targetRef()), readModificationOperand(ctx.modificationValue()));
-    }
-
-    @Override
     public Object visitSetModification(BehaviorSpecParser.SetModificationContext ctx) {
-        return new BMSet(readTarget(ctx.targetRef()), readModificationOperand(ctx.modificationValue()));
+        return new BMSet(readIdentifier(ctx.identifierValue()), readModificationValue(ctx.modificationValue()));
     }
 
     @Override
-    public Object visitRemoveModification(BehaviorSpecParser.RemoveModificationContext ctx) {
-        return new BMRemove(readTarget(ctx.targetRef()));
+    public Object visitDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx) {
+        return new BMDelete(readIdentifier(ctx.identifierValue()));
     }
 
     @Override
     public Object visitNoCheckModification(BehaviorSpecParser.NoCheckModificationContext ctx) {
-        return new BMNoCheck(readTarget(ctx.targetRef()));
+        return new BMNoCheck(readIdentifier(ctx.identifierValue()));
     }
 
     @Override
@@ -153,7 +143,7 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
 
     @Override
     public Object visitDelayModification(BehaviorSpecParser.DelayModificationContext ctx) {
-        return new BMDelay(readOperand(ctx.operandValue()));
+        return new BMDelay(readIdentifier(ctx.identifierValue()));
     }
 
     private static BehaviorConditionExpr combine(BehaviorConditionExpr leftExpression,
@@ -166,29 +156,11 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
         return expression;
     }
 
-    private static BehaviorModificationOperand readModificationOperand(BehaviorSpecParser.ModificationValueContext ctx) {
+    private static BehaviorModificationValue readModificationValue(BehaviorSpecParser.ModificationValueContext ctx) {
         if (ctx.hexLiteral() != null) {
             return new BehaviorModificationValue(readHexLiteral(ctx.hexLiteral()));
         }
-        return new BehaviorModificationValue(readOperand(ctx.operandValue()));
-    }
-
-    private static String readTarget(BehaviorSpecParser.TargetRefContext ctx) {
-        if (ctx.parameterRef() != null) {
-            return readParameter(ctx.parameterRef());
-        }
-        return readIdentifier(ctx.identifierValue());
-    }
-
-    private static String readOperand(BehaviorSpecParser.OperandValueContext ctx) {
-        if (ctx.parameterRef() != null) {
-            return readParameter(ctx.parameterRef());
-        }
-        return readIdentifier(ctx.identifierValue());
-    }
-
-    private static String readParameter(BehaviorSpecParser.ParameterRefContext ctx) {
-        return ctx.PARAM_REF().getText();
+        return new BehaviorModificationValue(readIdentifier(ctx.identifierValue()));
     }
 
     private static String readIdentifier(BehaviorSpecParser.IdentifierValueContext ctx) {

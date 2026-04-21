@@ -1,4 +1,4 @@
-// Generated from BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -17,27 +17,25 @@ public class BehaviorSpecParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, ADD=6, SET=7, REMOVE=8, NOCHECK=9, 
-		SKIP_KW=10, DELAY=11, VALUE=12, AND=13, OR=14, XOR=15, NOT=16, EQ=17, 
-		COLON=18, COMMA=19, LPAREN=20, RPAREN=21, PARAM_REF=22, HEX=23, IDENTIFIER=24, 
-		WS=25, LINE_COMMENT=26;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, SET=6, DELETE=7, NOCHECK=8, SKIP_KW=9, 
+		DELAY=10, VALUE=11, FIELD_VALUE=12, AND=13, OR=14, XOR=15, NOT=16, EQ=17, 
+		COLON=18, COMMA=19, LPAREN=20, RPAREN=21, HEX=22, IDENTIFIER=23, WS=24, 
+		LINE_COMMENT=25;
 	public static final int
 		RULE_behaviorSpec = 0, RULE_behaviorIdSection = 1, RULE_parametersSection = 2, 
 		RULE_eventTypeSection = 3, RULE_conditionsSection = 4, RULE_conditionExpr = 5, 
-		RULE_conditionPredicate = 6, RULE_valueAccessor = 7, RULE_modificationSection = 8, 
-		RULE_modificationStatement = 9, RULE_addModification = 10, RULE_setModification = 11, 
-		RULE_removeModification = 12, RULE_noCheckModification = 13, RULE_skipModification = 14, 
-		RULE_delayModification = 15, RULE_modificationValue = 16, RULE_targetRef = 17, 
-		RULE_operandValue = 18, RULE_parameterRef = 19, RULE_identifierValue = 20, 
-		RULE_hexLiteral = 21;
+		RULE_conditionPredicate = 6, RULE_fieldValueAccessor = 7, RULE_valueAccessor = 8, 
+		RULE_modificationSection = 9, RULE_modificationStatement = 10, RULE_setModification = 11, 
+		RULE_deleteModification = 12, RULE_noCheckModification = 13, RULE_skipModification = 14, 
+		RULE_delayModification = 15, RULE_modificationValue = 16, RULE_identifierValue = 17, 
+		RULE_hexLiteral = 18;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"behaviorSpec", "behaviorIdSection", "parametersSection", "eventTypeSection", 
-			"conditionsSection", "conditionExpr", "conditionPredicate", "valueAccessor", 
-			"modificationSection", "modificationStatement", "addModification", "setModification", 
-			"removeModification", "noCheckModification", "skipModification", "delayModification", 
-			"modificationValue", "targetRef", "operandValue", "parameterRef", "identifierValue", 
-			"hexLiteral"
+			"conditionsSection", "conditionExpr", "conditionPredicate", "fieldValueAccessor", 
+			"valueAccessor", "modificationSection", "modificationStatement", "setModification", 
+			"deleteModification", "noCheckModification", "skipModification", "delayModification", 
+			"modificationValue", "identifierValue", "hexLiteral"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -45,18 +43,17 @@ public class BehaviorSpecParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'BehaviorId'", "'Parameters'", "'EventType'", "'Conditions'", 
-			"'Modification'", "'add'", "'set'", "'remove'", "'noCheck'", "'skip'", 
-			"'delay'", "'value'", "'and'", "'or'", "'xor'", "'not'", "'=='", "':'", 
+			"'Modification'", "'set'", "'delete'", "'noCheck'", "'skip'", "'delay'", 
+			"'value'", "'fieldValue'", "'and'", "'or'", "'xor'", "'not'", null, "':'", 
 			"','", "'('", "')'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, "ADD", "SET", "REMOVE", "NOCHECK", 
-			"SKIP_KW", "DELAY", "VALUE", "AND", "OR", "XOR", "NOT", "EQ", "COLON", 
-			"COMMA", "LPAREN", "RPAREN", "PARAM_REF", "HEX", "IDENTIFIER", "WS", 
-			"LINE_COMMENT"
+			null, null, null, null, null, null, "SET", "DELETE", "NOCHECK", "SKIP_KW", 
+			"DELAY", "VALUE", "FIELD_VALUE", "AND", "OR", "XOR", "NOT", "EQ", "COLON", 
+			"COMMA", "LPAREN", "RPAREN", "HEX", "IDENTIFIER", "WS", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -154,25 +151,25 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44);
+			setState(38);
 			behaviorIdSection();
-			setState(46);
+			setState(40);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__1) {
 				{
-				setState(45);
+				setState(39);
 				parametersSection();
 				}
 			}
 
-			setState(48);
+			setState(42);
 			eventTypeSection();
-			setState(49);
+			setState(43);
 			conditionsSection();
-			setState(50);
+			setState(44);
 			modificationSection();
-			setState(51);
+			setState(45);
 			match(EOF);
 			}
 		}
@@ -218,11 +215,11 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(47);
 			match(T__0);
-			setState(54);
+			setState(48);
 			match(COLON);
-			setState(55);
+			setState(49);
 			identifierValue();
 			}
 		}
@@ -240,11 +237,11 @@ public class BehaviorSpecParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class ParametersSectionContext extends ParserRuleContext {
 		public TerminalNode COLON() { return getToken(BehaviorSpecParser.COLON, 0); }
-		public List<ParameterRefContext> parameterRef() {
-			return getRuleContexts(ParameterRefContext.class);
+		public List<IdentifierValueContext> identifierValue() {
+			return getRuleContexts(IdentifierValueContext.class);
 		}
-		public ParameterRefContext parameterRef(int i) {
-			return getRuleContext(ParameterRefContext.class,i);
+		public IdentifierValueContext identifierValue(int i) {
+			return getRuleContext(IdentifierValueContext.class,i);
 		}
 		public List<TerminalNode> COMMA() { return getTokens(BehaviorSpecParser.COMMA); }
 		public TerminalNode COMMA(int i) {
@@ -276,25 +273,25 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(57);
+			setState(51);
 			match(T__1);
-			setState(58);
+			setState(52);
 			match(COLON);
-			setState(59);
-			parameterRef();
-			setState(64);
+			setState(53);
+			identifierValue();
+			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(60);
+				setState(54);
 				match(COMMA);
-				setState(61);
-				parameterRef();
+				setState(55);
+				identifierValue();
 				}
 				}
-				setState(66);
+				setState(60);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -342,11 +339,11 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(61);
 			match(T__2);
-			setState(68);
+			setState(62);
 			match(COLON);
-			setState(69);
+			setState(63);
 			identifierValue();
 			}
 		}
@@ -392,11 +389,11 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(71);
+			setState(65);
 			match(T__3);
-			setState(72);
+			setState(66);
 			match(COLON);
-			setState(73);
+			setState(67);
 			conditionExpr(0);
 			}
 		}
@@ -461,20 +458,21 @@ public class BehaviorSpecParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(79);
+			setState(73);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case VALUE:
+			case FIELD_VALUE:
 				{
-				setState(76);
+				setState(70);
 				conditionPredicate();
 				}
 				break;
 			case NOT:
 				{
-				setState(77);
+				setState(71);
 				match(NOT);
-				setState(78);
+				setState(72);
 				conditionExpr(2);
 				}
 				break;
@@ -482,7 +480,7 @@ public class BehaviorSpecParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(86);
+			setState(80);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -493,9 +491,9 @@ public class BehaviorSpecParser extends Parser {
 					{
 					_localctx = new ConditionExprContext(_parentctx, _parentState);
 					pushNewRecursionContext(_localctx, _startState, RULE_conditionExpr);
-					setState(81);
+					setState(75);
 					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(82);
+					setState(76);
 					_la = _input.LA(1);
 					if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 57344L) != 0)) ) {
 					_errHandler.recoverInline(this);
@@ -505,12 +503,12 @@ public class BehaviorSpecParser extends Parser {
 						_errHandler.reportMatch(this);
 						consume();
 					}
-					setState(83);
+					setState(77);
 					conditionExpr(2);
 					}
 					} 
 				}
-				setState(88);
+				setState(82);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			}
@@ -529,12 +527,12 @@ public class BehaviorSpecParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ConditionPredicateContext extends ParserRuleContext {
-		public ValueAccessorContext valueAccessor() {
-			return getRuleContext(ValueAccessorContext.class,0);
+		public FieldValueAccessorContext fieldValueAccessor() {
+			return getRuleContext(FieldValueAccessorContext.class,0);
 		}
 		public TerminalNode EQ() { return getToken(BehaviorSpecParser.EQ, 0); }
-		public OperandValueContext operandValue() {
-			return getRuleContext(OperandValueContext.class,0);
+		public ValueAccessorContext valueAccessor() {
+			return getRuleContext(ValueAccessorContext.class,0);
 		}
 		public ConditionPredicateContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -559,14 +557,87 @@ public class BehaviorSpecParser extends Parser {
 		ConditionPredicateContext _localctx = new ConditionPredicateContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_conditionPredicate);
 		try {
+			setState(91);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case FIELD_VALUE:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(83);
+				fieldValueAccessor();
+				setState(84);
+				match(EQ);
+				setState(85);
+				valueAccessor();
+				}
+				break;
+			case VALUE:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(87);
+				valueAccessor();
+				setState(88);
+				match(EQ);
+				setState(89);
+				fieldValueAccessor();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class FieldValueAccessorContext extends ParserRuleContext {
+		public TerminalNode FIELD_VALUE() { return getToken(BehaviorSpecParser.FIELD_VALUE, 0); }
+		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
+		}
+		public TerminalNode RPAREN() { return getToken(BehaviorSpecParser.RPAREN, 0); }
+		public FieldValueAccessorContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_fieldValueAccessor; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterFieldValueAccessor(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitFieldValueAccessor(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitFieldValueAccessor(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final FieldValueAccessorContext fieldValueAccessor() throws RecognitionException {
+		FieldValueAccessorContext _localctx = new FieldValueAccessorContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_fieldValueAccessor);
+		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(89);
-			valueAccessor();
-			setState(90);
-			match(EQ);
-			setState(91);
-			operandValue();
+			setState(93);
+			match(FIELD_VALUE);
+			setState(94);
+			match(LPAREN);
+			setState(95);
+			identifierValue();
+			setState(96);
+			match(RPAREN);
 			}
 		}
 		catch (RecognitionException re) {
@@ -609,17 +680,17 @@ public class BehaviorSpecParser extends Parser {
 
 	public final ValueAccessorContext valueAccessor() throws RecognitionException {
 		ValueAccessorContext _localctx = new ValueAccessorContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_valueAccessor);
+		enterRule(_localctx, 16, RULE_valueAccessor);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(93);
+			setState(98);
 			match(VALUE);
-			setState(94);
+			setState(99);
 			match(LPAREN);
-			setState(95);
+			setState(100);
 			identifierValue();
-			setState(96);
+			setState(101);
 			match(RPAREN);
 			}
 		}
@@ -664,29 +735,29 @@ public class BehaviorSpecParser extends Parser {
 
 	public final ModificationSectionContext modificationSection() throws RecognitionException {
 		ModificationSectionContext _localctx = new ModificationSectionContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_modificationSection);
+		enterRule(_localctx, 18, RULE_modificationSection);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(98);
+			setState(103);
 			match(T__4);
-			setState(99);
+			setState(104);
 			match(COLON);
-			setState(101); 
+			setState(106); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(100);
+				setState(105);
 				modificationStatement();
 				}
 				}
-				setState(103); 
+				setState(108); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 4032L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 1984L) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -702,14 +773,11 @@ public class BehaviorSpecParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ModificationStatementContext extends ParserRuleContext {
-		public AddModificationContext addModification() {
-			return getRuleContext(AddModificationContext.class,0);
-		}
 		public SetModificationContext setModification() {
 			return getRuleContext(SetModificationContext.class,0);
 		}
-		public RemoveModificationContext removeModification() {
-			return getRuleContext(RemoveModificationContext.class,0);
+		public DeleteModificationContext deleteModification() {
+			return getRuleContext(DeleteModificationContext.class,0);
 		}
 		public NoCheckModificationContext noCheckModification() {
 			return getRuleContext(NoCheckModificationContext.class,0);
@@ -741,50 +809,43 @@ public class BehaviorSpecParser extends Parser {
 
 	public final ModificationStatementContext modificationStatement() throws RecognitionException {
 		ModificationStatementContext _localctx = new ModificationStatementContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_modificationStatement);
+		enterRule(_localctx, 20, RULE_modificationStatement);
 		try {
-			setState(111);
+			setState(115);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case ADD:
+			case SET:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(105);
-				addModification();
-				}
-				break;
-			case SET:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(106);
+				setState(110);
 				setModification();
 				}
 				break;
-			case REMOVE:
-				enterOuterAlt(_localctx, 3);
+			case DELETE:
+				enterOuterAlt(_localctx, 2);
 				{
-				setState(107);
-				removeModification();
+				setState(111);
+				deleteModification();
 				}
 				break;
 			case NOCHECK:
-				enterOuterAlt(_localctx, 4);
+				enterOuterAlt(_localctx, 3);
 				{
-				setState(108);
+				setState(112);
 				noCheckModification();
 				}
 				break;
 			case SKIP_KW:
-				enterOuterAlt(_localctx, 5);
+				enterOuterAlt(_localctx, 4);
 				{
-				setState(109);
+				setState(113);
 				skipModification();
 				}
 				break;
 			case DELAY:
-				enterOuterAlt(_localctx, 6);
+				enterOuterAlt(_localctx, 5);
 				{
-				setState(110);
+				setState(114);
 				delayModification();
 				}
 				break;
@@ -804,73 +865,11 @@ public class BehaviorSpecParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class AddModificationContext extends ParserRuleContext {
-		public TerminalNode ADD() { return getToken(BehaviorSpecParser.ADD, 0); }
-		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
-		public TargetRefContext targetRef() {
-			return getRuleContext(TargetRefContext.class,0);
-		}
-		public TerminalNode COMMA() { return getToken(BehaviorSpecParser.COMMA, 0); }
-		public ModificationValueContext modificationValue() {
-			return getRuleContext(ModificationValueContext.class,0);
-		}
-		public TerminalNode RPAREN() { return getToken(BehaviorSpecParser.RPAREN, 0); }
-		public AddModificationContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_addModification; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterAddModification(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitAddModification(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitAddModification(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final AddModificationContext addModification() throws RecognitionException {
-		AddModificationContext _localctx = new AddModificationContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_addModification);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(113);
-			match(ADD);
-			setState(114);
-			match(LPAREN);
-			setState(115);
-			targetRef();
-			setState(116);
-			match(COMMA);
-			setState(117);
-			modificationValue();
-			setState(118);
-			match(RPAREN);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
 	public static class SetModificationContext extends ParserRuleContext {
 		public TerminalNode SET() { return getToken(BehaviorSpecParser.SET, 0); }
 		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
-		public TargetRefContext targetRef() {
-			return getRuleContext(TargetRefContext.class,0);
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
 		}
 		public TerminalNode COMMA() { return getToken(BehaviorSpecParser.COMMA, 0); }
 		public ModificationValueContext modificationValue() {
@@ -902,17 +901,17 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(120);
+			setState(117);
 			match(SET);
-			setState(121);
+			setState(118);
 			match(LPAREN);
-			setState(122);
-			targetRef();
-			setState(123);
+			setState(119);
+			identifierValue();
+			setState(120);
 			match(COMMA);
-			setState(124);
+			setState(121);
 			modificationValue();
-			setState(125);
+			setState(122);
 			match(RPAREN);
 			}
 		}
@@ -928,45 +927,45 @@ public class BehaviorSpecParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class RemoveModificationContext extends ParserRuleContext {
-		public TerminalNode REMOVE() { return getToken(BehaviorSpecParser.REMOVE, 0); }
+	public static class DeleteModificationContext extends ParserRuleContext {
+		public TerminalNode DELETE() { return getToken(BehaviorSpecParser.DELETE, 0); }
 		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
-		public TargetRefContext targetRef() {
-			return getRuleContext(TargetRefContext.class,0);
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(BehaviorSpecParser.RPAREN, 0); }
-		public RemoveModificationContext(ParserRuleContext parent, int invokingState) {
+		public DeleteModificationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_removeModification; }
+		@Override public int getRuleIndex() { return RULE_deleteModification; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterRemoveModification(this);
+			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterDeleteModification(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitRemoveModification(this);
+			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitDeleteModification(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitRemoveModification(this);
+			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitDeleteModification(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final RemoveModificationContext removeModification() throws RecognitionException {
-		RemoveModificationContext _localctx = new RemoveModificationContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_removeModification);
+	public final DeleteModificationContext deleteModification() throws RecognitionException {
+		DeleteModificationContext _localctx = new DeleteModificationContext(_ctx, getState());
+		enterRule(_localctx, 24, RULE_deleteModification);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(127);
-			match(REMOVE);
-			setState(128);
+			setState(124);
+			match(DELETE);
+			setState(125);
 			match(LPAREN);
-			setState(129);
-			targetRef();
-			setState(130);
+			setState(126);
+			identifierValue();
+			setState(127);
 			match(RPAREN);
 			}
 		}
@@ -985,8 +984,8 @@ public class BehaviorSpecParser extends Parser {
 	public static class NoCheckModificationContext extends ParserRuleContext {
 		public TerminalNode NOCHECK() { return getToken(BehaviorSpecParser.NOCHECK, 0); }
 		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
-		public TargetRefContext targetRef() {
-			return getRuleContext(TargetRefContext.class,0);
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(BehaviorSpecParser.RPAREN, 0); }
 		public NoCheckModificationContext(ParserRuleContext parent, int invokingState) {
@@ -1014,13 +1013,13 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(132);
+			setState(129);
 			match(NOCHECK);
-			setState(133);
+			setState(130);
 			match(LPAREN);
-			setState(134);
-			targetRef();
-			setState(135);
+			setState(131);
+			identifierValue();
+			setState(132);
 			match(RPAREN);
 			}
 		}
@@ -1063,7 +1062,7 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(137);
+			setState(134);
 			match(SKIP_KW);
 			}
 		}
@@ -1082,8 +1081,8 @@ public class BehaviorSpecParser extends Parser {
 	public static class DelayModificationContext extends ParserRuleContext {
 		public TerminalNode DELAY() { return getToken(BehaviorSpecParser.DELAY, 0); }
 		public TerminalNode LPAREN() { return getToken(BehaviorSpecParser.LPAREN, 0); }
-		public OperandValueContext operandValue() {
-			return getRuleContext(OperandValueContext.class,0);
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
 		}
 		public TerminalNode RPAREN() { return getToken(BehaviorSpecParser.RPAREN, 0); }
 		public DelayModificationContext(ParserRuleContext parent, int invokingState) {
@@ -1111,13 +1110,13 @@ public class BehaviorSpecParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(139);
+			setState(136);
 			match(DELAY);
-			setState(140);
+			setState(137);
 			match(LPAREN);
-			setState(141);
-			operandValue();
-			setState(142);
+			setState(138);
+			identifierValue();
+			setState(139);
 			match(RPAREN);
 			}
 		}
@@ -1134,8 +1133,8 @@ public class BehaviorSpecParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ModificationValueContext extends ParserRuleContext {
-		public OperandValueContext operandValue() {
-			return getRuleContext(OperandValueContext.class,0);
+		public IdentifierValueContext identifierValue() {
+			return getRuleContext(IdentifierValueContext.class,0);
 		}
 		public HexLiteralContext hexLiteral() {
 			return getRuleContext(HexLiteralContext.class,0);
@@ -1163,195 +1162,25 @@ public class BehaviorSpecParser extends Parser {
 		ModificationValueContext _localctx = new ModificationValueContext(_ctx, getState());
 		enterRule(_localctx, 32, RULE_modificationValue);
 		try {
-			setState(146);
+			setState(143);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case PARAM_REF:
 			case IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(144);
-				operandValue();
+				setState(141);
+				identifierValue();
 				}
 				break;
 			case HEX:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(145);
+				setState(142);
 				hexLiteral();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class TargetRefContext extends ParserRuleContext {
-		public ParameterRefContext parameterRef() {
-			return getRuleContext(ParameterRefContext.class,0);
-		}
-		public IdentifierValueContext identifierValue() {
-			return getRuleContext(IdentifierValueContext.class,0);
-		}
-		public TargetRefContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_targetRef; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterTargetRef(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitTargetRef(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitTargetRef(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final TargetRefContext targetRef() throws RecognitionException {
-		TargetRefContext _localctx = new TargetRefContext(_ctx, getState());
-		enterRule(_localctx, 34, RULE_targetRef);
-		try {
-			setState(150);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case PARAM_REF:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(148);
-				parameterRef();
-				}
-				break;
-			case IDENTIFIER:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(149);
-				identifierValue();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class OperandValueContext extends ParserRuleContext {
-		public ParameterRefContext parameterRef() {
-			return getRuleContext(ParameterRefContext.class,0);
-		}
-		public IdentifierValueContext identifierValue() {
-			return getRuleContext(IdentifierValueContext.class,0);
-		}
-		public OperandValueContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_operandValue; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterOperandValue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitOperandValue(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitOperandValue(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final OperandValueContext operandValue() throws RecognitionException {
-		OperandValueContext _localctx = new OperandValueContext(_ctx, getState());
-		enterRule(_localctx, 36, RULE_operandValue);
-		try {
-			setState(154);
-			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case PARAM_REF:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(152);
-				parameterRef();
-				}
-				break;
-			case IDENTIFIER:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(153);
-				identifierValue();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class ParameterRefContext extends ParserRuleContext {
-		public TerminalNode PARAM_REF() { return getToken(BehaviorSpecParser.PARAM_REF, 0); }
-		public ParameterRefContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_parameterRef; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).enterParameterRef(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof BehaviorSpecListener ) ((BehaviorSpecListener)listener).exitParameterRef(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BehaviorSpecVisitor ) return ((BehaviorSpecVisitor<? extends T>)visitor).visitParameterRef(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final ParameterRefContext parameterRef() throws RecognitionException {
-		ParameterRefContext _localctx = new ParameterRefContext(_ctx, getState());
-		enterRule(_localctx, 38, RULE_parameterRef);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(156);
-			match(PARAM_REF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1389,11 +1218,11 @@ public class BehaviorSpecParser extends Parser {
 
 	public final IdentifierValueContext identifierValue() throws RecognitionException {
 		IdentifierValueContext _localctx = new IdentifierValueContext(_ctx, getState());
-		enterRule(_localctx, 40, RULE_identifierValue);
+		enterRule(_localctx, 34, RULE_identifierValue);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(158);
+			setState(145);
 			match(IDENTIFIER);
 			}
 		}
@@ -1432,11 +1261,11 @@ public class BehaviorSpecParser extends Parser {
 
 	public final HexLiteralContext hexLiteral() throws RecognitionException {
 		HexLiteralContext _localctx = new HexLiteralContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_hexLiteral);
+		enterRule(_localctx, 36, RULE_hexLiteral);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(160);
+			setState(147);
 			match(HEX);
 			}
 		}
@@ -1467,95 +1296,86 @@ public class BehaviorSpecParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u001a\u00a3\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
+		"\u0004\u0001\u0019\u0096\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
 		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004"+
 		"\u0002\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007"+
 		"\u0002\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b"+
 		"\u0002\f\u0007\f\u0002\r\u0007\r\u0002\u000e\u0007\u000e\u0002\u000f\u0007"+
 		"\u000f\u0002\u0010\u0007\u0010\u0002\u0011\u0007\u0011\u0002\u0012\u0007"+
-		"\u0012\u0002\u0013\u0007\u0013\u0002\u0014\u0007\u0014\u0002\u0015\u0007"+
-		"\u0015\u0001\u0000\u0001\u0000\u0003\u0000/\b\u0000\u0001\u0000\u0001"+
+		"\u0012\u0001\u0000\u0001\u0000\u0003\u0000)\b\u0000\u0001\u0000\u0001"+
 		"\u0000\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001"+
 		"\u0001\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001"+
-		"\u0002\u0005\u0002?\b\u0002\n\u0002\f\u0002B\t\u0002\u0001\u0003\u0001"+
+		"\u0002\u0005\u00029\b\u0002\n\u0002\f\u0002<\t\u0002\u0001\u0003\u0001"+
 		"\u0003\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0001\u0004\u0001"+
-		"\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0003\u0005P\b"+
-		"\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0005\u0005U\b\u0005\n\u0005"+
-		"\f\u0005X\t\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001"+
+		"\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0003\u0005J\b"+
+		"\u0005\u0001\u0005\u0001\u0005\u0001\u0005\u0005\u0005O\b\u0005\n\u0005"+
+		"\f\u0005R\t\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001"+
+		"\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0003\u0006\\\b\u0006\u0001"+
 		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\b\u0001\b"+
-		"\u0001\b\u0004\bf\b\b\u000b\b\f\bg\u0001\t\u0001\t\u0001\t\u0001\t\u0001"+
-		"\t\u0001\t\u0003\tp\b\t\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0001"+
-		"\n\u0001\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b"+
-		"\u0001\u000b\u0001\u000b\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001"+
-		"\r\u0001\r\u0001\r\u0001\r\u0001\r\u0001\u000e\u0001\u000e\u0001\u000f"+
-		"\u0001\u000f\u0001\u000f\u0001\u000f\u0001\u000f\u0001\u0010\u0001\u0010"+
-		"\u0003\u0010\u0093\b\u0010\u0001\u0011\u0001\u0011\u0003\u0011\u0097\b"+
-		"\u0011\u0001\u0012\u0001\u0012\u0003\u0012\u009b\b\u0012\u0001\u0013\u0001"+
-		"\u0013\u0001\u0014\u0001\u0014\u0001\u0015\u0001\u0015\u0001\u0015\u0000"+
-		"\u0001\n\u0016\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016"+
-		"\u0018\u001a\u001c\u001e \"$&(*\u0000\u0001\u0001\u0000\r\u000f\u0099"+
-		"\u0000,\u0001\u0000\u0000\u0000\u00025\u0001\u0000\u0000\u0000\u00049"+
-		"\u0001\u0000\u0000\u0000\u0006C\u0001\u0000\u0000\u0000\bG\u0001\u0000"+
-		"\u0000\u0000\nO\u0001\u0000\u0000\u0000\fY\u0001\u0000\u0000\u0000\u000e"+
-		"]\u0001\u0000\u0000\u0000\u0010b\u0001\u0000\u0000\u0000\u0012o\u0001"+
-		"\u0000\u0000\u0000\u0014q\u0001\u0000\u0000\u0000\u0016x\u0001\u0000\u0000"+
-		"\u0000\u0018\u007f\u0001\u0000\u0000\u0000\u001a\u0084\u0001\u0000\u0000"+
-		"\u0000\u001c\u0089\u0001\u0000\u0000\u0000\u001e\u008b\u0001\u0000\u0000"+
-		"\u0000 \u0092\u0001\u0000\u0000\u0000\"\u0096\u0001\u0000\u0000\u0000"+
-		"$\u009a\u0001\u0000\u0000\u0000&\u009c\u0001\u0000\u0000\u0000(\u009e"+
-		"\u0001\u0000\u0000\u0000*\u00a0\u0001\u0000\u0000\u0000,.\u0003\u0002"+
-		"\u0001\u0000-/\u0003\u0004\u0002\u0000.-\u0001\u0000\u0000\u0000./\u0001"+
-		"\u0000\u0000\u0000/0\u0001\u0000\u0000\u000001\u0003\u0006\u0003\u0000"+
-		"12\u0003\b\u0004\u000023\u0003\u0010\b\u000034\u0005\u0000\u0000\u0001"+
-		"4\u0001\u0001\u0000\u0000\u000056\u0005\u0001\u0000\u000067\u0005\u0012"+
-		"\u0000\u000078\u0003(\u0014\u00008\u0003\u0001\u0000\u0000\u00009:\u0005"+
-		"\u0002\u0000\u0000:;\u0005\u0012\u0000\u0000;@\u0003&\u0013\u0000<=\u0005"+
-		"\u0013\u0000\u0000=?\u0003&\u0013\u0000><\u0001\u0000\u0000\u0000?B\u0001"+
-		"\u0000\u0000\u0000@>\u0001\u0000\u0000\u0000@A\u0001\u0000\u0000\u0000"+
-		"A\u0005\u0001\u0000\u0000\u0000B@\u0001\u0000\u0000\u0000CD\u0005\u0003"+
-		"\u0000\u0000DE\u0005\u0012\u0000\u0000EF\u0003(\u0014\u0000F\u0007\u0001"+
-		"\u0000\u0000\u0000GH\u0005\u0004\u0000\u0000HI\u0005\u0012\u0000\u0000"+
-		"IJ\u0003\n\u0005\u0000J\t\u0001\u0000\u0000\u0000KL\u0006\u0005\uffff"+
-		"\uffff\u0000LP\u0003\f\u0006\u0000MN\u0005\u0010\u0000\u0000NP\u0003\n"+
-		"\u0005\u0002OK\u0001\u0000\u0000\u0000OM\u0001\u0000\u0000\u0000PV\u0001"+
-		"\u0000\u0000\u0000QR\n\u0001\u0000\u0000RS\u0007\u0000\u0000\u0000SU\u0003"+
-		"\n\u0005\u0002TQ\u0001\u0000\u0000\u0000UX\u0001\u0000\u0000\u0000VT\u0001"+
-		"\u0000\u0000\u0000VW\u0001\u0000\u0000\u0000W\u000b\u0001\u0000\u0000"+
-		"\u0000XV\u0001\u0000\u0000\u0000YZ\u0003\u000e\u0007\u0000Z[\u0005\u0011"+
-		"\u0000\u0000[\\\u0003$\u0012\u0000\\\r\u0001\u0000\u0000\u0000]^\u0005"+
-		"\f\u0000\u0000^_\u0005\u0014\u0000\u0000_`\u0003(\u0014\u0000`a\u0005"+
-		"\u0015\u0000\u0000a\u000f\u0001\u0000\u0000\u0000bc\u0005\u0005\u0000"+
-		"\u0000ce\u0005\u0012\u0000\u0000df\u0003\u0012\t\u0000ed\u0001\u0000\u0000"+
-		"\u0000fg\u0001\u0000\u0000\u0000ge\u0001\u0000\u0000\u0000gh\u0001\u0000"+
-		"\u0000\u0000h\u0011\u0001\u0000\u0000\u0000ip\u0003\u0014\n\u0000jp\u0003"+
-		"\u0016\u000b\u0000kp\u0003\u0018\f\u0000lp\u0003\u001a\r\u0000mp\u0003"+
-		"\u001c\u000e\u0000np\u0003\u001e\u000f\u0000oi\u0001\u0000\u0000\u0000"+
-		"oj\u0001\u0000\u0000\u0000ok\u0001\u0000\u0000\u0000ol\u0001\u0000\u0000"+
-		"\u0000om\u0001\u0000\u0000\u0000on\u0001\u0000\u0000\u0000p\u0013\u0001"+
-		"\u0000\u0000\u0000qr\u0005\u0006\u0000\u0000rs\u0005\u0014\u0000\u0000"+
-		"st\u0003\"\u0011\u0000tu\u0005\u0013\u0000\u0000uv\u0003 \u0010\u0000"+
-		"vw\u0005\u0015\u0000\u0000w\u0015\u0001\u0000\u0000\u0000xy\u0005\u0007"+
-		"\u0000\u0000yz\u0005\u0014\u0000\u0000z{\u0003\"\u0011\u0000{|\u0005\u0013"+
-		"\u0000\u0000|}\u0003 \u0010\u0000}~\u0005\u0015\u0000\u0000~\u0017\u0001"+
-		"\u0000\u0000\u0000\u007f\u0080\u0005\b\u0000\u0000\u0080\u0081\u0005\u0014"+
-		"\u0000\u0000\u0081\u0082\u0003\"\u0011\u0000\u0082\u0083\u0005\u0015\u0000"+
-		"\u0000\u0083\u0019\u0001\u0000\u0000\u0000\u0084\u0085\u0005\t\u0000\u0000"+
-		"\u0085\u0086\u0005\u0014\u0000\u0000\u0086\u0087\u0003\"\u0011\u0000\u0087"+
-		"\u0088\u0005\u0015\u0000\u0000\u0088\u001b\u0001\u0000\u0000\u0000\u0089"+
-		"\u008a\u0005\n\u0000\u0000\u008a\u001d\u0001\u0000\u0000\u0000\u008b\u008c"+
-		"\u0005\u000b\u0000\u0000\u008c\u008d\u0005\u0014\u0000\u0000\u008d\u008e"+
-		"\u0003$\u0012\u0000\u008e\u008f\u0005\u0015\u0000\u0000\u008f\u001f\u0001"+
-		"\u0000\u0000\u0000\u0090\u0093\u0003$\u0012\u0000\u0091\u0093\u0003*\u0015"+
-		"\u0000\u0092\u0090\u0001\u0000\u0000\u0000\u0092\u0091\u0001\u0000\u0000"+
-		"\u0000\u0093!\u0001\u0000\u0000\u0000\u0094\u0097\u0003&\u0013\u0000\u0095"+
-		"\u0097\u0003(\u0014\u0000\u0096\u0094\u0001\u0000\u0000\u0000\u0096\u0095"+
-		"\u0001\u0000\u0000\u0000\u0097#\u0001\u0000\u0000\u0000\u0098\u009b\u0003"+
-		"&\u0013\u0000\u0099\u009b\u0003(\u0014\u0000\u009a\u0098\u0001\u0000\u0000"+
-		"\u0000\u009a\u0099\u0001\u0000\u0000\u0000\u009b%\u0001\u0000\u0000\u0000"+
-		"\u009c\u009d\u0005\u0016\u0000\u0000\u009d\'\u0001\u0000\u0000\u0000\u009e"+
-		"\u009f\u0005\u0018\u0000\u0000\u009f)\u0001\u0000\u0000\u0000\u00a0\u00a1"+
-		"\u0005\u0017\u0000\u0000\u00a1+\u0001\u0000\u0000\u0000\t.@OVgo\u0092"+
-		"\u0096\u009a";
+		"\u0001\b\u0001\b\u0001\b\u0001\t\u0001\t\u0001\t\u0004\tk\b\t\u000b\t"+
+		"\f\tl\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0003\nt\b\n\u0001\u000b"+
+		"\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b"+
+		"\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\r\u0001\r\u0001\r\u0001"+
+		"\r\u0001\r\u0001\u000e\u0001\u000e\u0001\u000f\u0001\u000f\u0001\u000f"+
+		"\u0001\u000f\u0001\u000f\u0001\u0010\u0001\u0010\u0003\u0010\u0090\b\u0010"+
+		"\u0001\u0011\u0001\u0011\u0001\u0012\u0001\u0012\u0001\u0012\u0000\u0001"+
+		"\n\u0013\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018"+
+		"\u001a\u001c\u001e \"$\u0000\u0001\u0001\u0000\r\u000f\u008d\u0000&\u0001"+
+		"\u0000\u0000\u0000\u0002/\u0001\u0000\u0000\u0000\u00043\u0001\u0000\u0000"+
+		"\u0000\u0006=\u0001\u0000\u0000\u0000\bA\u0001\u0000\u0000\u0000\nI\u0001"+
+		"\u0000\u0000\u0000\f[\u0001\u0000\u0000\u0000\u000e]\u0001\u0000\u0000"+
+		"\u0000\u0010b\u0001\u0000\u0000\u0000\u0012g\u0001\u0000\u0000\u0000\u0014"+
+		"s\u0001\u0000\u0000\u0000\u0016u\u0001\u0000\u0000\u0000\u0018|\u0001"+
+		"\u0000\u0000\u0000\u001a\u0081\u0001\u0000\u0000\u0000\u001c\u0086\u0001"+
+		"\u0000\u0000\u0000\u001e\u0088\u0001\u0000\u0000\u0000 \u008f\u0001\u0000"+
+		"\u0000\u0000\"\u0091\u0001\u0000\u0000\u0000$\u0093\u0001\u0000\u0000"+
+		"\u0000&(\u0003\u0002\u0001\u0000\')\u0003\u0004\u0002\u0000(\'\u0001\u0000"+
+		"\u0000\u0000()\u0001\u0000\u0000\u0000)*\u0001\u0000\u0000\u0000*+\u0003"+
+		"\u0006\u0003\u0000+,\u0003\b\u0004\u0000,-\u0003\u0012\t\u0000-.\u0005"+
+		"\u0000\u0000\u0001.\u0001\u0001\u0000\u0000\u0000/0\u0005\u0001\u0000"+
+		"\u000001\u0005\u0012\u0000\u000012\u0003\"\u0011\u00002\u0003\u0001\u0000"+
+		"\u0000\u000034\u0005\u0002\u0000\u000045\u0005\u0012\u0000\u00005:\u0003"+
+		"\"\u0011\u000067\u0005\u0013\u0000\u000079\u0003\"\u0011\u000086\u0001"+
+		"\u0000\u0000\u00009<\u0001\u0000\u0000\u0000:8\u0001\u0000\u0000\u0000"+
+		":;\u0001\u0000\u0000\u0000;\u0005\u0001\u0000\u0000\u0000<:\u0001\u0000"+
+		"\u0000\u0000=>\u0005\u0003\u0000\u0000>?\u0005\u0012\u0000\u0000?@\u0003"+
+		"\"\u0011\u0000@\u0007\u0001\u0000\u0000\u0000AB\u0005\u0004\u0000\u0000"+
+		"BC\u0005\u0012\u0000\u0000CD\u0003\n\u0005\u0000D\t\u0001\u0000\u0000"+
+		"\u0000EF\u0006\u0005\uffff\uffff\u0000FJ\u0003\f\u0006\u0000GH\u0005\u0010"+
+		"\u0000\u0000HJ\u0003\n\u0005\u0002IE\u0001\u0000\u0000\u0000IG\u0001\u0000"+
+		"\u0000\u0000JP\u0001\u0000\u0000\u0000KL\n\u0001\u0000\u0000LM\u0007\u0000"+
+		"\u0000\u0000MO\u0003\n\u0005\u0002NK\u0001\u0000\u0000\u0000OR\u0001\u0000"+
+		"\u0000\u0000PN\u0001\u0000\u0000\u0000PQ\u0001\u0000\u0000\u0000Q\u000b"+
+		"\u0001\u0000\u0000\u0000RP\u0001\u0000\u0000\u0000ST\u0003\u000e\u0007"+
+		"\u0000TU\u0005\u0011\u0000\u0000UV\u0003\u0010\b\u0000V\\\u0001\u0000"+
+		"\u0000\u0000WX\u0003\u0010\b\u0000XY\u0005\u0011\u0000\u0000YZ\u0003\u000e"+
+		"\u0007\u0000Z\\\u0001\u0000\u0000\u0000[S\u0001\u0000\u0000\u0000[W\u0001"+
+		"\u0000\u0000\u0000\\\r\u0001\u0000\u0000\u0000]^\u0005\f\u0000\u0000^"+
+		"_\u0005\u0014\u0000\u0000_`\u0003\"\u0011\u0000`a\u0005\u0015\u0000\u0000"+
+		"a\u000f\u0001\u0000\u0000\u0000bc\u0005\u000b\u0000\u0000cd\u0005\u0014"+
+		"\u0000\u0000de\u0003\"\u0011\u0000ef\u0005\u0015\u0000\u0000f\u0011\u0001"+
+		"\u0000\u0000\u0000gh\u0005\u0005\u0000\u0000hj\u0005\u0012\u0000\u0000"+
+		"ik\u0003\u0014\n\u0000ji\u0001\u0000\u0000\u0000kl\u0001\u0000\u0000\u0000"+
+		"lj\u0001\u0000\u0000\u0000lm\u0001\u0000\u0000\u0000m\u0013\u0001\u0000"+
+		"\u0000\u0000nt\u0003\u0016\u000b\u0000ot\u0003\u0018\f\u0000pt\u0003\u001a"+
+		"\r\u0000qt\u0003\u001c\u000e\u0000rt\u0003\u001e\u000f\u0000sn\u0001\u0000"+
+		"\u0000\u0000so\u0001\u0000\u0000\u0000sp\u0001\u0000\u0000\u0000sq\u0001"+
+		"\u0000\u0000\u0000sr\u0001\u0000\u0000\u0000t\u0015\u0001\u0000\u0000"+
+		"\u0000uv\u0005\u0006\u0000\u0000vw\u0005\u0014\u0000\u0000wx\u0003\"\u0011"+
+		"\u0000xy\u0005\u0013\u0000\u0000yz\u0003 \u0010\u0000z{\u0005\u0015\u0000"+
+		"\u0000{\u0017\u0001\u0000\u0000\u0000|}\u0005\u0007\u0000\u0000}~\u0005"+
+		"\u0014\u0000\u0000~\u007f\u0003\"\u0011\u0000\u007f\u0080\u0005\u0015"+
+		"\u0000\u0000\u0080\u0019\u0001\u0000\u0000\u0000\u0081\u0082\u0005\b\u0000"+
+		"\u0000\u0082\u0083\u0005\u0014\u0000\u0000\u0083\u0084\u0003\"\u0011\u0000"+
+		"\u0084\u0085\u0005\u0015\u0000\u0000\u0085\u001b\u0001\u0000\u0000\u0000"+
+		"\u0086\u0087\u0005\t\u0000\u0000\u0087\u001d\u0001\u0000\u0000\u0000\u0088"+
+		"\u0089\u0005\n\u0000\u0000\u0089\u008a\u0005\u0014\u0000\u0000\u008a\u008b"+
+		"\u0003\"\u0011\u0000\u008b\u008c\u0005\u0015\u0000\u0000\u008c\u001f\u0001"+
+		"\u0000\u0000\u0000\u008d\u0090\u0003\"\u0011\u0000\u008e\u0090\u0003$"+
+		"\u0012\u0000\u008f\u008d\u0001\u0000\u0000\u0000\u008f\u008e\u0001\u0000"+
+		"\u0000\u0000\u0090!\u0001\u0000\u0000\u0000\u0091\u0092\u0005\u0017\u0000"+
+		"\u0000\u0092#\u0001\u0000\u0000\u0000\u0093\u0094\u0005\u0016\u0000\u0000"+
+		"\u0094%\u0001\u0000\u0000\u0000\b(:IP[ls\u008f";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

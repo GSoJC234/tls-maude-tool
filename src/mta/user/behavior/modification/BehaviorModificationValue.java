@@ -1,8 +1,8 @@
-package mta.user.behavior.modification.item.value;
+package mta.user.behavior.modification;
 
 import java.util.Objects;
 
-public class BehaviorModificationValue implements BehaviorModificationOperand {
+public class BehaviorModificationValue {
 
     private String value;
 
