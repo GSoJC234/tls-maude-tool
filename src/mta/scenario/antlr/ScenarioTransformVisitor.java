@@ -356,12 +356,12 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             case "{anon,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA384.name();
             case "{anon,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_SHA512.name();
             case "{anon,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.ANON_MD5.name();
-            case "{rsa-pkcs,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA1.name();
-            case "{rsa-pkcs,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA224.name();
-            case "{rsa-pkcs,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA256.name();
-            case "{rsa-pkcs,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA384.name();
-            case "{rsa-pkcs,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA512.name();
-            case "{rsa-pkcs,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_MD5.name();
+            case "{rsa,sha}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA1.name();
+            case "{rsa,sha224}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA224.name();
+            case "{rsa,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA256.name();
+            case "{rsa,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA384.name();
+            case "{rsa,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_SHA512.name();
+            case "{rsa,md5}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_MD5.name();
             case "{rsa-pss-rsae,sha256}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA256.name();
             case "{rsa-pss-rsae,sha384}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA384.name();
             case "{rsa-pss-rsae,sha512}": return SignatureAlgorithm.title() + "." + SignatureAlgorithm.RSA_PSS_RSAE_SHA512.name();

@@ -217,7 +217,7 @@ null
 'no-compression'
 'zlib-compression'
 'anon'
-'rsa-pkcs'
+'rsa'
 'rsa-pss-rsae'
 'rsa-pss-pss'
 'ecdsa'

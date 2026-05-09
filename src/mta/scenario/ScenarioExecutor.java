@@ -1,5 +1,8 @@
 package mta.scenario;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.tools.*;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -12,6 +15,7 @@ import java.util.*;
 
 public class ScenarioExecutor {
 
+    private static final Logger LOGGER = LogManager.getLogger(ScenarioExecutor.class);
 
     private final String scenario;
     private final String tlsAttackerConfigPath;
@@ -38,7 +42,7 @@ public class ScenarioExecutor {
                                "  }\n" +
                                "}\n";
 
-        System.out.println("classTemplate = " + classTemplate);
+        LOGGER.debug("classTemplate = {}", classTemplate);
 
         // JavaCompiler
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -61,6 +65,10 @@ public class ScenarioExecutor {
 
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
             System.err.println(diagnostic.getMessage(null));
+        }
+
+        if (!success) {
+            throw new RuntimeException("ScenarioTest compilation failed");
         }
 
         ClassLoader classLoader = fileManager.getClassLoader(null);

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 public class ScenarioRunner {
 
@@ -26,6 +27,7 @@ public class ScenarioRunner {
     private Path outputDir;
     private Path tlsAttackerConfigPath;
     private String scenario;
+    private List<Node> nodes;
 
     public ScenarioRunner(String sceanrio, Path testerConfigPath, Path outputDir) {
         this.scenario = sceanrio;
@@ -46,6 +48,22 @@ public class ScenarioRunner {
         this.outputDir = outputDir;
     }
 
+    public ScenarioRunner(
+            Path scenarioPath,
+            String mode,
+            String ip,
+            int port,
+            String caCertificatePath,
+            String certificatePath,
+            String privateKeyPath,
+            Path tlsAttackerConfigPath,
+            Path outputDir) {
+        this.scenario = readFile(scenarioPath);
+        this.nodes = List.of(buildNode(mode, ip, port, caCertificatePath, certificatePath, privateKeyPath));
+        this.tlsAttackerConfigPath = tlsAttackerConfigPath;
+        this.outputDir = outputDir;
+    }
+
 
     private String readFile(Path scenarioPath) {
         try {
@@ -61,10 +79,33 @@ public class ScenarioRunner {
         System.setProperty("logFilePath", outputDir.toString());
         ctx.reconfigure();
 
-        Config config = getConfig();
-        String transformedScenario = scenarioTransform(scenario, config.getNodes());
+        List<Node> nodeList = nodes != null ? nodes : getConfig().getNodes();
+        String transformedScenario = scenarioTransform(scenario, nodeList);
         ScenarioExecutor executor = new ScenarioExecutor(transformedScenario, tlsAttackerConfigPath.toString());
         executor.execute();
+    }
+
+    private Node buildNode(
+            String mode,
+            String ip,
+            int port,
+            String caCertificatePath,
+            String certificatePath,
+            String privateKeyPath) {
+        String normalizedMode = mode.trim().toLowerCase(Locale.ROOT);
+        if (!normalizedMode.equals("client") && !normalizedMode.equals("server")) {
+            throw new IllegalArgumentException("mode must be client or server: " + mode);
+        }
+
+        Node node = new Node();
+        node.setMode(normalizedMode);
+        node.setId(normalizedMode.equals("server") ? "N2 . SI" : "N1 . CI");
+        node.setIp(ip);
+        node.setPort(port);
+        node.setCaCertificatePath(caCertificatePath);
+        node.setCertificatePath(certificatePath);
+        node.setPrivateKeyPath(privateKeyPath);
+        return node;
     }
 
     private Config getConfig() {

@@ -161,17 +161,16 @@ public class ScenarioParser extends Parser {
 			"'TLS-PSK-WITH-AES-256-CCM-8'", "'TLS-DHE-PSK-WITH-AES-128-CCM'", "'TLS-DHE-PSK-WITH-AES-256-CCM'", 
 			"'TLS-AES-128-CCM-SHA256'", "'TLS-AES-128-CCM-8-SHA256'", "'TLS-AES-128-GCM-SHA256'", 
 			"'TLS-AES-256-GCM-SHA384'", "'no-compression'", "'zlib-compression'", 
-			"'anon'", "'rsa-pkcs'", "'rsa-pss-rsae'", "'rsa-pss-pss'", "'ecdsa'", 
-			"'dsa'", "'sha'", "'sha224'", "'sha256'", "'sha384'", "'sha512'", "'md5'", 
-			"'secp160k1'", "'secp160r1'", "'secp160r2'", "'secp192k1'", "'secp192r1'", 
-			"'secp224r1'", "'secp224k1'", "'secp256r1'", "'secp256k1'", "'secp384r1'", 
-			"'secp521r1'", "'ffdhe2048'", "'ffdhe3072'", "'ffdhe4096'", "'ffdhe6144'", 
-			"'ffdhe8192'", "'psk-ke'", "'psk-dhe-ke'", "'valid'", "'smaller'", "'larger'", 
-			"'maxSize'", "'minSize'", "'namedcurve'", "'rsa-sign'", "'dss-sign'", 
-			"'rsa-fixed-dh'", "'dss-fixed-dh'", "'ecdsa-sign'", "'rsa-fixed-ecdh'", 
-			"'ecdsa-fixed-ecdh'", "'prvkey-path'", "'cert-path'", "'ca-names'", "'long'", 
-			"'CS'", "'PV'", "'SA'", "'NG'", null, null, "';'", "'('", "')'", "'{'", 
-			"'}'", "','"
+			"'anon'", "'rsa'", "'rsa-pss-rsae'", "'rsa-pss-pss'", "'ecdsa'", "'dsa'", 
+			"'sha'", "'sha224'", "'sha256'", "'sha384'", "'sha512'", "'md5'", "'secp160k1'", 
+			"'secp160r1'", "'secp160r2'", "'secp192k1'", "'secp192r1'", "'secp224r1'", 
+			"'secp224k1'", "'secp256r1'", "'secp256k1'", "'secp384r1'", "'secp521r1'", 
+			"'ffdhe2048'", "'ffdhe3072'", "'ffdhe4096'", "'ffdhe6144'", "'ffdhe8192'", 
+			"'psk-ke'", "'psk-dhe-ke'", "'valid'", "'smaller'", "'larger'", "'maxSize'", 
+			"'minSize'", "'namedcurve'", "'rsa-sign'", "'dss-sign'", "'rsa-fixed-dh'", 
+			"'dss-fixed-dh'", "'ecdsa-sign'", "'rsa-fixed-ecdh'", "'ecdsa-fixed-ecdh'", 
+			"'prvkey-path'", "'cert-path'", "'ca-names'", "'long'", "'CS'", "'PV'", 
+			"'SA'", "'NG'", null, null, "';'", "'('", "')'", "'{'", "'}'", "','"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();

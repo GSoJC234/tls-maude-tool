@@ -74,7 +74,7 @@ public class MaudeRunner {
                     }
                     default -> {
                         if (out != null) {
-                            out.write(line);
+                            out.write(normalizeScenarioLine(line));
                             out.newLine();
                         }
                     }
@@ -84,5 +84,13 @@ public class MaudeRunner {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String normalizeScenarioLine(String line) {
+        String trimmed = line.trim();
+        if (trimmed.startsWith("close(") && !trimmed.endsWith(";")) {
+            return line + " ;";
+        }
+        return line;
     }
 }

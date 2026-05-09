@@ -133,7 +133,7 @@ signature_and_hash_algorithm_constant:
     LBRACE signature_constant COMMA hash_constant RBRACE;
 
 signature_constant:
-    'anon' | 'rsa-pkcs' | 'rsa-pss-rsae' | 'rsa-pss-pss' | 'ecdsa' | 'dsa'
+    'anon' | 'rsa' | 'rsa-pss-rsae' | 'rsa-pss-pss' | 'ecdsa' | 'dsa'
     ;
 
 hash_constant:

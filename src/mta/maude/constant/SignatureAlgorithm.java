@@ -37,7 +37,7 @@ public enum SignatureAlgorithm {
     ANON_MD5;
 
     public static String title(){
-        return "SignatureAndHashAlgorithm";
+        return "SignatureAlgorithm";
     }
 
     public de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm transform(){

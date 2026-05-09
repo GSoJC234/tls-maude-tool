@@ -49,21 +49,41 @@ public class Main {
     }
 
     private static void runScenario(String[] args) {
-        if (args.length < 5) {
-            System.err.println("Usage: --run [scenario path] [tester configuration path] [tls-attacker configuration path] [output file path]");
+        if (args.length < 10) {
+            System.err.println("Usage: --run [scenario path] [mode] [ip] [port] [ca certificate path] [certificate path] [private key path] [tls-attacker configuration path] [output file path]");
+            System.exit(1);
         }
         String scenarioPath = args[1];
-        String testerConfigPath = args[2];
-        String tlsAttackerConfigPath = args[3];
-        String outputPath = args[4];
+        String testerMode = args[2];
+        String testerIp = args[3];
+        int testerPort = Integer.parseInt(args[4]);
+        String caCertificatePath = args[5];
+        String certificatePath = args[6];
+        String privateKeyPath = args[7];
+        String tlsAttackerConfigPath = args[8];
+        String outputPath = args[9];
 
         System.out.println("   Run formal mta.scenario");
         System.out.println("   Scenario path : " + scenarioPath);
-        System.out.println("   Configuration path : " + testerConfigPath);
+        System.out.println("   Mode : " + testerMode);
+        System.out.println("   IP : " + testerIp);
+        System.out.println("   Port : " + testerPort);
+        System.out.println("   CA certificate path : " + caCertificatePath);
+        System.out.println("   Certificate path : " + certificatePath);
+        System.out.println("   Private key path : " + privateKeyPath);
         System.out.println("   TLS attacker configuration path : " + tlsAttackerConfigPath);
         System.out.println("   Output path : " + outputPath);
 
-        ScenarioRunner scenarioRunner = new ScenarioRunner(Path.of(scenarioPath), Path.of(testerConfigPath), Path.of(tlsAttackerConfigPath), Path.of(outputPath));
+        ScenarioRunner scenarioRunner = new ScenarioRunner(
+                Path.of(scenarioPath),
+                testerMode,
+                testerIp,
+                testerPort,
+                caCertificatePath,
+                certificatePath,
+                privateKeyPath,
+                Path.of(tlsAttackerConfigPath),
+                Path.of(outputPath));
         scenarioRunner.execute();
     }
 
