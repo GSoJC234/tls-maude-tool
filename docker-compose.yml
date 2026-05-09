@@ -1,0 +1,62 @@
+services:
+  mta:
+    build:
+      context: .
+      dockerfile: DockerFile
+      args:
+        TLS_ATTACKER_REPO: ${TLS_ATTACKER_REPO:-https://github.com/GSoJC234/TLS-Attacker.git}
+        TLS_ATTACKER_REF: ${TLS_ATTACKER_REF:-main}
+    image: ${MTA_IMAGE:-maude-tls-attacker:mta}
+    platform: linux/amd64
+    entrypoint: ["/bin/bash", "/app/scripts/run-test.sh"]
+    volumes:
+      - ./scripts:/app/scripts:ro
+      - ./work:/work
+      - ./resources/cert:/certs:ro
+      - ./resources/config:/app/resources/config:ro
+    networks:
+      - tls-test
+
+  openssl-target:
+    profiles: ["targets"]
+    image: ${OPENSSL_TARGET_IMAGE:-tls-library-openssl:${OPENSSL_VERSION:-3.4.0}}
+    platform: linux/amd64
+    volumes:
+      - ./work:/work
+      - ./resources/cert:/certs:ro
+    networks:
+      - tls-test
+
+  gnutls-target:
+    profiles: ["targets"]
+    image: ${GNUTLS_TARGET_IMAGE:-tls-library-gnutls:${GNUTLS_VERSION:-3.8.11}}
+    platform: linux/amd64
+    volumes:
+      - ./work:/work
+      - ./resources/cert:/certs:ro
+    networks:
+      - tls-test
+
+  mbedtls-target:
+    profiles: ["targets"]
+    image: ${MBEDTLS_TARGET_IMAGE:-tls-library-mbedtls:${MBEDTLS_VERSION:-4.0.0}}
+    platform: linux/amd64
+    volumes:
+      - ./work:/work
+      - ./resources/cert:/certs:ro
+    networks:
+      - tls-test
+
+  wolfssl-target:
+    profiles: ["targets"]
+    image: ${WOLFSSL_TARGET_IMAGE:-tls-library-wolfssl:${WOLFSSL_VERSION:-5.8.4}}
+    platform: linux/amd64
+    volumes:
+      - ./work:/work
+      - ./resources/cert:/certs:ro
+    networks:
+      - tls-test
+
+networks:
+  tls-test:
+    name: maude-tls-test

@@ -1,0 +1,8 @@
+.git
+.idea
+.vscode
+out
+test
+*.iml
+.DS_Store
+work
