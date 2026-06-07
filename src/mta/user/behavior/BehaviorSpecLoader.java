@@ -28,6 +28,19 @@ public class BehaviorSpecLoader {
     }
 
     public BehaviorSpec loadBehaviorSpec(Path behaviorSpecPath) {
+        BehaviorDeviationSpecification specification = loadBehaviorDeviationSpecification(behaviorSpecPath);
+        if (specification.getBehaviorSpecs().isEmpty()) {
+            throw new IllegalArgumentException("Behavior deviation specification has no behavior specs: "
+                    + behaviorSpecPath);
+        }
+        return specification.getBehaviorSpecs().get(0);
+    }
+
+    public BehaviorDeviationSpecification loadBehaviorDeviationSpecification(String behaviorSpecPath) {
+        return loadBehaviorDeviationSpecification(Path.of(behaviorSpecPath));
+    }
+
+    public BehaviorDeviationSpecification loadBehaviorDeviationSpecification(Path behaviorSpecPath) {
         try {
             return parse(CharStreams.fromPath(behaviorSpecPath));
         } catch (IOException e) {
@@ -36,10 +49,19 @@ public class BehaviorSpecLoader {
     }
 
     public BehaviorSpec loadBehaviorSpecFromString(String behaviorSpecContent) {
+        BehaviorDeviationSpecification specification =
+                loadBehaviorDeviationSpecificationFromString(behaviorSpecContent);
+        if (specification.getBehaviorSpecs().isEmpty()) {
+            throw new IllegalArgumentException("Behavior deviation specification has no behavior specs");
+        }
+        return specification.getBehaviorSpecs().get(0);
+    }
+
+    public BehaviorDeviationSpecification loadBehaviorDeviationSpecificationFromString(String behaviorSpecContent) {
         return parse(CharStreams.fromString(behaviorSpecContent));
     }
 
-    private BehaviorSpec parse(CharStream input) {
+    private BehaviorDeviationSpecification parse(CharStream input) {
         BehaviorSpecLexer lexer = new BehaviorSpecLexer(input);
         lexer.removeErrorListeners();
         lexer.addErrorListener(THROWING_ERROR_LISTENER);
@@ -48,6 +70,7 @@ public class BehaviorSpecLoader {
         parser.removeErrorListeners();
         parser.addErrorListener(THROWING_ERROR_LISTENER);
 
-        return (BehaviorSpec) new BehaviorSpecBuildingVisitor().visit(parser.behaviorSpec());
+        return (BehaviorDeviationSpecification) new BehaviorSpecBuildingVisitor()
+                .visit(parser.behaviorDeviationSpecification());
     }
 }

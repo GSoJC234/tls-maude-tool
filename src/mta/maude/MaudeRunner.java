@@ -18,6 +18,35 @@ public class MaudeRunner {
         this.maudeExecutable = maudeExecutable;
     }
 
+    public void execute(Path modulePath, MaudeRunManifest manifest, Path outputLogPath) {
+        ProcessBuilder maudePb = new ProcessBuilder(maudeExecutable, modulePath.toAbsolutePath().toString());
+        maudePb.redirectOutput(outputLogPath.toFile());
+        maudePb.redirectErrorStream(true);
+
+        try {
+            Path parent = outputLogPath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Process maudeProcess = maudePb.start();
+            try (BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(maudeProcess.getOutputStream()))) {
+                writer.write(manifest.toReductionCommand());
+                writer.newLine();
+                writer.flush();
+            }
+            int exitCode = maudeProcess.waitFor();
+            System.out.println("Maude exit code: " + exitCode);
+
+            if (exitCode != 0) {
+                throw new RuntimeException("Maude exited with code " + exitCode
+                        + " (see " + outputLogPath + ")");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // echo "red runScenario(system, scen1) ." | mta.maude requirements/rfc8446.mta.maude > requirement1.log
     public void execute(Path modulePath, int requirementIdx, int requirementTLSVersion, Path outputDirPath) {
         ProcessBuilder maudePb = new ProcessBuilder(maudeExecutable, modulePath.toAbsolutePath().toString());

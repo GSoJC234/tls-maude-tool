@@ -18,315 +18,245 @@ public interface ScenarioSpecListener extends ParseTreeListener {
 	 */
 	void exitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioItem}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterScenarioItem(ScenarioSpecParser.ScenarioItemContext ctx);
+	void enterScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioItem}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitScenarioItem(ScenarioSpecParser.ScenarioItemContext ctx);
+	void exitScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#loadStatement}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioChoice}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoadStatement(ScenarioSpecParser.LoadStatementContext ctx);
+	void enterScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#loadStatement}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioChoice}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoadStatement(ScenarioSpecParser.LoadStatementContext ctx);
+	void exitScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#useStatement}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioSequence}.
 	 * @param ctx the parse tree
 	 */
-	void enterUseStatement(ScenarioSpecParser.UseStatementContext ctx);
+	void enterScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#useStatement}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioSequence}.
 	 * @param ctx the parse tree
 	 */
-	void exitUseStatement(ScenarioSpecParser.UseStatementContext ctx);
+	void exitScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#nodesSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioRepeat}.
 	 * @param ctx the parse tree
 	 */
-	void enterNodesSection(ScenarioSpecParser.NodesSectionContext ctx);
+	void enterScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#nodesSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioRepeat}.
 	 * @param ctx the parse tree
 	 */
-	void exitNodesSection(ScenarioSpecParser.NodesSectionContext ctx);
+	void exitScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#linkSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioPrimary}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinkSection(ScenarioSpecParser.LinkSectionContext ctx);
+	void enterScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#linkSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioPrimary}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinkSection(ScenarioSpecParser.LinkSectionContext ctx);
+	void exitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#linkDeclaration}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx);
+	void enterStepExpr(ScenarioSpecParser.StepExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#linkDeclaration}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stepExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx);
+	void exitStepExpr(ScenarioSpecParser.StepExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#linkedIdentifiers}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepOr}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx);
+	void enterStepOr(ScenarioSpecParser.StepOrContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#linkedIdentifiers}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stepOr}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx);
+	void exitStepOr(ScenarioSpecParser.StepOrContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#constantsSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepAnd}.
 	 * @param ctx the parse tree
 	 */
-	void enterConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx);
+	void enterStepAnd(ScenarioSpecParser.StepAndContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#constantsSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stepAnd}.
 	 * @param ctx the parse tree
 	 */
-	void exitConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx);
+	void exitStepAnd(ScenarioSpecParser.StepAndContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#constantDeclaration}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepNot}.
 	 * @param ctx the parse tree
 	 */
-	void enterConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx);
+	void enterStepNot(ScenarioSpecParser.StepNotContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#constantDeclaration}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stepNot}.
 	 * @param ctx the parse tree
 	 */
-	void exitConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx);
+	void exitStepNot(ScenarioSpecParser.StepNotContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#constantSet}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepAtom}.
 	 * @param ctx the parse tree
 	 */
-	void enterConstantSet(ScenarioSpecParser.ConstantSetContext ctx);
+	void enterStepAtom(ScenarioSpecParser.StepAtomContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#constantSet}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stepAtom}.
 	 * @param ctx the parse tree
 	 */
-	void exitConstantSet(ScenarioSpecParser.ConstantSetContext ctx);
+	void exitStepAtom(ScenarioSpecParser.StepAtomContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#constantValue}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateAtom}.
 	 * @param ctx the parse tree
 	 */
-	void enterConstantValue(ScenarioSpecParser.ConstantValueContext ctx);
+	void enterStateAtom(ScenarioSpecParser.StateAtomContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#constantValue}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateAtom}.
 	 * @param ctx the parse tree
 	 */
-	void exitConstantValue(ScenarioSpecParser.ConstantValueContext ctx);
+	void exitStateAtom(ScenarioSpecParser.StateAtomContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#statePropositionsSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateObject}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx);
+	void enterStateObject(ScenarioSpecParser.StateObjectContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#statePropositionsSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateObject}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx);
+	void exitStateObject(ScenarioSpecParser.StateObjectContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionAtom}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	void enterActionAtom(ScenarioSpecParser.ActionAtomContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionAtom}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	void exitActionAtom(ScenarioSpecParser.ActionAtomContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#statePropositionExpr}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx);
+	void enterTerm(ScenarioSpecParser.TermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#statePropositionExpr}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx);
+	void exitTerm(ScenarioSpecParser.TermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#statePropositionTerm}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx);
+	void enterDottedTerm(ScenarioSpecParser.DottedTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#statePropositionTerm}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx);
+	void exitDottedTerm(ScenarioSpecParser.DottedTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionPropositionsSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx);
+	void enterPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionPropositionsSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx);
+	void exitPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#functionTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	void enterFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#functionTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	void exitFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionInvocation}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx);
+	void enterIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionInvocation}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx);
+	void exitIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionArgument}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#listTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionArgument(ScenarioSpecParser.ActionArgumentContext ctx);
+	void enterListTerm(ScenarioSpecParser.ListTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionArgument}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#listTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx);
+	void exitListTerm(ScenarioSpecParser.ListTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#oneOfExpr}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#braceTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx);
+	void enterBraceTerm(ScenarioSpecParser.BraceTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#oneOfExpr}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#braceTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx);
+	void exitBraceTerm(ScenarioSpecParser.BraceTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionValue}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#termList}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionValue(ScenarioSpecParser.ActionValueContext ctx);
+	void enterTermList(ScenarioSpecParser.TermListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionValue}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#termList}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionValue(ScenarioSpecParser.ActionValueContext ctx);
+	void exitTermList(ScenarioSpecParser.TermListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioPropertiesSection}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 */
-	void enterScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx);
+	void enterRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertiesSection}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 */
-	void exitScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx);
+	void exitRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#identifier}.
 	 * @param ctx the parse tree
 	 */
-	void enterScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
+	void enterIdentifier(ScenarioSpecParser.IdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#identifier}.
 	 * @param ctx the parse tree
 	 */
-	void exitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
+	void exitIdentifier(ScenarioSpecParser.IdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#linkQualifier}.
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void enterLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx);
+	void enterNumberLiteral(ScenarioSpecParser.NumberLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#linkQualifier}.
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void exitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#nodeBinding}.
-	 * @param ctx the parse tree
-	 */
-	void enterNodeBinding(ScenarioSpecParser.NodeBindingContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#nodeBinding}.
-	 * @param ctx the parse tree
-	 */
-	void exitNodeBinding(ScenarioSpecParser.NodeBindingContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#propertyRelation}.
-	 * @param ctx the parse tree
-	 */
-	void enterPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#propertyRelation}.
-	 * @param ctx the parse tree
-	 */
-	void exitPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#propertyReferenceValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterPropertyReferenceValue(ScenarioSpecParser.PropertyReferenceValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#propertyReferenceValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitPropertyReferenceValue(ScenarioSpecParser.PropertyReferenceValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#conditionExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterConditionExpr(ScenarioSpecParser.ConditionExprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#conditionExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitConditionExpr(ScenarioSpecParser.ConditionExprContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#conditionPredicate}.
-	 * @param ctx the parse tree
-	 */
-	void enterConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#conditionPredicate}.
-	 * @param ctx the parse tree
-	 */
-	void exitConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#valueAccessor}.
-	 * @param ctx the parse tree
-	 */
-	void enterValueAccessor(ScenarioSpecParser.ValueAccessorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#valueAccessor}.
-	 * @param ctx the parse tree
-	 */
-	void exitValueAccessor(ScenarioSpecParser.ValueAccessorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#conditionOperand}.
-	 * @param ctx the parse tree
-	 */
-	void enterConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#conditionOperand}.
-	 * @param ctx the parse tree
-	 */
-	void exitConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx);
+	void exitNumberLiteral(ScenarioSpecParser.NumberLiteralContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ScenarioSpecParser#stringLiteral}.
 	 * @param ctx the parse tree
@@ -337,34 +267,4 @@ public interface ScenarioSpecListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStringLiteral(ScenarioSpecParser.StringLiteralContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#constantRef}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstantRef(ScenarioSpecParser.ConstantRefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#constantRef}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstantRef(ScenarioSpecParser.ConstantRefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#identifierValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#identifierValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ScenarioSpecParser#hexLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void enterHexLiteral(ScenarioSpecParser.HexLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioSpecParser#hexLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void exitHexLiteral(ScenarioSpecParser.HexLiteralContext ctx);
 }

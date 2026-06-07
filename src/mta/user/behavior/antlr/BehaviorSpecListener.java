@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -7,6 +7,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  * {@link BehaviorSpecParser}.
  */
 public interface BehaviorSpecListener extends ParseTreeListener {
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#behaviorDeviationSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void enterBehaviorDeviationSpecification(BehaviorSpecParser.BehaviorDeviationSpecificationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#behaviorDeviationSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void exitBehaviorDeviationSpecification(BehaviorSpecParser.BehaviorDeviationSpecificationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#behaviorSpec}.
 	 * @param ctx the parse tree
@@ -38,16 +48,6 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitParametersSection(BehaviorSpecParser.ParametersSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#eventTypeSection}.
-	 * @param ctx the parse tree
-	 */
-	void enterEventTypeSection(BehaviorSpecParser.EventTypeSectionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#eventTypeSection}.
-	 * @param ctx the parse tree
-	 */
-	void exitEventTypeSection(BehaviorSpecParser.EventTypeSectionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#conditionsSection}.
 	 * @param ctx the parse tree
 	 */
@@ -58,143 +58,253 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitConditionsSection(BehaviorSpecParser.ConditionsSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#conditionExpr}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationsSection}.
 	 * @param ctx the parse tree
 	 */
-	void enterConditionExpr(BehaviorSpecParser.ConditionExprContext ctx);
+	void enterModificationsSection(BehaviorSpecParser.ModificationsSectionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#conditionExpr}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationsSection}.
 	 * @param ctx the parse tree
 	 */
-	void exitConditionExpr(BehaviorSpecParser.ConditionExprContext ctx);
+	void exitModificationsSection(BehaviorSpecParser.ModificationsSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#conditionPredicate}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterInstancesSection}.
 	 * @param ctx the parse tree
 	 */
-	void enterConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx);
+	void enterParameterInstancesSection(BehaviorSpecParser.ParameterInstancesSectionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#conditionPredicate}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterInstancesSection}.
 	 * @param ctx the parse tree
 	 */
-	void exitConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx);
+	void exitParameterInstancesSection(BehaviorSpecParser.ParameterInstancesSectionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#fieldValueAccessor}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterInstance}.
 	 * @param ctx the parse tree
 	 */
-	void enterFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx);
+	void enterParameterInstance(BehaviorSpecParser.ParameterInstanceContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#fieldValueAccessor}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterInstance}.
 	 * @param ctx the parse tree
 	 */
-	void exitFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx);
+	void exitParameterInstance(BehaviorSpecParser.ParameterInstanceContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#valueAccessor}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterBinding}.
 	 * @param ctx the parse tree
 	 */
-	void enterValueAccessor(BehaviorSpecParser.ValueAccessorContext ctx);
+	void enterParameterBinding(BehaviorSpecParser.ParameterBindingContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#valueAccessor}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterBinding}.
 	 * @param ctx the parse tree
 	 */
-	void exitValueAccessor(BehaviorSpecParser.ValueAccessorContext ctx);
+	void exitParameterBinding(BehaviorSpecParser.ParameterBindingContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationSection}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#actionExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterModificationSection(BehaviorSpecParser.ModificationSectionContext ctx);
+	void enterActionExpr(BehaviorSpecParser.ActionExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationSection}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#actionExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitModificationSection(BehaviorSpecParser.ModificationSectionContext ctx);
+	void exitActionExpr(BehaviorSpecParser.ActionExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationStatement}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#actionOr}.
 	 * @param ctx the parse tree
 	 */
-	void enterModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx);
+	void enterActionOr(BehaviorSpecParser.ActionOrContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationStatement}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#actionOr}.
 	 * @param ctx the parse tree
 	 */
-	void exitModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx);
+	void exitActionOr(BehaviorSpecParser.ActionOrContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#setModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#actionAnd}.
 	 * @param ctx the parse tree
 	 */
-	void enterSetModification(BehaviorSpecParser.SetModificationContext ctx);
+	void enterActionAnd(BehaviorSpecParser.ActionAndContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#setModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#actionAnd}.
 	 * @param ctx the parse tree
 	 */
-	void exitSetModification(BehaviorSpecParser.SetModificationContext ctx);
+	void exitActionAnd(BehaviorSpecParser.ActionAndContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#deleteModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#actionNot}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx);
+	void enterActionNot(BehaviorSpecParser.ActionNotContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#deleteModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#actionNot}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx);
+	void exitActionNot(BehaviorSpecParser.ActionNotContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#noCheckModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#actionAtom}.
 	 * @param ctx the parse tree
 	 */
-	void enterNoCheckModification(BehaviorSpecParser.NoCheckModificationContext ctx);
+	void enterActionAtom(BehaviorSpecParser.ActionAtomContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#noCheckModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#actionAtom}.
 	 * @param ctx the parse tree
 	 */
-	void exitNoCheckModification(BehaviorSpecParser.NoCheckModificationContext ctx);
+	void exitActionAtom(BehaviorSpecParser.ActionAtomContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#skipModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationExpr}.
 	 * @param ctx the parse tree
 	 */
-	void enterSkipModification(BehaviorSpecParser.SkipModificationContext ctx);
+	void enterModificationExpr(BehaviorSpecParser.ModificationExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#skipModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationExpr}.
 	 * @param ctx the parse tree
 	 */
-	void exitSkipModification(BehaviorSpecParser.SkipModificationContext ctx);
+	void exitModificationExpr(BehaviorSpecParser.ModificationExprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#delayModification}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationCall}.
 	 * @param ctx the parse tree
 	 */
-	void enterDelayModification(BehaviorSpecParser.DelayModificationContext ctx);
+	void enterModificationCall(BehaviorSpecParser.ModificationCallContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#delayModification}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationCall}.
 	 * @param ctx the parse tree
 	 */
-	void exitDelayModification(BehaviorSpecParser.DelayModificationContext ctx);
+	void exitModificationCall(BehaviorSpecParser.ModificationCallContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#modificationValue}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterModificationValue(BehaviorSpecParser.ModificationValueContext ctx);
+	void enterTerm(BehaviorSpecParser.TermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#modificationValue}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitModificationValue(BehaviorSpecParser.ModificationValueContext ctx);
+	void exitTerm(BehaviorSpecParser.TermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#identifierValue}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterIdentifierValue(BehaviorSpecParser.IdentifierValueContext ctx);
+	void enterDottedTerm(BehaviorSpecParser.DottedTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#identifierValue}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitIdentifierValue(BehaviorSpecParser.IdentifierValueContext ctx);
+	void exitDottedTerm(BehaviorSpecParser.DottedTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link BehaviorSpecParser#hexLiteral}.
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterHexLiteral(BehaviorSpecParser.HexLiteralContext ctx);
+	void enterPrimaryTerm(BehaviorSpecParser.PrimaryTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link BehaviorSpecParser#hexLiteral}.
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitHexLiteral(BehaviorSpecParser.HexLiteralContext ctx);
+	void exitPrimaryTerm(BehaviorSpecParser.PrimaryTermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#functionTerm}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionTerm(BehaviorSpecParser.FunctionTermContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#functionTerm}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionTerm(BehaviorSpecParser.FunctionTermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#indexedTerm}.
+	 * @param ctx the parse tree
+	 */
+	void enterIndexedTerm(BehaviorSpecParser.IndexedTermContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#indexedTerm}.
+	 * @param ctx the parse tree
+	 */
+	void exitIndexedTerm(BehaviorSpecParser.IndexedTermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#listTerm}.
+	 * @param ctx the parse tree
+	 */
+	void enterListTerm(BehaviorSpecParser.ListTermContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#listTerm}.
+	 * @param ctx the parse tree
+	 */
+	void exitListTerm(BehaviorSpecParser.ListTermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#braceTerm}.
+	 * @param ctx the parse tree
+	 */
+	void enterBraceTerm(BehaviorSpecParser.BraceTermContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#braceTerm}.
+	 * @param ctx the parse tree
+	 */
+	void exitBraceTerm(BehaviorSpecParser.BraceTermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#termList}.
+	 * @param ctx the parse tree
+	 */
+	void enterTermList(BehaviorSpecParser.TermListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#termList}.
+	 * @param ctx the parse tree
+	 */
+	void exitTermList(BehaviorSpecParser.TermListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#rawMaudeCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterRawMaudeCall(BehaviorSpecParser.RawMaudeCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#rawMaudeCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitRawMaudeCall(BehaviorSpecParser.RawMaudeCallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterRef}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterRef(BehaviorSpecParser.ParameterRefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterRef}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterRef(BehaviorSpecParser.ParameterRefContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterName}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterName(BehaviorSpecParser.ParameterNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterName}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterName(BehaviorSpecParser.ParameterNameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterIdentifier(BehaviorSpecParser.IdentifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#identifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitIdentifier(BehaviorSpecParser.IdentifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#numberLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumberLiteral(BehaviorSpecParser.NumberLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#numberLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumberLiteral(BehaviorSpecParser.NumberLiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#stringLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringLiteral(BehaviorSpecParser.StringLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#stringLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringLiteral(BehaviorSpecParser.StringLiteralContext ctx);
 }

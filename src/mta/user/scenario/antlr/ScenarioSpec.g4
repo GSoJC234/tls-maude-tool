@@ -1,227 +1,133 @@
 grammar ScenarioSpec;
 
 scenarioSpec
-    : scenarioItem* scenarioPropertiesSection+ EOF
+    : SCENARIO_PROPERTY COLON scenarioExpr EOF
     ;
 
-scenarioItem
-    : loadStatement
-    | useStatement
-    | nodesSection
-    | linkSection
-    | constantsSection
-    | statePropositionsSection
-    | actionPropositionsSection
+scenarioExpr
+    : scenarioChoice
     ;
 
-loadStatement
-    : LOAD stringLiteral AS identifierValue
+scenarioChoice
+    : scenarioSequence (PIPE scenarioSequence)*
     ;
 
-useStatement
-    : USE stringLiteral
+scenarioSequence
+    : scenarioRepeat (SEMI scenarioRepeat)*
     ;
 
-nodesSection
-    : NODES COLON identifierValue (COMMA identifierValue)*
+scenarioRepeat
+    : scenarioPrimary STAR*
     ;
 
-linkSection
-    : LINKS COLON linkDeclaration (COMMA linkDeclaration)*
+scenarioPrimary
+    : ANY_STEP
+    | rawMaudeCall
+    | LPAREN scenarioExpr RPAREN
+    | stepExpr
     ;
 
-linkDeclaration
-    :  identifierValue EQ linkedIdentifiers
+stepExpr
+    : stepOr
     ;
 
-linkedIdentifiers
-    :  identifierValue LEFTRIGHTARROW identifierValue
+stepOr
+    : stepAnd (OR stepAnd)*
     ;
 
-constantsSection
-    : CONSTANTS COLON constantDeclaration (COMMA? constantDeclaration)*
+stepAnd
+    : stepNot (AND stepNot)*
     ;
 
-constantDeclaration
-    : constantRef EQ constantSet
+stepNot
+    : NOT stepNot
+    | stepAtom
+    | LPAREN stepExpr RPAREN
     ;
 
-constantSet
-    : LBRACE constantValue (COMMA constantValue)* RBRACE
+stepAtom
+    : stateAtom
+    | actionAtom
     ;
 
-constantValue
-    : identifierValue
-    | hexLiteral
+stateAtom
+    : stateObject DOT identifier EQ term
     ;
 
-statePropositionsSection
-    : STATE_PROPOSITIONS COLON statePropositionDeclaration (COMMA? statePropositionDeclaration)*
+stateObject
+    : identifier (DOT identifier)*
     ;
 
-statePropositionDeclaration
-    : identifierValue EQ statePropositionExpr
+actionAtom
+    : identifier EQ term
     ;
 
-statePropositionExpr
-    : statePropositionTerm
-    | NOT statePropositionExpr
-    | LPAREN statePropositionExpr RPAREN
-    | statePropositionExpr ( OR | XOR | AND) statePropositionExpr
+term
+    : dottedTerm
     ;
 
-statePropositionTerm
-    : identifierValue PIPE LPAREN conditionExpr RPAREN
+dottedTerm
+    : primaryTerm (DOT primaryTerm)*
     ;
 
-actionPropositionsSection
-    : ACTION_PROPOSITIONS COLON actionPropositionDeclaration (COMMA? actionPropositionDeclaration)*
-    ;
-
-actionPropositionDeclaration
-    : identifierValue EQ actionInvocation
-    ;
-
-actionInvocation
-    : identifierValue LPAREN actionArgument (COMMA actionArgument)* RPAREN
-    | identifierValue
-    ;
-
-actionArgument
-    : oneOfExpr
-    | actionValue
-    ;
-
-oneOfExpr
-    : ONEOF LPAREN constantRef RPAREN
-    ;
-
-actionValue
-    : identifierValue
-    | hexLiteral
-    ;
-
-scenarioPropertiesSection
-    : SCENARIO_PROPERTIES COLON scenarioPropertyDeclaration (COMMA? scenarioPropertyDeclaration)*
-    ;
-
-scenarioPropertyDeclaration
-    : identifierValue LBRACK nodeBinding (COMMA nodeBinding)* RBRACK linkQualifier COLON propertyRelation
-    ;
-
-linkQualifier
-    : VIA identifierValue (COMMA identifierValue)*
-    ;
-
-nodeBinding
-    : identifierValue BIND identifierValue
-    ;
-
-propertyRelation
-    : identifierValue
-    | NOT propertyRelation
-    | LPAREN propertyRelation RPAREN
-    | propertyRelation (ZERO_OR_MORE | ONE_OR_MORE)
-    | propertyRelation (STEP_ZERO_OR_MORE | STEP_ONE_OR_MORE | STEP_ONE | PIPE | OR) propertyRelation
-    ;
-
-propertyReferenceValue
-    : constantRef
-    | identifierValue
+primaryTerm
+    : rawMaudeCall
+    | functionTerm
+    | indexedTerm
+    | listTerm
+    | braceTerm
     | stringLiteral
+    | identifier
+    | numberLiteral
+    | LPAREN term RPAREN
     ;
 
-conditionExpr
-    : conditionPredicate
-    | NOT conditionExpr
-    | LPAREN conditionExpr RPAREN
-    | conditionExpr (OR | XOR | AND) conditionExpr
+functionTerm
+    : identifier LPAREN termList? RPAREN
     ;
 
-conditionPredicate
-    : valueAccessor EQ2 conditionOperand
+indexedTerm
+    : identifier LBRACK term RBRACK
     ;
 
-valueAccessor
-    : VALUE LPAREN identifierValue RPAREN
+listTerm
+    : LBRACK termList? RBRACK
     ;
 
-conditionOperand
-    : constantRef
-    | identifierValue
-    | stringLiteral
+braceTerm
+    : LBRACE termList? RBRACE
+    ;
+
+termList
+    : term (COMMA term)*
+    ;
+
+rawMaudeCall
+    : MAUDE LPAREN stringLiteral RPAREN
+    ;
+
+identifier
+    : IDENTIFIER
+    ;
+
+numberLiteral
+    : NUMBER
     ;
 
 stringLiteral
     : STRING
     ;
 
-constantRef
-    : CONSTANT_REF
-    ;
-
-identifierValue
-    : IDENTIFIER
-    ;
-
-hexLiteral
-    : HEX
-    ;
-
-LOAD
-    : 'load'
-    ;
-
-USE
-    : 'use'
-    ;
-
-AS
-    : 'as'
-    ;
-
-NODES
-    : 'Nodes'
-    ;
-
-LINKS
-    : 'Links'
-    ;
-
-CONSTANTS
-    : 'Constants'
-    ;
-
-STATE_PROPOSITIONS
-    : 'StatePropositions'
-    ;
-
-ACTION_PROPOSITIONS
-    : 'ActionPropositions'
-    ;
-
 SCENARIO_PROPERTY
     : 'ScenarioProperty'
     ;
 
-SCENARIO_PROPERTIES
-    : 'ScenarioProperties'
+ANY_STEP
+    : 'anyStep'
     ;
 
-VALUE
-    : 'value'
-    ;
-
-ONEOF
-    : 'oneOf'
-    ;
-
-LEFTRIGHTARROW
-    : '<->'
-    ;
-
-VIA
-    : 'via'
+MAUDE
+    : 'maude'
     ;
 
 AND
@@ -232,48 +138,13 @@ OR
     : 'or'
     ;
 
-XOR
-    : 'xor'
-    ;
-
 NOT
     : 'not'
     ;
 
-STEP_ZERO_OR_MORE
-    : '->*'
-    ;
-
-STEP_ONE_OR_MORE
-    : '->+'
-    ;
-
-STEP_ONE
-    : '->'
-    ;
-
-ZERO_OR_MORE
-    : '*'
-    ;
-
-ONE_OR_MORE
-    : '+'
-    ;
-
-BIND
-    : '<-'
-    ;
-
-PIPE
-    : '|'
-    ;
-
-EQ2
-    : '=='
-    ;
-
 EQ
     : '='
+    | '=='
     ;
 
 COLON
@@ -282,6 +153,22 @@ COLON
 
 COMMA
     : ','
+    ;
+
+DOT
+    : '.'
+    ;
+
+SEMI
+    : ';'
+    ;
+
+PIPE
+    : '|'
+    ;
+
+STAR
+    : '*'
     ;
 
 LPAREN
@@ -308,20 +195,16 @@ RBRACE
     : '}'
     ;
 
-CONSTANT_REF
-    : '#' [A-Za-z_] [A-Za-z0-9_-]*
+NUMBER
+    : [0-9]+
     ;
 
-HEX
-    : '0x' [0-9a-fA-F]+
+STRING
+    : '"' (ESC | ~["\\\r\n])* '"'
     ;
 
 IDENTIFIER
     : [A-Za-z_] [A-Za-z0-9_-]*
-    ;
-
-STRING
-    : '"' (~["\\\r\n] | '\\' .)* '"'
     ;
 
 WS
@@ -330,4 +213,13 @@ WS
 
 LINE_COMMENT
     : '//' ~[\r\n]* -> skip
+    ;
+
+fragment ESC
+    : '\\' ["\\/bfnrt]
+    | '\\' 'u' HEX HEX HEX HEX
+    ;
+
+fragment HEX
+    : [0-9a-fA-F]
     ;

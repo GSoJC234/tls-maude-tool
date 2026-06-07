@@ -29,373 +29,289 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterScenarioItem(ScenarioSpecParser.ScenarioItemContext ctx) { }
+	@Override public void enterScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitScenarioItem(ScenarioSpecParser.ScenarioItemContext ctx) { }
+	@Override public void exitScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoadStatement(ScenarioSpecParser.LoadStatementContext ctx) { }
+	@Override public void enterScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoadStatement(ScenarioSpecParser.LoadStatementContext ctx) { }
+	@Override public void exitScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUseStatement(ScenarioSpecParser.UseStatementContext ctx) { }
+	@Override public void enterScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUseStatement(ScenarioSpecParser.UseStatementContext ctx) { }
+	@Override public void exitScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNodesSection(ScenarioSpecParser.NodesSectionContext ctx) { }
+	@Override public void enterScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNodesSection(ScenarioSpecParser.NodesSectionContext ctx) { }
+	@Override public void exitScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinkSection(ScenarioSpecParser.LinkSectionContext ctx) { }
+	@Override public void enterScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinkSection(ScenarioSpecParser.LinkSectionContext ctx) { }
+	@Override public void exitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) { }
+	@Override public void enterStepExpr(ScenarioSpecParser.StepExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) { }
+	@Override public void exitStepExpr(ScenarioSpecParser.StepExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) { }
+	@Override public void enterStepOr(ScenarioSpecParser.StepOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) { }
+	@Override public void exitStepOr(ScenarioSpecParser.StepOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx) { }
+	@Override public void enterStepAnd(ScenarioSpecParser.StepAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx) { }
+	@Override public void exitStepAnd(ScenarioSpecParser.StepAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx) { }
+	@Override public void enterStepNot(ScenarioSpecParser.StepNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx) { }
+	@Override public void exitStepNot(ScenarioSpecParser.StepNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstantSet(ScenarioSpecParser.ConstantSetContext ctx) { }
+	@Override public void enterStepAtom(ScenarioSpecParser.StepAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstantSet(ScenarioSpecParser.ConstantSetContext ctx) { }
+	@Override public void exitStepAtom(ScenarioSpecParser.StepAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstantValue(ScenarioSpecParser.ConstantValueContext ctx) { }
+	@Override public void enterStateAtom(ScenarioSpecParser.StateAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConstantValue(ScenarioSpecParser.ConstantValueContext ctx) { }
+	@Override public void exitStateAtom(ScenarioSpecParser.StateAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx) { }
+	@Override public void enterStateObject(ScenarioSpecParser.StateObjectContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx) { }
+	@Override public void exitStateObject(ScenarioSpecParser.StateObjectContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx) { }
+	@Override public void enterActionAtom(ScenarioSpecParser.ActionAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx) { }
+	@Override public void exitActionAtom(ScenarioSpecParser.ActionAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx) { }
+	@Override public void enterTerm(ScenarioSpecParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx) { }
+	@Override public void exitTerm(ScenarioSpecParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx) { }
+	@Override public void enterDottedTerm(ScenarioSpecParser.DottedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx) { }
+	@Override public void exitDottedTerm(ScenarioSpecParser.DottedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx) { }
+	@Override public void enterPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx) { }
+	@Override public void exitPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx) { }
+	@Override public void enterFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx) { }
+	@Override public void exitFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx) { }
+	@Override public void enterIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx) { }
+	@Override public void exitIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionArgument(ScenarioSpecParser.ActionArgumentContext ctx) { }
+	@Override public void enterListTerm(ScenarioSpecParser.ListTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx) { }
+	@Override public void exitListTerm(ScenarioSpecParser.ListTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) { }
+	@Override public void enterBraceTerm(ScenarioSpecParser.BraceTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) { }
+	@Override public void exitBraceTerm(ScenarioSpecParser.BraceTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionValue(ScenarioSpecParser.ActionValueContext ctx) { }
+	@Override public void enterTermList(ScenarioSpecParser.TermListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionValue(ScenarioSpecParser.ActionValueContext ctx) { }
+	@Override public void exitTermList(ScenarioSpecParser.TermListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx) { }
+	@Override public void enterRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx) { }
+	@Override public void exitRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx) { }
+	@Override public void enterIdentifier(ScenarioSpecParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx) { }
+	@Override public void exitIdentifier(ScenarioSpecParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) { }
+	@Override public void enterNumberLiteral(ScenarioSpecParser.NumberLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNodeBinding(ScenarioSpecParser.NodeBindingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNodeBinding(ScenarioSpecParser.NodeBindingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPropertyReferenceValue(ScenarioSpecParser.PropertyReferenceValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPropertyReferenceValue(ScenarioSpecParser.PropertyReferenceValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConditionExpr(ScenarioSpecParser.ConditionExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConditionExpr(ScenarioSpecParser.ConditionExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterValueAccessor(ScenarioSpecParser.ValueAccessorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValueAccessor(ScenarioSpecParser.ValueAccessorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx) { }
+	@Override public void exitNumberLiteral(ScenarioSpecParser.NumberLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -408,42 +324,6 @@ public class ScenarioSpecBaseListener implements ScenarioSpecListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStringLiteral(ScenarioSpecParser.StringLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterConstantRef(ScenarioSpecParser.ConstantRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConstantRef(ScenarioSpecParser.ConstantRefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -8,15 +8,35 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface TLSProfileListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#profile}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#profiles}.
 	 * @param ctx the parse tree
 	 */
-	void enterProfile(TLSProfileParser.ProfileContext ctx);
+	void enterProfiles(TLSProfileParser.ProfilesContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#profile}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#profiles}.
 	 * @param ctx the parse tree
 	 */
-	void exitProfile(TLSProfileParser.ProfileContext ctx);
+	void exitProfiles(TLSProfileParser.ProfilesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLSProfileParser#profileBlock}.
+	 * @param ctx the parse tree
+	 */
+	void enterProfileBlock(TLSProfileParser.ProfileBlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLSProfileParser#profileBlock}.
+	 * @param ctx the parse tree
+	 */
+	void exitProfileBlock(TLSProfileParser.ProfileBlockContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TLSProfileParser#profileName}.
+	 * @param ctx the parse tree
+	 */
+	void enterProfileName(TLSProfileParser.ProfileNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TLSProfileParser#profileName}.
+	 * @param ctx the parse tree
+	 */
+	void exitProfileName(TLSProfileParser.ProfileNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TLSProfileParser#profileEntry}.
 	 * @param ctx the parse tree
@@ -28,303 +48,133 @@ public interface TLSProfileListener extends ParseTreeListener {
 	 */
 	void exitProfileEntry(TLSProfileParser.ProfileEntryContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#testRoleEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#profileValue}.
 	 * @param ctx the parse tree
 	 */
-	void enterTestRoleEntry(TLSProfileParser.TestRoleEntryContext ctx);
+	void enterProfileValue(TLSProfileParser.ProfileValueContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#testRoleEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#profileValue}.
 	 * @param ctx the parse tree
 	 */
-	void exitTestRoleEntry(TLSProfileParser.TestRoleEntryContext ctx);
+	void exitProfileValue(TLSProfileParser.ProfileValueContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#tlsRoleEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterTlsRoleEntry(TLSProfileParser.TlsRoleEntryContext ctx);
+	void enterTerm(TLSProfileParser.TermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#tlsRoleEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitTlsRoleEntry(TLSProfileParser.TlsRoleEntryContext ctx);
+	void exitTerm(TLSProfileParser.TermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#versionEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterVersionEntry(TLSProfileParser.VersionEntryContext ctx);
+	void enterDottedTerm(TLSProfileParser.DottedTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#versionEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitVersionEntry(TLSProfileParser.VersionEntryContext ctx);
+	void exitDottedTerm(TLSProfileParser.DottedTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#cipherSuitesEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterCipherSuitesEntry(TLSProfileParser.CipherSuitesEntryContext ctx);
+	void enterPrimaryTerm(TLSProfileParser.PrimaryTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#cipherSuitesEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitCipherSuitesEntry(TLSProfileParser.CipherSuitesEntryContext ctx);
+	void exitPrimaryTerm(TLSProfileParser.PrimaryTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#compressionsEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#functionTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterCompressionsEntry(TLSProfileParser.CompressionsEntryContext ctx);
+	void enterFunctionTerm(TLSProfileParser.FunctionTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#compressionsEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#functionTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitCompressionsEntry(TLSProfileParser.CompressionsEntryContext ctx);
+	void exitFunctionTerm(TLSProfileParser.FunctionTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#certificateTypesEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterCertificateTypesEntry(TLSProfileParser.CertificateTypesEntryContext ctx);
+	void enterIndexedTerm(TLSProfileParser.IndexedTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#certificateTypesEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitCertificateTypesEntry(TLSProfileParser.CertificateTypesEntryContext ctx);
+	void exitIndexedTerm(TLSProfileParser.IndexedTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#certificateAlgosEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#listTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterCertificateAlgosEntry(TLSProfileParser.CertificateAlgosEntryContext ctx);
+	void enterListTerm(TLSProfileParser.ListTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#certificateAlgosEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#listTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitCertificateAlgosEntry(TLSProfileParser.CertificateAlgosEntryContext ctx);
+	void exitListTerm(TLSProfileParser.ListTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#certificateEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#braceTerm}.
 	 * @param ctx the parse tree
 	 */
-	void enterCertificateEntry(TLSProfileParser.CertificateEntryContext ctx);
+	void enterBraceTerm(TLSProfileParser.BraceTermContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#certificateEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#braceTerm}.
 	 * @param ctx the parse tree
 	 */
-	void exitCertificateEntry(TLSProfileParser.CertificateEntryContext ctx);
+	void exitBraceTerm(TLSProfileParser.BraceTermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#privateKeyEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#termList}.
 	 * @param ctx the parse tree
 	 */
-	void enterPrivateKeyEntry(TLSProfileParser.PrivateKeyEntryContext ctx);
+	void enterTermList(TLSProfileParser.TermListContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#privateKeyEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#termList}.
 	 * @param ctx the parse tree
 	 */
-	void exitPrivateKeyEntry(TLSProfileParser.PrivateKeyEntryContext ctx);
+	void exitTermList(TLSProfileParser.TermListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#caCertificateEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 */
-	void enterCaCertificateEntry(TLSProfileParser.CaCertificateEntryContext ctx);
+	void enterRawMaudeCall(TLSProfileParser.RawMaudeCallContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#caCertificateEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 */
-	void exitCaCertificateEntry(TLSProfileParser.CaCertificateEntryContext ctx);
+	void exitRawMaudeCall(TLSProfileParser.RawMaudeCallContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#supportedGroupsEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#identifier}.
 	 * @param ctx the parse tree
 	 */
-	void enterSupportedGroupsEntry(TLSProfileParser.SupportedGroupsEntryContext ctx);
+	void enterIdentifier(TLSProfileParser.IdentifierContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#supportedGroupsEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#identifier}.
 	 * @param ctx the parse tree
 	 */
-	void exitSupportedGroupsEntry(TLSProfileParser.SupportedGroupsEntryContext ctx);
+	void exitIdentifier(TLSProfileParser.IdentifierContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#signatureAlgorithmsEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void enterSignatureAlgorithmsEntry(TLSProfileParser.SignatureAlgorithmsEntryContext ctx);
+	void enterNumberLiteral(TLSProfileParser.NumberLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#signatureAlgorithmsEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void exitSignatureAlgorithmsEntry(TLSProfileParser.SignatureAlgorithmsEntryContext ctx);
+	void exitNumberLiteral(TLSProfileParser.NumberLiteralContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#keySharesEntry}.
+	 * Enter a parse tree produced by {@link TLSProfileParser#stringLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void enterKeySharesEntry(TLSProfileParser.KeySharesEntryContext ctx);
+	void enterStringLiteral(TLSProfileParser.StringLiteralContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#keySharesEntry}.
+	 * Exit a parse tree produced by {@link TLSProfileParser#stringLiteral}.
 	 * @param ctx the parse tree
 	 */
-	void exitKeySharesEntry(TLSProfileParser.KeySharesEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#supportedVersionsEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterSupportedVersionsEntry(TLSProfileParser.SupportedVersionsEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#supportedVersionsEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitSupportedVersionsEntry(TLSProfileParser.SupportedVersionsEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#pskKeyExchangeModesEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterPskKeyExchangeModesEntry(TLSProfileParser.PskKeyExchangeModesEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#pskKeyExchangeModesEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitPskKeyExchangeModesEntry(TLSProfileParser.PskKeyExchangeModesEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#newSessionTicketReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewSessionTicketReqEntry(TLSProfileParser.NewSessionTicketReqEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#newSessionTicketReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewSessionTicketReqEntry(TLSProfileParser.NewSessionTicketReqEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#newSessionTicketWaitEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewSessionTicketWaitEntry(TLSProfileParser.NewSessionTicketWaitEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#newSessionTicketWaitEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewSessionTicketWaitEntry(TLSProfileParser.NewSessionTicketWaitEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#earlyDataReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterEarlyDataReqEntry(TLSProfileParser.EarlyDataReqEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#earlyDataReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitEarlyDataReqEntry(TLSProfileParser.EarlyDataReqEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#postClientAuthReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterPostClientAuthReqEntry(TLSProfileParser.PostClientAuthReqEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#postClientAuthReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitPostClientAuthReqEntry(TLSProfileParser.PostClientAuthReqEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#keyUpdateReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterKeyUpdateReqEntry(TLSProfileParser.KeyUpdateReqEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#keyUpdateReqEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitKeyUpdateReqEntry(TLSProfileParser.KeyUpdateReqEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#keyUpdateWaitEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterKeyUpdateWaitEntry(TLSProfileParser.KeyUpdateWaitEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#keyUpdateWaitEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitKeyUpdateWaitEntry(TLSProfileParser.KeyUpdateWaitEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#certificateRequestEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterCertificateRequestEntry(TLSProfileParser.CertificateRequestEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#certificateRequestEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitCertificateRequestEntry(TLSProfileParser.CertificateRequestEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#executionConfigurationEntry}.
-	 * @param ctx the parse tree
-	 */
-	void enterExecutionConfigurationEntry(TLSProfileParser.ExecutionConfigurationEntryContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#executionConfigurationEntry}.
-	 * @param ctx the parse tree
-	 */
-	void exitExecutionConfigurationEntry(TLSProfileParser.ExecutionConfigurationEntryContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#executionConfigurationField}.
-	 * @param ctx the parse tree
-	 */
-	void enterExecutionConfigurationField(TLSProfileParser.ExecutionConfigurationFieldContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#executionConfigurationField}.
-	 * @param ctx the parse tree
-	 */
-	void exitExecutionConfigurationField(TLSProfileParser.ExecutionConfigurationFieldContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#executionConfigurationName}.
-	 * @param ctx the parse tree
-	 */
-	void enterExecutionConfigurationName(TLSProfileParser.ExecutionConfigurationNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#executionConfigurationName}.
-	 * @param ctx the parse tree
-	 */
-	void exitExecutionConfigurationName(TLSProfileParser.ExecutionConfigurationNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#executionConfigurationPath}.
-	 * @param ctx the parse tree
-	 */
-	void enterExecutionConfigurationPath(TLSProfileParser.ExecutionConfigurationPathContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#executionConfigurationPath}.
-	 * @param ctx the parse tree
-	 */
-	void exitExecutionConfigurationPath(TLSProfileParser.ExecutionConfigurationPathContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#valueList}.
-	 * @param ctx the parse tree
-	 */
-	void enterValueList(TLSProfileParser.ValueListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#valueList}.
-	 * @param ctx the parse tree
-	 */
-	void exitValueList(TLSProfileParser.ValueListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#booleanValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterBooleanValue(TLSProfileParser.BooleanValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#booleanValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitBooleanValue(TLSProfileParser.BooleanValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#pathValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterPathValue(TLSProfileParser.PathValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#pathValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitPathValue(TLSProfileParser.PathValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TLSProfileParser#scalarValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterScalarValue(TLSProfileParser.ScalarValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TLSProfileParser#scalarValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitScalarValue(TLSProfileParser.ScalarValueContext ctx);
+	void exitStringLiteral(TLSProfileParser.StringLiteralContext ctx);
 }

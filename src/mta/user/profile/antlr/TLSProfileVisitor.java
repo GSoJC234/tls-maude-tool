@@ -11,11 +11,23 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface TLSProfileVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#profile}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#profiles}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProfile(TLSProfileParser.ProfileContext ctx);
+	T visitProfiles(TLSProfileParser.ProfilesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLSProfileParser#profileBlock}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProfileBlock(TLSProfileParser.ProfileBlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TLSProfileParser#profileName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProfileName(TLSProfileParser.ProfileNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TLSProfileParser#profileEntry}.
 	 * @param ctx the parse tree
@@ -23,183 +35,81 @@ public interface TLSProfileVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProfileEntry(TLSProfileParser.ProfileEntryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#testRoleEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#profileValue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTestRoleEntry(TLSProfileParser.TestRoleEntryContext ctx);
+	T visitProfileValue(TLSProfileParser.ProfileValueContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#tlsRoleEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTlsRoleEntry(TLSProfileParser.TlsRoleEntryContext ctx);
+	T visitTerm(TLSProfileParser.TermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#versionEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVersionEntry(TLSProfileParser.VersionEntryContext ctx);
+	T visitDottedTerm(TLSProfileParser.DottedTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#cipherSuitesEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCipherSuitesEntry(TLSProfileParser.CipherSuitesEntryContext ctx);
+	T visitPrimaryTerm(TLSProfileParser.PrimaryTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#compressionsEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#functionTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCompressionsEntry(TLSProfileParser.CompressionsEntryContext ctx);
+	T visitFunctionTerm(TLSProfileParser.FunctionTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#certificateTypesEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCertificateTypesEntry(TLSProfileParser.CertificateTypesEntryContext ctx);
+	T visitIndexedTerm(TLSProfileParser.IndexedTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#certificateAlgosEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#listTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCertificateAlgosEntry(TLSProfileParser.CertificateAlgosEntryContext ctx);
+	T visitListTerm(TLSProfileParser.ListTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#certificateEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#braceTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCertificateEntry(TLSProfileParser.CertificateEntryContext ctx);
+	T visitBraceTerm(TLSProfileParser.BraceTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#privateKeyEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#termList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrivateKeyEntry(TLSProfileParser.PrivateKeyEntryContext ctx);
+	T visitTermList(TLSProfileParser.TermListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#caCertificateEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCaCertificateEntry(TLSProfileParser.CaCertificateEntryContext ctx);
+	T visitRawMaudeCall(TLSProfileParser.RawMaudeCallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#supportedGroupsEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#identifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSupportedGroupsEntry(TLSProfileParser.SupportedGroupsEntryContext ctx);
+	T visitIdentifier(TLSProfileParser.IdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#signatureAlgorithmsEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSignatureAlgorithmsEntry(TLSProfileParser.SignatureAlgorithmsEntryContext ctx);
+	T visitNumberLiteral(TLSProfileParser.NumberLiteralContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#keySharesEntry}.
+	 * Visit a parse tree produced by {@link TLSProfileParser#stringLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitKeySharesEntry(TLSProfileParser.KeySharesEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#supportedVersionsEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSupportedVersionsEntry(TLSProfileParser.SupportedVersionsEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#pskKeyExchangeModesEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPskKeyExchangeModesEntry(TLSProfileParser.PskKeyExchangeModesEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#newSessionTicketReqEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNewSessionTicketReqEntry(TLSProfileParser.NewSessionTicketReqEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#newSessionTicketWaitEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNewSessionTicketWaitEntry(TLSProfileParser.NewSessionTicketWaitEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#earlyDataReqEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEarlyDataReqEntry(TLSProfileParser.EarlyDataReqEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#postClientAuthReqEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPostClientAuthReqEntry(TLSProfileParser.PostClientAuthReqEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#keyUpdateReqEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitKeyUpdateReqEntry(TLSProfileParser.KeyUpdateReqEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#keyUpdateWaitEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitKeyUpdateWaitEntry(TLSProfileParser.KeyUpdateWaitEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#certificateRequestEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCertificateRequestEntry(TLSProfileParser.CertificateRequestEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#executionConfigurationEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExecutionConfigurationEntry(TLSProfileParser.ExecutionConfigurationEntryContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#executionConfigurationField}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExecutionConfigurationField(TLSProfileParser.ExecutionConfigurationFieldContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#executionConfigurationName}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExecutionConfigurationName(TLSProfileParser.ExecutionConfigurationNameContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#executionConfigurationPath}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExecutionConfigurationPath(TLSProfileParser.ExecutionConfigurationPathContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#valueList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitValueList(TLSProfileParser.ValueListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#booleanValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBooleanValue(TLSProfileParser.BooleanValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#pathValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPathValue(TLSProfileParser.PathValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TLSProfileParser#scalarValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitScalarValue(TLSProfileParser.ScalarValueContext ctx);
+	T visitStringLiteral(TLSProfileParser.StringLiteralContext ctx);
 }

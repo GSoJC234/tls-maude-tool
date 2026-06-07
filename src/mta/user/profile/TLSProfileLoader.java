@@ -28,6 +28,22 @@ public class TLSProfileLoader {
     }
 
     public TLSProfile loadTLSProfile(Path profilePath) {
+        TLSProfiles profiles = loadTLSProfiles(profilePath);
+        TLSProfile tester = profiles.getTester();
+        if (tester != null) {
+            return tester;
+        }
+        if (!profiles.getProfiles().isEmpty()) {
+            return profiles.getProfiles().values().iterator().next();
+        }
+        throw new IllegalArgumentException("TLSProfiles file has no profiles: " + profilePath);
+    }
+
+    public TLSProfiles loadTLSProfiles(String profilePath) {
+        return loadTLSProfiles(Path.of(profilePath));
+    }
+
+    public TLSProfiles loadTLSProfiles(Path profilePath) {
         try {
             return parse(CharStreams.fromPath(profilePath));
         } catch (IOException e) {
@@ -36,10 +52,22 @@ public class TLSProfileLoader {
     }
 
     public TLSProfile loadTLSProfileFromString(String profileContent) {
+        TLSProfiles profiles = loadTLSProfilesFromString(profileContent);
+        TLSProfile tester = profiles.getTester();
+        if (tester != null) {
+            return tester;
+        }
+        if (!profiles.getProfiles().isEmpty()) {
+            return profiles.getProfiles().values().iterator().next();
+        }
+        throw new IllegalArgumentException("TLSProfiles content has no profiles");
+    }
+
+    public TLSProfiles loadTLSProfilesFromString(String profileContent) {
         return parse(CharStreams.fromString(profileContent));
     }
 
-    private TLSProfile parse(CharStream input) {
+    private TLSProfiles parse(CharStream input) {
         TLSProfileLexer lexer = new TLSProfileLexer(input);
         lexer.removeErrorListeners();
         lexer.addErrorListener(THROWING_ERROR_LISTENER);
@@ -48,6 +76,6 @@ public class TLSProfileLoader {
         parser.removeErrorListeners();
         parser.addErrorListener(THROWING_ERROR_LISTENER);
 
-        return new TLSProfileBuildingVisitor().visit(parser.profile());
+        return (TLSProfiles) new TLSProfileBuildingVisitor().visit(parser.profiles());
     }
 }

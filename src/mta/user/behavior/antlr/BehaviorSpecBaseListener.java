@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
+// Generated from src/mta/user/behavior/antlr/BehaviorSpec.g4 by ANTLR 4.13.2
 package mta.user.behavior.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -12,6 +12,18 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  */
 @SuppressWarnings("CheckReturnValue")
 public class BehaviorSpecBaseListener implements BehaviorSpecListener {
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBehaviorDeviationSpecification(BehaviorSpecParser.BehaviorDeviationSpecificationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBehaviorDeviationSpecification(BehaviorSpecParser.BehaviorDeviationSpecificationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -53,18 +65,6 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEventTypeSection(BehaviorSpecParser.EventTypeSectionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEventTypeSection(BehaviorSpecParser.EventTypeSectionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterConditionsSection(BehaviorSpecParser.ConditionsSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -77,169 +77,301 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConditionExpr(BehaviorSpecParser.ConditionExprContext ctx) { }
+	@Override public void enterModificationsSection(BehaviorSpecParser.ModificationsSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConditionExpr(BehaviorSpecParser.ConditionExprContext ctx) { }
+	@Override public void exitModificationsSection(BehaviorSpecParser.ModificationsSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx) { }
+	@Override public void enterParameterInstancesSection(BehaviorSpecParser.ParameterInstancesSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitConditionPredicate(BehaviorSpecParser.ConditionPredicateContext ctx) { }
+	@Override public void exitParameterInstancesSection(BehaviorSpecParser.ParameterInstancesSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx) { }
+	@Override public void enterParameterInstance(BehaviorSpecParser.ParameterInstanceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFieldValueAccessor(BehaviorSpecParser.FieldValueAccessorContext ctx) { }
+	@Override public void exitParameterInstance(BehaviorSpecParser.ParameterInstanceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValueAccessor(BehaviorSpecParser.ValueAccessorContext ctx) { }
+	@Override public void enterParameterBinding(BehaviorSpecParser.ParameterBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitValueAccessor(BehaviorSpecParser.ValueAccessorContext ctx) { }
+	@Override public void exitParameterBinding(BehaviorSpecParser.ParameterBindingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModificationSection(BehaviorSpecParser.ModificationSectionContext ctx) { }
+	@Override public void enterActionExpr(BehaviorSpecParser.ActionExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModificationSection(BehaviorSpecParser.ModificationSectionContext ctx) { }
+	@Override public void exitActionExpr(BehaviorSpecParser.ActionExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx) { }
+	@Override public void enterActionOr(BehaviorSpecParser.ActionOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModificationStatement(BehaviorSpecParser.ModificationStatementContext ctx) { }
+	@Override public void exitActionOr(BehaviorSpecParser.ActionOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSetModification(BehaviorSpecParser.SetModificationContext ctx) { }
+	@Override public void enterActionAnd(BehaviorSpecParser.ActionAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSetModification(BehaviorSpecParser.SetModificationContext ctx) { }
+	@Override public void exitActionAnd(BehaviorSpecParser.ActionAndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx) { }
+	@Override public void enterActionNot(BehaviorSpecParser.ActionNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeleteModification(BehaviorSpecParser.DeleteModificationContext ctx) { }
+	@Override public void exitActionNot(BehaviorSpecParser.ActionNotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNoCheckModification(BehaviorSpecParser.NoCheckModificationContext ctx) { }
+	@Override public void enterActionAtom(BehaviorSpecParser.ActionAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNoCheckModification(BehaviorSpecParser.NoCheckModificationContext ctx) { }
+	@Override public void exitActionAtom(BehaviorSpecParser.ActionAtomContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSkipModification(BehaviorSpecParser.SkipModificationContext ctx) { }
+	@Override public void enterModificationExpr(BehaviorSpecParser.ModificationExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitSkipModification(BehaviorSpecParser.SkipModificationContext ctx) { }
+	@Override public void exitModificationExpr(BehaviorSpecParser.ModificationExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDelayModification(BehaviorSpecParser.DelayModificationContext ctx) { }
+	@Override public void enterModificationCall(BehaviorSpecParser.ModificationCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDelayModification(BehaviorSpecParser.DelayModificationContext ctx) { }
+	@Override public void exitModificationCall(BehaviorSpecParser.ModificationCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModificationValue(BehaviorSpecParser.ModificationValueContext ctx) { }
+	@Override public void enterTerm(BehaviorSpecParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModificationValue(BehaviorSpecParser.ModificationValueContext ctx) { }
+	@Override public void exitTerm(BehaviorSpecParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIdentifierValue(BehaviorSpecParser.IdentifierValueContext ctx) { }
+	@Override public void enterDottedTerm(BehaviorSpecParser.DottedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIdentifierValue(BehaviorSpecParser.IdentifierValueContext ctx) { }
+	@Override public void exitDottedTerm(BehaviorSpecParser.DottedTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHexLiteral(BehaviorSpecParser.HexLiteralContext ctx) { }
+	@Override public void enterPrimaryTerm(BehaviorSpecParser.PrimaryTermContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHexLiteral(BehaviorSpecParser.HexLiteralContext ctx) { }
+	@Override public void exitPrimaryTerm(BehaviorSpecParser.PrimaryTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunctionTerm(BehaviorSpecParser.FunctionTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunctionTerm(BehaviorSpecParser.FunctionTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIndexedTerm(BehaviorSpecParser.IndexedTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIndexedTerm(BehaviorSpecParser.IndexedTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterListTerm(BehaviorSpecParser.ListTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListTerm(BehaviorSpecParser.ListTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBraceTerm(BehaviorSpecParser.BraceTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBraceTerm(BehaviorSpecParser.BraceTermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTermList(BehaviorSpecParser.TermListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTermList(BehaviorSpecParser.TermListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRawMaudeCall(BehaviorSpecParser.RawMaudeCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRawMaudeCall(BehaviorSpecParser.RawMaudeCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParameterRef(BehaviorSpecParser.ParameterRefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterRef(BehaviorSpecParser.ParameterRefContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParameterName(BehaviorSpecParser.ParameterNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterName(BehaviorSpecParser.ParameterNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIdentifier(BehaviorSpecParser.IdentifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIdentifier(BehaviorSpecParser.IdentifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNumberLiteral(BehaviorSpecParser.NumberLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNumberLiteral(BehaviorSpecParser.NumberLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStringLiteral(BehaviorSpecParser.StringLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStringLiteral(BehaviorSpecParser.StringLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -2,6 +2,7 @@ package mta.user.scenario;
 
 import mta.user.behavior.BehaviorSpec;
 import mta.user.profile.TLSProfile;
+import mta.user.common.ScenarioExpression;
 import mta.user.scenario.property.ScenarioProperty;
 import mta.user.scenario.state.StateProposition;
 
@@ -24,6 +25,7 @@ public class ScenarioSpec {
     private final Map<String, StateProposition> statePropositions;
     private final Map<String, ActionProposition> actionPropositions;
     private final List<ScenarioProperty> scenarioProperties;
+    private ScenarioExpression currentScenarioProperty;
 
     public ScenarioSpec() {
         profiles = new LinkedHashMap<String, TLSProfile>();
@@ -224,6 +226,14 @@ public class ScenarioSpec {
         }
     }
 
+    public ScenarioExpression getCurrentScenarioProperty() {
+        return currentScenarioProperty;
+    }
+
+    public void setCurrentScenarioProperty(ScenarioExpression currentScenarioProperty) {
+        this.currentScenarioProperty = currentScenarioProperty;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -239,13 +249,15 @@ public class ScenarioSpec {
                 && Objects.equals(constants, that.constants)
                 && Objects.equals(statePropositions, that.statePropositions)
                 && Objects.equals(actionPropositions, that.actionPropositions)
-                && Objects.equals(scenarioProperties, that.scenarioProperties);
+                && Objects.equals(scenarioProperties, that.scenarioProperties)
+                && Objects.equals(currentScenarioProperty, that.currentScenarioProperty);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(profiles, behaviorSpecs, nodeIds, nodeLinks,
-                constants, statePropositions, actionPropositions, scenarioProperties);
+                constants, statePropositions, actionPropositions, scenarioProperties,
+                currentScenarioProperty);
     }
 
     @Override
@@ -259,6 +271,7 @@ public class ScenarioSpec {
                 + ", statePropositions=" + statePropositions
                 + ", actionPropositions=" + actionPropositions
                 + ", scenarioProperties=" + scenarioProperties
+                + ", currentScenarioProperty=" + currentScenarioProperty
                 + '}';
     }
 

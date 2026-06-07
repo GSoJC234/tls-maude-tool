@@ -3,6 +3,7 @@ package mta.user.behavior;
 import mta.user.behavior.condition.BehaviorCondition;
 import mta.user.behavior.modification.BehaviorModification;
 import mta.user.behavior.modification.item.BehaviorModificationItem;
+import mta.user.common.ActionExpression;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +17,16 @@ public class BehaviorSpec {
     private EventType eventType;
     private BehaviorCondition conditions;
     private BehaviorModification modifications;
+    private ActionExpression actionCondition;
+    private final List<BehaviorModificationSpec> modificationSpecs;
+    private final List<BehaviorParameterInstance> parameterInstances;
 
     public BehaviorSpec() {
         this.parameters = new ArrayList<String>();
         this.conditions = new BehaviorCondition();
         this.modifications = new BehaviorModification();
+        this.modificationSpecs = new ArrayList<BehaviorModificationSpec>();
+        this.parameterInstances = new ArrayList<BehaviorParameterInstance>();
     }
 
     public String getBehaviorId() {
@@ -86,6 +92,48 @@ public class BehaviorSpec {
         }
     }
 
+    public ActionExpression getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(ActionExpression actionCondition) {
+        this.actionCondition = actionCondition;
+    }
+
+    public List<BehaviorModificationSpec> getModificationSpecs() {
+        return Collections.unmodifiableList(modificationSpecs);
+    }
+
+    public void setModificationSpecs(List<BehaviorModificationSpec> modificationSpecs) {
+        this.modificationSpecs.clear();
+        if (modificationSpecs != null) {
+            this.modificationSpecs.addAll(modificationSpecs);
+        }
+    }
+
+    public void addModificationSpec(BehaviorModificationSpec modificationSpec) {
+        if (modificationSpec != null) {
+            modificationSpecs.add(modificationSpec);
+        }
+    }
+
+    public List<BehaviorParameterInstance> getParameterInstances() {
+        return Collections.unmodifiableList(parameterInstances);
+    }
+
+    public void setParameterInstances(List<BehaviorParameterInstance> parameterInstances) {
+        this.parameterInstances.clear();
+        if (parameterInstances != null) {
+            this.parameterInstances.addAll(parameterInstances);
+        }
+    }
+
+    public void addParameterInstance(BehaviorParameterInstance parameterInstance) {
+        if (parameterInstance != null) {
+            parameterInstances.add(parameterInstance);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -98,12 +146,16 @@ public class BehaviorSpec {
                 && Objects.equals(parameters, that.parameters)
                 && eventType == that.eventType
                 && Objects.equals(conditions, that.conditions)
-                && Objects.equals(modifications, that.modifications);
+                && Objects.equals(modifications, that.modifications)
+                && Objects.equals(actionCondition, that.actionCondition)
+                && Objects.equals(modificationSpecs, that.modificationSpecs)
+                && Objects.equals(parameterInstances, that.parameterInstances);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(behaviorId, parameters, eventType, conditions, modifications);
+        return Objects.hash(behaviorId, parameters, eventType, conditions, modifications,
+                actionCondition, modificationSpecs, parameterInstances);
     }
 
     @Override
@@ -114,6 +166,9 @@ public class BehaviorSpec {
                 + ", eventType=" + eventType
                 + ", conditions=" + conditions
                 + ", modifications=" + modifications
+                + ", actionCondition=" + actionCondition
+                + ", modificationSpecs=" + modificationSpecs
+                + ", parameterInstances=" + parameterInstances
                 + '}';
     }
 }

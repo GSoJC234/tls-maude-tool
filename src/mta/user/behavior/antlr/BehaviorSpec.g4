@@ -1,100 +1,182 @@
 grammar BehaviorSpec;
 
+behaviorDeviationSpecification
+    : BEHAVIOR_DEVIATION_SPECIFICATION COLON behaviorSpec* EOF
+    ;
+
 behaviorSpec
-    : behaviorIdSection
-      parametersSection?
-      eventTypeSection
-      conditionsSection
-      modificationSection
-      EOF
+    : DASH? behaviorIdSection parametersSection? conditionsSection modificationsSection parameterInstancesSection?
     ;
 
 behaviorIdSection
-    : 'BehaviorId' COLON identifierValue
+    : BEHAVIOR_ID COLON identifier
     ;
 
 parametersSection
-    : 'Parameters' COLON identifierValue (COMMA identifierValue)*
-    ;
-
-eventTypeSection
-    : 'EventType' COLON identifierValue
+    : PARAMETERS COLON parameterName (COMMA parameterName)*
     ;
 
 conditionsSection
-    : 'Conditions' COLON conditionExpr
+    : CONDITIONS COLON actionExpr
     ;
 
-conditionExpr
-    : conditionPredicate
-    | NOT conditionExpr 
-    | conditionExpr (OR | XOR | AND) conditionExpr
+modificationsSection
+    : MODIFICATIONS COLON modificationExpr
     ;
 
-conditionPredicate
-    : fieldValueAccessor EQ valueAccessor
-    | valueAccessor EQ fieldValueAccessor
+parameterInstancesSection
+    : PARAMETER_INSTANCES COLON parameterInstance*
     ;
 
-fieldValueAccessor
-    : FIELD_VALUE LPAREN identifierValue RPAREN
+parameterInstance
+    : DASH? parameterBinding (COMMA? parameterBinding)*
     ;
 
-valueAccessor
-    : VALUE LPAREN identifierValue RPAREN
+parameterBinding
+    : parameterName (COLON | EQ) term
     ;
 
-modificationSection
-    : 'Modification' COLON modificationStatement+
+actionExpr
+    : actionOr
     ;
 
-modificationStatement
-    : setModification
-    | deleteModification
-    | noCheckModification
-    | skipModification
-    | delayModification
+actionOr
+    : actionAnd (OR actionAnd)*
     ;
 
-setModification
-    : SET LPAREN identifierValue COMMA modificationValue RPAREN
+actionAnd
+    : actionNot (AND actionNot)*
     ;
 
-deleteModification
-    : DELETE LPAREN identifierValue RPAREN
+actionNot
+    : NOT actionNot
+    | rawMaudeCall
+    | actionAtom
+    | LPAREN actionExpr RPAREN
     ;
 
-noCheckModification
-    : NOCHECK LPAREN identifierValue RPAREN
+actionAtom
+    : identifier EQ term
     ;
 
-skipModification
-    : SKIP_KW
+modificationExpr
+    : modificationCall (AND modificationCall)*
     ;
 
-delayModification
-    : DELAY LPAREN identifierValue RPAREN
+modificationCall
+    : rawMaudeCall
+    | SETM LPAREN term COMMA term RPAREN
+    | SETF LPAREN term COMMA term RPAREN
+    | ADD LPAREN term COMMA term RPAREN
+    | REMOVE LPAREN term RPAREN
+    | NOCHECK LPAREN term RPAREN
+    | SKIP_KW LPAREN? RPAREN?
+    | DELAY LPAREN term RPAREN
     ;
 
-modificationValue
-    : identifierValue
-    | hexLiteral
+term
+    : dottedTerm
     ;
 
-identifierValue
+dottedTerm
+    : primaryTerm (DOT primaryTerm)*
+    ;
+
+primaryTerm
+    : parameterRef
+    | rawMaudeCall
+    | functionTerm
+    | indexedTerm
+    | listTerm
+    | braceTerm
+    | stringLiteral
+    | identifier
+    | numberLiteral
+    | LPAREN term RPAREN
+    ;
+
+functionTerm
+    : identifier LPAREN termList? RPAREN
+    ;
+
+indexedTerm
+    : identifier LBRACK term RBRACK
+    ;
+
+listTerm
+    : LBRACK termList? RBRACK
+    ;
+
+braceTerm
+    : LBRACE termList? RBRACE
+    ;
+
+termList
+    : term (COMMA term)*
+    ;
+
+rawMaudeCall
+    : MAUDE LPAREN stringLiteral RPAREN
+    ;
+
+parameterRef
+    : PARAMETER_REF
+    ;
+
+parameterName
     : IDENTIFIER
     ;
 
-hexLiteral
-    : HEX
+identifier
+    : IDENTIFIER
     ;
 
-SET
-    : 'set'
+numberLiteral
+    : NUMBER
     ;
 
-DELETE
-    : 'delete'
+stringLiteral
+    : STRING
+    ;
+
+BEHAVIOR_DEVIATION_SPECIFICATION
+    : 'BehaviorDeviationSpecification'
+    ;
+
+BEHAVIOR_ID
+    : 'BehaviorId'
+    ;
+
+PARAMETERS
+    : 'Parameters'
+    ;
+
+CONDITIONS
+    : 'Conditions'
+    ;
+
+MODIFICATIONS
+    : 'Modifications'
+    ;
+
+PARAMETER_INSTANCES
+    : 'ParameterInstances'
+    ;
+
+SETM
+    : 'setM'
+    ;
+
+SETF
+    : 'setF'
+    ;
+
+ADD
+    : 'add'
+    ;
+
+REMOVE
+    : 'remove'
     ;
 
 NOCHECK
@@ -109,12 +191,8 @@ DELAY
     : 'delay'
     ;
 
-VALUE
-    : 'value'
-    ;
-
-FIELD_VALUE
-    : 'fieldValue'
+MAUDE
+    : 'maude'
     ;
 
 AND
@@ -125,17 +203,13 @@ OR
     : 'or'
     ;
 
-XOR
-    : 'xor'
-    ;
-
 NOT
     : 'not'
     ;
 
 EQ
-    : '=='
-    | '='
+    : '='
+    | '=='
     ;
 
 COLON
@@ -146,6 +220,14 @@ COMMA
     : ','
     ;
 
+DOT
+    : '.'
+    ;
+
+DASH
+    : '-'
+    ;
+
 LPAREN
     : '('
     ;
@@ -154,8 +236,32 @@ RPAREN
     : ')'
     ;
 
-HEX
-    : '0x' [0-9a-fA-F]+
+LBRACK
+    : '['
+    ;
+
+RBRACK
+    : ']'
+    ;
+
+LBRACE
+    : '{'
+    ;
+
+RBRACE
+    : '}'
+    ;
+
+PARAMETER_REF
+    : '$' [A-Za-z_] [A-Za-z0-9_-]*
+    ;
+
+NUMBER
+    : [0-9]+
+    ;
+
+STRING
+    : '"' (ESC | ~["\\\r\n])* '"'
     ;
 
 IDENTIFIER
@@ -168,4 +274,13 @@ WS
 
 LINE_COMMENT
     : '//' ~[\r\n]* -> skip
+    ;
+
+fragment ESC
+    : '\\' ["\\/bfnrt]
+    | '\\' 'u' HEX HEX HEX HEX
+    ;
+
+fragment HEX
+    : [0-9a-fA-F]
     ;

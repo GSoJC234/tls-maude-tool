@@ -1,469 +1,259 @@
 package mta.user.scenario;
 
-import mta.user.behavior.BehaviorSpec;
-import mta.user.behavior.BehaviorSpecLoader;
-import mta.user.behavior.condition.BehaviorCondition;
-import mta.user.behavior.condition.BehaviorConditionExpr;
-import mta.user.behavior.condition.BehaviorConditionOpr;
-import mta.user.behavior.condition.BehaviorConditionTerm;
-import mta.user.profile.TLSProfile;
-import mta.user.profile.TLSProfileLoader;
+import mta.user.common.ActionExpression;
+import mta.user.common.ScenarioExpression;
+import mta.user.common.StateExpression;
+import mta.user.common.StepExpression;
+import mta.user.common.UserTerm;
 import mta.user.scenario.antlr.ScenarioSpecBaseVisitor;
 import mta.user.scenario.antlr.ScenarioSpecParser;
-import mta.user.scenario.property.ConnectionStep;
-import mta.user.scenario.property.NodeBinding;
-import mta.user.scenario.property.PropertyRelation;
-import mta.user.scenario.property.PropertyTerm;
-import mta.user.scenario.property.ScenarioProperty;
-import mta.user.scenario.property.operation.Not;
-import mta.user.scenario.property.operation.OneOrMoreRepetition;
-import mta.user.scenario.property.operation.OneOrMoreStep;
-import mta.user.scenario.property.operation.OneStep;
-import mta.user.scenario.property.operation.Or;
-import mta.user.scenario.property.operation.PropertyRelationOperation;
-import mta.user.scenario.property.operation.ZeroOrMoreRepetition;
-import mta.user.scenario.property.operation.ZeroOrMoreStep;
-import mta.user.scenario.state.SPAnd;
-import mta.user.scenario.state.SPNot;
-import mta.user.scenario.state.SPOr;
-import mta.user.scenario.state.SPXor;
-import mta.user.scenario.state.StateProposition;
-import mta.user.scenario.state.StatePropositionExpression;
-import mta.user.scenario.state.StatePropositionOperator;
-import mta.user.scenario.state.StatePropositionTerm;
 
 import java.nio.file.Path;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object> {
 
+    @SuppressWarnings("unused")
     private final Path baseDirectory;
-    private final TLSProfileLoader tlsProfileLoader;
-    private final BehaviorSpecLoader behaviorSpecLoader;
-    private ScenarioSpec scenarioSpec;
 
     public ScenarioSpecBuildingVisitor() {
         this(Path.of(".").toAbsolutePath().normalize());
     }
 
     public ScenarioSpecBuildingVisitor(Path baseDirectory) {
-        this(baseDirectory, new TLSProfileLoader(), new BehaviorSpecLoader());
-    }
-
-    public ScenarioSpecBuildingVisitor(Path baseDirectory,
-                                       TLSProfileLoader tlsProfileLoader,
-                                       BehaviorSpecLoader behaviorSpecLoader) {
         this.baseDirectory = baseDirectory != null ? baseDirectory : Path.of(".").toAbsolutePath().normalize();
-        this.tlsProfileLoader = tlsProfileLoader;
-        this.behaviorSpecLoader = behaviorSpecLoader;
     }
 
     @Override
     public Object visitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx) {
-        scenarioSpec = new ScenarioSpec();
-
-        for (ScenarioSpecParser.ScenarioItemContext itemContext : ctx.scenarioItem()) {
-            visit(itemContext);
-        }
-
-        // The grammar places scenario properties after declarations, so
-        // relation terms such as IS / FS / AP can be resolved in a final pass.
-        for (ScenarioSpecParser.ScenarioPropertiesSectionContext sectionContext : ctx.scenarioPropertiesSection()) {
-            visit(sectionContext);
-        }
-
+        ScenarioSpec scenarioSpec = new ScenarioSpec();
+        scenarioSpec.setCurrentScenarioProperty((ScenarioExpression) visit(ctx.scenarioExpr()));
         return scenarioSpec;
     }
 
     @Override
-    public Object visitLoadStatement(ScenarioSpecParser.LoadStatementContext ctx) {
-        Path profilePath = resolvePath(ctx.stringLiteral());
-        TLSProfile profile = tlsProfileLoader.loadTLSProfile(profilePath);
-        scenarioSpec.addProfile(readIdentifier(ctx.identifierValue()), profile);
-        return null;
+    public Object visitScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx) {
+        return visit(ctx.scenarioChoice());
     }
 
     @Override
-    public Object visitUseStatement(ScenarioSpecParser.UseStatementContext ctx) {
-        Path behaviorSpecPath = resolvePath(ctx.stringLiteral());
-        BehaviorSpec behaviorSpec = behaviorSpecLoader.loadBehaviorSpec(behaviorSpecPath);
-        scenarioSpec.addBehaviorSpec(behaviorSpec);
-        return null;
-    }
-
-    @Override
-    public Object visitNodesSection(ScenarioSpecParser.NodesSectionContext ctx) {
-        for (ScenarioSpecParser.IdentifierValueContext identifierContext : ctx.identifierValue()) {
-            scenarioSpec.addNodeId(readIdentifier(identifierContext));
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitLinkSection(ScenarioSpecParser.LinkSectionContext ctx) {
-        for (ScenarioSpecParser.LinkDeclarationContext declarationContext : ctx.linkDeclaration()) {
-            visit(declarationContext);
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx) {
-        scenarioSpec.addNodeLink(
-                readIdentifier(ctx.identifierValue()),
-                (NodeLink) visit(ctx.linkedIdentifiers())
-        );
-        return null;
-    }
-
-    @Override
-    public Object visitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx) {
-        return new NodeLink(
-                readIdentifier(ctx.identifierValue(0)),
-                readIdentifier(ctx.identifierValue(1))
-        );
-    }
-
-    @Override
-    public Object visitConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx) {
-        for (ScenarioSpecParser.ConstantDeclarationContext declarationContext : ctx.constantDeclaration()) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<String, Set<String>> constantEntry =
-                    (Map.Entry<String, Set<String>>) visit(declarationContext);
-            scenarioSpec.addConstant(constantEntry.getKey(), constantEntry.getValue());
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx) {
-        return new AbstractMap.SimpleEntry<String, Set<String>>(
-                readConstant(ctx.constantRef()),
-                readConstantSet(ctx.constantSet())
-        );
-    }
-
-    @Override
-    public Object visitStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx) {
-        for (ScenarioSpecParser.StatePropositionDeclarationContext declarationContext : ctx.statePropositionDeclaration()) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<String, StateProposition> propositionEntry =
-                    (Map.Entry<String, StateProposition>) visit(declarationContext);
-            scenarioSpec.addStateProposition(propositionEntry.getKey(), propositionEntry.getValue());
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx) {
-        return new AbstractMap.SimpleEntry<String, StateProposition>(
-                readIdentifier(ctx.identifierValue()),
-                (StateProposition) visit(ctx.statePropositionExpr())
-        );
-    }
-
-    @Override
-    public Object visitStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx) {
-        if (ctx.statePropositionTerm() != null) {
-            return visit(ctx.statePropositionTerm());
-        }
-        if (ctx.NOT() != null) {
-            StatePropositionExpression expression = new StatePropositionExpression();
-            expression.setOperator(new SPNot());
-            expression.setLeftExpression((StatePropositionExpression) visit(ctx.statePropositionExpr(0)));
-            return expression;
-        }
-        if (ctx.LPAREN() != null) {
-            return visit(ctx.statePropositionExpr(0));
-        }
-
-        StatePropositionExpression leftExpression = (StatePropositionExpression) visit(ctx.statePropositionExpr(0));
-        StatePropositionExpression rightExpression = (StatePropositionExpression) visit(ctx.statePropositionExpr(1));
-        return combineStateExpression(leftExpression, rightExpression, readStateOperator(ctx));
-    }
-
-    @Override
-    public Object visitStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx) {
-        return new StatePropositionTerm(
-                readIdentifier(ctx.identifierValue()),
-                new BehaviorCondition((BehaviorConditionExpr) visit(ctx.conditionExpr()))
-        );
-    }
-
-    @Override
-    public Object visitActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx) {
-        for (ScenarioSpecParser.ActionPropositionDeclarationContext declarationContext : ctx.actionPropositionDeclaration()) {
-            @SuppressWarnings("unchecked")
-            Map.Entry<String, ActionProposition> propositionEntry =
-                    (Map.Entry<String, ActionProposition>) visit(declarationContext);
-            scenarioSpec.addActionProposition(propositionEntry.getKey(), propositionEntry.getValue());
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx) {
-        return new AbstractMap.SimpleEntry<String, ActionProposition>(
-                readIdentifier(ctx.identifierValue()),
-                (ActionProposition) visit(ctx.actionInvocation())
-        );
-    }
-
-    @Override
-    public Object visitActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx) {
-        ActionProposition actionProposition = new ActionProposition();
-        actionProposition.setActionId(readIdentifier(ctx.identifierValue()));
-        for (ScenarioSpecParser.ActionArgumentContext argumentContext : ctx.actionArgument()) {
-            actionProposition.addArgument((ActionArgument) visit(argumentContext));
-        }
-        return actionProposition;
-    }
-
-    @Override
-    public Object visitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx) {
-        if (ctx.oneOfExpr() != null) {
-            return visit(ctx.oneOfExpr());
-        }
-        return visit(ctx.actionValue());
-    }
-
-    @Override
-    public Object visitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx) {
-        return new ActionArgumentOneOf(readConstant(ctx.constantRef()));
-    }
-
-    @Override
-    public Object visitActionValue(ScenarioSpecParser.ActionValueContext ctx) {
-        if (ctx.hexLiteral() != null) {
-            return new ActionArgumentValue(readHexLiteral(ctx.hexLiteral()));
-        }
-        return new ActionArgumentValue(readIdentifier(ctx.identifierValue()));
-    }
-
-    @Override
-    public Object visitScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx) {
-        for (ScenarioSpecParser.ScenarioPropertyDeclarationContext declarationContext : ctx.scenarioPropertyDeclaration()) {
-            scenarioSpec.addScenarioProperty((ScenarioProperty) visit(declarationContext));
-        }
-        return null;
-    }
-
-    @Override
-    public Object visitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx) {
-        ScenarioProperty scenarioProperty = new ScenarioProperty();
-        scenarioProperty.setConnectorId(readIdentifier(ctx.identifierValue()));
-
-        for (ScenarioSpecParser.NodeBindingContext bindingContext : ctx.nodeBinding()) {
-            scenarioProperty.addNodeBinding((NodeBinding) visit(bindingContext));
-        }
-        for (String linkId : visitLinkQualifier(ctx.linkQualifier())) {
-            scenarioProperty.addLinkId(linkId);
-        }
-
-        ConnectionStep propertyRoot = new ConnectionStep();
-        propertyRoot.setPropertyRelation((PropertyRelation) visit(ctx.propertyRelation()));
-        scenarioProperty.addStep(propertyRoot);
-        return scenarioProperty;
-    }
-
-    @Override
-    public List<String> visitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx) {
-        List<String> linkIds = new ArrayList<String>();
-        for (ScenarioSpecParser.IdentifierValueContext identifierContext : ctx.identifierValue()) {
-            linkIds.add(readIdentifier(identifierContext));
-        }
-        return linkIds;
-    }
-
-    @Override
-    public Object visitNodeBinding(ScenarioSpecParser.NodeBindingContext ctx) {
-        return new NodeBinding(
-                readIdentifier(ctx.identifierValue(0)),
-                readIdentifier(ctx.identifierValue(1))
-        );
-    }
-
-    @Override
-    public Object visitPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx) {
-        if (ctx.identifierValue() != null) {
-            return readPropertyTerm(ctx.identifierValue());
-        }
-        if (ctx.NOT() != null) {
-            return combinePropertyRelation(
-                    (PropertyRelation) visit(ctx.propertyRelation(0)),
-                    null,
-                    new Not()
+    public Object visitScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx) {
+        ScenarioExpression expression = (ScenarioExpression) visit(ctx.scenarioSequence(0));
+        for (int index = 1; index < ctx.scenarioSequence().size(); index++) {
+            expression = new ScenarioExpression.Choice(
+                    expression,
+                    (ScenarioExpression) visit(ctx.scenarioSequence(index))
             );
         }
-        if (ctx.LPAREN() != null) {
-            return visit(ctx.propertyRelation(0));
-        }
-        if (ctx.ZERO_OR_MORE() != null || ctx.ONE_OR_MORE() != null) {
-            PropertyRelationOperation operation = ctx.ZERO_OR_MORE() != null
-                    ? new ZeroOrMoreRepetition()
-                    : new OneOrMoreRepetition();
-            return combinePropertyRelation((PropertyRelation) visit(ctx.propertyRelation(0)), null, operation);
-        }
-
-        PropertyRelation leftRelation = (PropertyRelation) visit(ctx.propertyRelation(0));
-        PropertyRelation rightRelation = (PropertyRelation) visit(ctx.propertyRelation(1));
-        return combinePropertyRelation(leftRelation, rightRelation, readPropertyOperation(ctx));
+        return expression;
     }
 
     @Override
-    public Object visitConditionExpr(ScenarioSpecParser.ConditionExprContext ctx) {
-        if (ctx.conditionPredicate() != null) {
-            return visit(ctx.conditionPredicate());
+    public Object visitScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx) {
+        ScenarioExpression expression = (ScenarioExpression) visit(ctx.scenarioRepeat(0));
+        for (int index = 1; index < ctx.scenarioRepeat().size(); index++) {
+            expression = new ScenarioExpression.Sequence(
+                    expression,
+                    (ScenarioExpression) visit(ctx.scenarioRepeat(index))
+            );
         }
+        return expression;
+    }
+
+    @Override
+    public Object visitScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx) {
+        ScenarioExpression expression = (ScenarioExpression) visit(ctx.scenarioPrimary());
+        for (int index = 0; index < ctx.STAR().size(); index++) {
+            expression = new ScenarioExpression.Star(expression);
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx) {
+        if (ctx.ANY_STEP() != null) {
+            return new ScenarioExpression.Step(new StepExpression.AnyStep());
+        }
+        if (ctx.rawMaudeCall() != null) {
+            return new ScenarioExpression.RawMaude((String) visit(ctx.rawMaudeCall()));
+        }
+        if (ctx.scenarioExpr() != null) {
+            return visit(ctx.scenarioExpr());
+        }
+        return new ScenarioExpression.Step((StepExpression) visit(ctx.stepExpr()));
+    }
+
+    @Override
+    public Object visitStepExpr(ScenarioSpecParser.StepExprContext ctx) {
+        return visit(ctx.stepOr());
+    }
+
+    @Override
+    public Object visitStepOr(ScenarioSpecParser.StepOrContext ctx) {
+        StepExpression expression = (StepExpression) visit(ctx.stepAnd(0));
+        for (int index = 1; index < ctx.stepAnd().size(); index++) {
+            expression = new StepExpression.Binary(
+                    StepExpression.Operator.OR,
+                    expression,
+                    (StepExpression) visit(ctx.stepAnd(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitStepAnd(ScenarioSpecParser.StepAndContext ctx) {
+        StepExpression expression = (StepExpression) visit(ctx.stepNot(0));
+        for (int index = 1; index < ctx.stepNot().size(); index++) {
+            expression = new StepExpression.Binary(
+                    StepExpression.Operator.AND,
+                    expression,
+                    (StepExpression) visit(ctx.stepNot(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitStepNot(ScenarioSpecParser.StepNotContext ctx) {
         if (ctx.NOT() != null) {
-            BehaviorConditionExpr expression = new BehaviorConditionExpr();
-            expression.setOperator(BehaviorConditionOpr.not);
-            expression.setLeftExpression((BehaviorConditionExpr) visit(ctx.conditionExpr(0)));
-            return expression;
+            return new StepExpression.Not((StepExpression) visit(ctx.stepNot()));
         }
-        if (ctx.LPAREN() != null) {
-            return visit(ctx.conditionExpr(0));
+        if (ctx.stepAtom() != null) {
+            return visit(ctx.stepAtom());
         }
-
-        BehaviorConditionExpr leftExpression = (BehaviorConditionExpr) visit(ctx.conditionExpr(0));
-        BehaviorConditionExpr rightExpression = (BehaviorConditionExpr) visit(ctx.conditionExpr(1));
-
-        if (ctx.OR() != null) {
-            return combineConditionExpression(leftExpression, rightExpression, BehaviorConditionOpr.or);
-        }
-        if (ctx.XOR() != null) {
-            return combineConditionExpression(leftExpression, rightExpression, BehaviorConditionOpr.xor);
-        }
-        return combineConditionExpression(leftExpression, rightExpression, BehaviorConditionOpr.and);
+        return visit(ctx.stepExpr());
     }
 
     @Override
-    public Object visitConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx) {
-        return new BehaviorConditionTerm(
-                readIdentifier(ctx.valueAccessor().identifierValue()),
-                readConditionOperand(ctx.conditionOperand())
+    public Object visitStepAtom(ScenarioSpecParser.StepAtomContext ctx) {
+        if (ctx.stateAtom() != null) {
+            return new StepExpression.State((StateExpression) visit(ctx.stateAtom()));
+        }
+        return new StepExpression.Action((ActionExpression) visit(ctx.actionAtom()));
+    }
+
+    @Override
+    public Object visitStateAtom(ScenarioSpecParser.StateAtomContext ctx) {
+        return new StateExpression.Atom(
+                (UserTerm) visit(ctx.stateObject()),
+                readIdentifier(ctx.identifier()),
+                (UserTerm) visit(ctx.term())
         );
     }
 
-    private static BehaviorConditionExpr combineConditionExpression(BehaviorConditionExpr leftExpression,
-                                                                    BehaviorConditionExpr rightExpression,
-                                                                    BehaviorConditionOpr operator) {
-        BehaviorConditionExpr expression = new BehaviorConditionExpr();
-        expression.setLeftExpression(leftExpression);
-        expression.setRightExpression(rightExpression);
-        expression.setOperator(operator);
-        return expression;
+    @Override
+    public Object visitStateObject(ScenarioSpecParser.StateObjectContext ctx) {
+        List<ScenarioSpecParser.IdentifierContext> identifiers = ctx.identifier();
+        if (identifiers.size() == 1) {
+            return new UserTerm.Atom(readIdentifier(identifiers.get(0)));
+        }
+
+        List<UserTerm> parts = new ArrayList<UserTerm>();
+        for (ScenarioSpecParser.IdentifierContext identifierContext : identifiers) {
+            parts.add(new UserTerm.Atom(readIdentifier(identifierContext)));
+        }
+        return new UserTerm.Dotted(parts);
     }
 
-    private static StatePropositionExpression combineStateExpression(StatePropositionExpression leftExpression,
-                                                                    StatePropositionExpression rightExpression,
-                                                                    StatePropositionOperator operator) {
-        StatePropositionExpression expression = new StatePropositionExpression();
-        expression.setLeftExpression(leftExpression);
-        expression.setRightExpression(rightExpression);
-        expression.setOperator(operator);
-        return expression;
+    @Override
+    public Object visitActionAtom(ScenarioSpecParser.ActionAtomContext ctx) {
+        return new ActionExpression.Atom(readIdentifier(ctx.identifier()), (UserTerm) visit(ctx.term()));
     }
 
-    private static PropertyRelation combinePropertyRelation(PropertyRelation leftRelation,
-                                                            PropertyRelation rightRelation,
-                                                            PropertyRelationOperation operator) {
-        PropertyRelation relation = new PropertyRelation();
-        relation.setLeftRelation(leftRelation);
-        relation.setRightRelation(rightRelation);
-        relation.setOperation(operator);
-        return relation;
+    @Override
+    public Object visitTerm(ScenarioSpecParser.TermContext ctx) {
+        return visit(ctx.dottedTerm());
     }
 
-    private PropertyRelationOperation readPropertyOperation(ScenarioSpecParser.PropertyRelationContext ctx) {
-        if (ctx.STEP_ZERO_OR_MORE() != null) {
-            return new ZeroOrMoreStep();
+    @Override
+    public Object visitDottedTerm(ScenarioSpecParser.DottedTermContext ctx) {
+        List<ScenarioSpecParser.PrimaryTermContext> parts = ctx.primaryTerm();
+        if (parts.size() == 1) {
+            return visit(parts.get(0));
         }
-        if (ctx.STEP_ONE_OR_MORE() != null) {
-            return new OneOrMoreStep();
+
+        List<UserTerm> renderedParts = new ArrayList<UserTerm>();
+        for (ScenarioSpecParser.PrimaryTermContext part : parts) {
+            renderedParts.add((UserTerm) visit(part));
         }
-        if (ctx.STEP_ONE() != null) {
-            return new OneStep();
-        }
-        return new Or();
+        return new UserTerm.Dotted(renderedParts);
     }
 
-    private StatePropositionOperator readStateOperator(ScenarioSpecParser.StatePropositionExprContext ctx) {
-        if (ctx.OR() != null) {
-            return new SPOr();
+    @Override
+    public Object visitPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx) {
+        if (ctx.functionTerm() != null) {
+            return visit(ctx.functionTerm());
         }
-        if (ctx.XOR() != null) {
-            return new SPXor();
+        if (ctx.rawMaudeCall() != null) {
+            return new UserTerm.RawMaude((String) visit(ctx.rawMaudeCall()));
         }
-        return new SPAnd();
+        if (ctx.indexedTerm() != null) {
+            return visit(ctx.indexedTerm());
+        }
+        if (ctx.listTerm() != null) {
+            return visit(ctx.listTerm());
+        }
+        if (ctx.braceTerm() != null) {
+            return visit(ctx.braceTerm());
+        }
+        if (ctx.stringLiteral() != null) {
+            return new UserTerm.StringLiteral(stripQuotes(ctx.stringLiteral().STRING().getText()));
+        }
+        if (ctx.identifier() != null) {
+            return new UserTerm.Atom(readIdentifier(ctx.identifier()));
+        }
+        if (ctx.numberLiteral() != null) {
+            return new UserTerm.Atom(ctx.numberLiteral().NUMBER().getText());
+        }
+        return visit(ctx.term());
     }
 
-    private PropertyTerm readPropertyTerm(ScenarioSpecParser.IdentifierValueContext ctx) {
-        String referenceId = readIdentifier(ctx);
-        boolean isState = scenarioSpec.getStatePropositions().containsKey(referenceId);
-        if (isState)
-            return PropertyTerm.stateProposition(referenceId);
-        else
-            return PropertyTerm.actionProposition(referenceId);
-    }
-
-    private Path resolvePath(ScenarioSpecParser.StringLiteralContext ctx) {
-        Path path = Path.of(stripQuotes(ctx.STRING().getText()));
-        if (path.isAbsolute()) {
-            return path.normalize();
-        }
-        return baseDirectory.resolve(path).normalize();
-    }
-
-    private static Set<String> readConstantSet(ScenarioSpecParser.ConstantSetContext ctx) {
-        Set<String> constants = new LinkedHashSet<String>();
-        for (ScenarioSpecParser.ConstantValueContext valueContext : ctx.constantValue()) {
-            constants.add(readConstantValue(valueContext));
-        }
-        return constants;
-    }
-
-    private static String readConstantValue(ScenarioSpecParser.ConstantValueContext ctx) {
-        if (ctx.hexLiteral() != null) {
-            return readHexLiteral(ctx.hexLiteral());
-        }
-        return readIdentifier(ctx.identifierValue());
-    }
-
-    private static String readConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx) {
-        if (ctx.constantRef() != null) {
-            return readConstant(ctx.constantRef());
-        }
-        if (ctx.identifierValue() != null) {
-            return readIdentifier(ctx.identifierValue());
-        }
+    @Override
+    public Object visitRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx) {
         return stripQuotes(ctx.stringLiteral().STRING().getText());
     }
 
-    private static String readConstant(ScenarioSpecParser.ConstantRefContext ctx) {
-        return ctx.CONSTANT_REF().getText();
+    @Override
+    public Object visitFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx) {
+        return new UserTerm.Call(readIdentifier(ctx.identifier()), readTermList(ctx.termList()));
     }
 
-    private static String readIdentifier(ScenarioSpecParser.IdentifierValueContext ctx) {
+    @Override
+    public Object visitIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx) {
+        return new UserTerm.Indexed(readIdentifier(ctx.identifier()), (UserTerm) visit(ctx.term()));
+    }
+
+    @Override
+    public Object visitListTerm(ScenarioSpecParser.ListTermContext ctx) {
+        return new UserTerm.ListTerm(readTermList(ctx.termList()));
+    }
+
+    @Override
+    public Object visitBraceTerm(ScenarioSpecParser.BraceTermContext ctx) {
+        return new UserTerm.BraceTerm(readTermList(ctx.termList()));
+    }
+
+    private List<UserTerm> readTermList(ScenarioSpecParser.TermListContext ctx) {
+        List<UserTerm> terms = new ArrayList<UserTerm>();
+        if (ctx == null) {
+            return terms;
+        }
+        for (ScenarioSpecParser.TermContext termContext : ctx.term()) {
+            terms.add((UserTerm) visit(termContext));
+        }
+        return terms;
+    }
+
+    private static String readIdentifier(ScenarioSpecParser.IdentifierContext ctx) {
         return ctx.IDENTIFIER().getText();
     }
 
-    private static String readHexLiteral(ScenarioSpecParser.HexLiteralContext ctx) {
-        return ctx.HEX().getText();
-    }
-
-    private static String stripQuotes(String raw) {
-        if (raw == null || raw.length() < 2) {
-            return raw;
+    private static String stripQuotes(String text) {
+        if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
+            return text.substring(1, text.length() - 1);
         }
-        if (raw.charAt(0) == '"' && raw.charAt(raw.length() - 1) == '"') {
-            return raw.substring(1, raw.length() - 1);
-        }
-        return raw;
+        return text;
     }
 }

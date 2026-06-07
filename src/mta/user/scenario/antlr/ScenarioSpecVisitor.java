@@ -17,213 +17,153 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioItem}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitScenarioItem(ScenarioSpecParser.ScenarioItemContext ctx);
+	T visitScenarioExpr(ScenarioSpecParser.ScenarioExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#loadStatement}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioChoice}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLoadStatement(ScenarioSpecParser.LoadStatementContext ctx);
+	T visitScenarioChoice(ScenarioSpecParser.ScenarioChoiceContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#useStatement}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioSequence}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUseStatement(ScenarioSpecParser.UseStatementContext ctx);
+	T visitScenarioSequence(ScenarioSpecParser.ScenarioSequenceContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#nodesSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioRepeat}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNodesSection(ScenarioSpecParser.NodesSectionContext ctx);
+	T visitScenarioRepeat(ScenarioSpecParser.ScenarioRepeatContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioPrimary}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinkSection(ScenarioSpecParser.LinkSectionContext ctx);
+	T visitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkDeclaration}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinkDeclaration(ScenarioSpecParser.LinkDeclarationContext ctx);
+	T visitStepExpr(ScenarioSpecParser.StepExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkedIdentifiers}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepOr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinkedIdentifiers(ScenarioSpecParser.LinkedIdentifiersContext ctx);
+	T visitStepOr(ScenarioSpecParser.StepOrContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantsSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepAnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstantsSection(ScenarioSpecParser.ConstantsSectionContext ctx);
+	T visitStepAnd(ScenarioSpecParser.StepAndContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantDeclaration}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepNot}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstantDeclaration(ScenarioSpecParser.ConstantDeclarationContext ctx);
+	T visitStepNot(ScenarioSpecParser.StepNotContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantSet}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepAtom}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstantSet(ScenarioSpecParser.ConstantSetContext ctx);
+	T visitStepAtom(ScenarioSpecParser.StepAtomContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantValue}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateAtom}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstantValue(ScenarioSpecParser.ConstantValueContext ctx);
+	T visitStateAtom(ScenarioSpecParser.StateAtomContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionsSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateObject}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatePropositionsSection(ScenarioSpecParser.StatePropositionsSectionContext ctx);
+	T visitStateObject(ScenarioSpecParser.StateObjectContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionAtom}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	T visitActionAtom(ScenarioSpecParser.ActionAtomContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionExpr}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatePropositionExpr(ScenarioSpecParser.StatePropositionExprContext ctx);
+	T visitTerm(ScenarioSpecParser.TermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionTerm}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#dottedTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatePropositionTerm(ScenarioSpecParser.StatePropositionTermContext ctx);
+	T visitDottedTerm(ScenarioSpecParser.DottedTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionPropositionsSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#primaryTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionPropositionsSection(ScenarioSpecParser.ActionPropositionsSectionContext ctx);
+	T visitPrimaryTerm(ScenarioSpecParser.PrimaryTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#functionTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	T visitFunctionTerm(ScenarioSpecParser.FunctionTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionInvocation}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#indexedTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionInvocation(ScenarioSpecParser.ActionInvocationContext ctx);
+	T visitIndexedTerm(ScenarioSpecParser.IndexedTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionArgument}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#listTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionArgument(ScenarioSpecParser.ActionArgumentContext ctx);
+	T visitListTerm(ScenarioSpecParser.ListTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#oneOfExpr}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#braceTerm}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOneOfExpr(ScenarioSpecParser.OneOfExprContext ctx);
+	T visitBraceTerm(ScenarioSpecParser.BraceTermContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionValue}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#termList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionValue(ScenarioSpecParser.ActionValueContext ctx);
+	T visitTermList(ScenarioSpecParser.TermListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertiesSection}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#rawMaudeCall}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitScenarioPropertiesSection(ScenarioSpecParser.ScenarioPropertiesSectionContext ctx);
+	T visitRawMaudeCall(ScenarioSpecParser.RawMaudeCallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#identifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
+	T visitIdentifier(ScenarioSpecParser.IdentifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#linkQualifier}.
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#numberLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLinkQualifier(ScenarioSpecParser.LinkQualifierContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#nodeBinding}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNodeBinding(ScenarioSpecParser.NodeBindingContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#propertyRelation}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPropertyRelation(ScenarioSpecParser.PropertyRelationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#propertyReferenceValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPropertyReferenceValue(ScenarioSpecParser.PropertyReferenceValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#conditionExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConditionExpr(ScenarioSpecParser.ConditionExprContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#conditionPredicate}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConditionPredicate(ScenarioSpecParser.ConditionPredicateContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#valueAccessor}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitValueAccessor(ScenarioSpecParser.ValueAccessorContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#conditionOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConditionOperand(ScenarioSpecParser.ConditionOperandContext ctx);
+	T visitNumberLiteral(ScenarioSpecParser.NumberLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#stringLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStringLiteral(ScenarioSpecParser.StringLiteralContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#constantRef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConstantRef(ScenarioSpecParser.ConstantRefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#identifierValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdentifierValue(ScenarioSpecParser.IdentifierValueContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ScenarioSpecParser#hexLiteral}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitHexLiteral(ScenarioSpecParser.HexLiteralContext ctx);
 }

@@ -12,8 +12,8 @@ public enum TestRole {
         }
 
         return switch (value.trim().toUpperCase(Locale.ROOT)){
-            case "Target" -> Target;
-            case "Tester" -> Tester;
+            case "TARGET" -> Target;
+            case "TESTER" -> Tester;
             default -> throw new IllegalArgumentException("Unknown role: " + value);
         };
     }

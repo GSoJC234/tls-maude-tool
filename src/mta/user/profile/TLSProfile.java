@@ -1,11 +1,14 @@
 package mta.user.profile;
 
 import mta.maude.constant.*;
+import mta.user.common.UserTerm;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class TLSProfile {
@@ -33,6 +36,9 @@ public class TLSProfile {
     private boolean keyUpdateWait;
     private boolean certificateRequest;
     private ExecutionConfiguration executionConfiguration;
+    private String libraryName;
+    private String libraryVersion;
+    private final Map<String, List<UserTerm>> rawFields;
 
     public TLSProfile() {
         this.certificateTypes = new ArrayList<CertificateType>();
@@ -44,6 +50,7 @@ public class TLSProfile {
         this.signatureAlgorithms = new ArrayList<SignatureAlgorithm>();
         this.keyShares = new ArrayList<NamedGroup>();
         this.supportedVersions = new ArrayList<SupportedVersion>();
+        this.rawFields = new LinkedHashMap<String, List<UserTerm>>();
     }
 
     public TestRole getTestRole() {
@@ -311,6 +318,37 @@ public class TLSProfile {
         this.executionConfiguration = executionConfiguration;
     }
 
+    public String getLibraryName() {
+        return libraryName;
+    }
+
+    public void setLibraryName(String libraryName) {
+        this.libraryName = libraryName;
+    }
+
+    public String getLibraryVersion() {
+        return libraryVersion;
+    }
+
+    public void setLibraryVersion(String libraryVersion) {
+        this.libraryVersion = libraryVersion;
+    }
+
+    public Map<String, List<UserTerm>> getRawFields() {
+        Map<String, List<UserTerm>> copy = new LinkedHashMap<String, List<UserTerm>>();
+        for (Map.Entry<String, List<UserTerm>> entry : rawFields.entrySet()) {
+            copy.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
+        }
+        return Collections.unmodifiableMap(copy);
+    }
+
+    public void putRawField(String name, List<UserTerm> values) {
+        if (name == null) {
+            return;
+        }
+        rawFields.put(name, values != null ? new ArrayList<UserTerm>(values) : List.of());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -341,7 +379,10 @@ public class TLSProfile {
                 && keyUpdateReq == that.keyUpdateReq
                 && keyUpdateWait == that.keyUpdateWait
                 && certificateRequest == that.certificateRequest
-                && Objects.equals(executionConfiguration, that.executionConfiguration);
+                && Objects.equals(executionConfiguration, that.executionConfiguration)
+                && Objects.equals(libraryName, that.libraryName)
+                && Objects.equals(libraryVersion, that.libraryVersion)
+                && Objects.equals(rawFields, that.rawFields);
     }
 
     @Override
@@ -352,7 +393,7 @@ public class TLSProfile {
                 supportedVersions, pskKeyExchangeModes, newSessionTicketReq,
                 newSessionTicketWait, earlyDataReq, postClientAuthReq,
                 keyUpdateReq, keyUpdateWait, certificateRequest,
-                executionConfiguration);
+                executionConfiguration, libraryName, libraryVersion, rawFields);
     }
 
     @Override
@@ -378,6 +419,9 @@ public class TLSProfile {
                 + ", keyUpdateWait=" + keyUpdateWait
                 + ", certificateRequest=" + certificateRequest
                 + ", executionConfiguration=" + executionConfiguration
+                + ", libraryName='" + libraryName + '\''
+                + ", libraryVersion='" + libraryVersion + '\''
+                + ", rawFields=" + rawFields
                 + '}';
     }
 
