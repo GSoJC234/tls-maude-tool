@@ -2,26 +2,24 @@ package mta.maude.module;
 
 import mta.user.behavior.BehaviorDeviationSpecification;
 import mta.user.behavior.BehaviorSpecLoader;
+import mta.user.common.UserTerm;
+import mta.user.profile.TLSProfile;
 import mta.user.profile.TLSProfileLoader;
 import mta.user.profile.TLSProfiles;
 import mta.user.scenario.ScenarioSpec;
 import mta.user.scenario.ScenarioSpecLoader;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class UserScenarioModuleBuilder {
 
     public static final String PROFILE_FILE = "tlsprofile.dsl";
     public static final String BEHAVIOR_FILE = "behavior.dsl";
     public static final String SCENARIO_FILE = "scenario.dsl";
-    public static final String MANIFEST_FILE = "manifest.properties";
-    public static final String EXTRA_MAUDE_FILE = "extra.maude";
 
     private final TLSProfileLoader profileLoader;
     private final BehaviorSpecLoader behaviorSpecLoader;
@@ -40,29 +38,16 @@ public class UserScenarioModuleBuilder {
     }
 
     public GeneratedTestModuleSpec fromDirectory(Path caseDirectory) {
-        Properties manifest = loadManifest(caseDirectory.resolve(MANIFEST_FILE));
-        GeneratedTestModuleSpec spec = fromFiles(
+        return fromFiles(
                 caseDirectory.resolve(PROFILE_FILE),
                 caseDirectory.resolve(BEHAVIOR_FILE),
-                caseDirectory.resolve(SCENARIO_FILE),
-                manifest
+                caseDirectory.resolve(SCENARIO_FILE)
         );
-
-        Path extraMaude = caseDirectory.resolve(EXTRA_MAUDE_FILE);
-        if (Files.exists(extraMaude)) {
-            try {
-                spec.addExtraMaudeDefinition(Files.readString(extraMaude));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read extra Maude definitions: " + extraMaude, e);
-            }
-        }
-        return spec;
     }
 
     public GeneratedTestModuleSpec fromFiles(Path profilePath,
                                              Path behaviorPath,
-                                             Path scenarioPath,
-                                             Properties manifest) {
+                                             Path scenarioPath) {
         TLSProfiles profiles = profileLoader.loadTLSProfiles(profilePath);
         BehaviorDeviationSpecification behavior =
                 behaviorSpecLoader.loadBehaviorDeviationSpecification(behaviorPath);
@@ -72,53 +57,93 @@ public class UserScenarioModuleBuilder {
         spec.setTlsProfiles(profiles);
         spec.setBehaviorDeviationSpecification(behavior);
         spec.setScenarioSpec(scenarioSpec);
-
-        setIfPresent(manifest, "moduleName", spec::setModuleName);
-        setIfPresent(manifest, "baseLoadPath", spec::setBaseLoadPath);
-        setIfPresent(manifest, "protocolVersion", spec::setProtocolVersion);
-        setIfPresent(manifest, "initialCwaName", spec::setInitialCwaName);
-        setIfPresent(manifest, "tlsConfigurationName", spec::setTlsConfigurationName);
-        setIfPresent(manifest, "behaviorSpecificationName", spec::setBehaviorSpecificationName);
-        setIfPresent(manifest, "scenarioPropertyName", spec::setScenarioPropertyName);
-        setIfPresent(manifest, "runner", spec::setRunner);
-        setIfPresent(manifest, "expectedResultSort", spec::setExpectedResultSort);
-        if (manifest.getProperty("nat") != null && !manifest.getProperty("nat").isBlank()) {
-            spec.setNat(Integer.parseInt(manifest.getProperty("nat").trim()));
-        }
-
-        List<String> extraModules = commaSeparated(manifest.getProperty("extraProtectingModules"));
-        spec.setExtraProtectingModules(extraModules);
+        applyDefaults(spec, profilePath.toAbsolutePath().normalize().getParent());
         return spec;
     }
 
-    private Properties loadManifest(Path manifestPath) {
-        Properties properties = new Properties();
-        try (Reader reader = Files.newBufferedReader(manifestPath)) {
-            properties.load(reader);
-            return properties;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read scenario manifest: " + manifestPath, e);
+    public void applyDefaults(GeneratedTestModuleSpec spec, Path searchStart) {
+        String protocolVersion = inferProtocolVersion(spec.getTlsProfiles());
+        spec.setProtocolVersion(protocolVersion);
+        spec.setBaseLoadPath(defaultBaseLoadPath(protocolVersion, searchStart));
+        spec.setRunner("runScenario");
+        spec.setNat(null);
+        spec.setExpectedResultSort("List{Scen}");
+    }
+
+    public String inferProtocolVersion(TLSProfiles profiles) {
+        Set<String> versions = new LinkedHashSet<String>();
+        collectProtocolVersion(versions, profiles.getTester());
+        collectProtocolVersion(versions, profiles.getTarget());
+        if (versions.isEmpty()) {
+            return "TLS-13";
+        }
+        if (versions.size() > 1) {
+            throw new IllegalArgumentException("Conflicting TLS profile versions: " + versions);
+        }
+        return versions.iterator().next();
+    }
+
+    public String defaultBaseLoadPath(String protocolVersion, Path searchStart) {
+        String fileName = switch (protocolVersion) {
+            case "TLS-12" -> "5246-base.maude";
+            case "TLS-13" -> "8446-base.maude";
+            default -> throw new IllegalArgumentException("Unsupported TLS protocol version: " + protocolVersion);
+        };
+
+        Path relative = Path.of("maude", "requirements", fileName);
+        Path projectRoot = findProjectRoot(searchStart, relative);
+        if (projectRoot == null) {
+            projectRoot = findProjectRoot(Path.of("").toAbsolutePath().normalize(), relative);
+        }
+        if (projectRoot != null) {
+            return projectRoot.resolve(relative).toAbsolutePath().normalize().toString();
+        }
+        return relative.toString();
+    }
+
+    private void collectProtocolVersion(Set<String> versions, TLSProfile profile) {
+        if (profile == null) {
+            return;
+        }
+        List<UserTerm> values = profile.getRawFields().get("Version");
+        if (values == null) {
+            return;
+        }
+        for (UserTerm value : values) {
+            String rendered = renderVersionTerm(value);
+            if (rendered.contains("TLS-12")) {
+                versions.add("TLS-12");
+            }
+            if (rendered.contains("TLS-13")) {
+                versions.add("TLS-13");
+            }
         }
     }
 
-    private interface StringSetter {
-        void set(String value);
+    private String renderVersionTerm(UserTerm term) {
+        if (term instanceof UserTerm.RawMaude rawMaude) {
+            return rawMaude.text();
+        }
+        if (term instanceof UserTerm.StringLiteral literal) {
+            return literal.value();
+        }
+        return term.source();
     }
 
-    private static void setIfPresent(Properties properties, String key, StringSetter setter) {
-        String value = properties.getProperty(key);
-        if (value != null && !value.isBlank()) {
-            setter.set(value.trim());
+    private Path findProjectRoot(Path start, Path relativeBasePath) {
+        if (start == null) {
+            return null;
         }
-    }
-
-    private static List<String> commaSeparated(String value) {
-        if (value == null || value.isBlank()) {
-            return List.of();
+        Path current = start.toAbsolutePath().normalize();
+        if (Files.isRegularFile(current)) {
+            current = current.getParent();
         }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(item -> !item.isEmpty())
-                .toList();
+        while (current != null) {
+            if (Files.exists(current.resolve(relativeBasePath))) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        return null;
     }
 }

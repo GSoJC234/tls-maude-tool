@@ -1,33 +1,51 @@
 package mta.main;
 
 import mta.maude.MaudeRunner;
+import mta.maude.module.GeneratedTestModuleRenderer;
+import mta.maude.module.GeneratedTestModuleSpec;
+import mta.maude.module.UserScenarioModuleBuilder;
 import mta.scenario.ScenarioRunner;
 import mta.visualizer.VisualizerConnector;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Main {
 
     private static final String CONFIG_BASE_PATH = "resources/mta.config";
+    private static final String DEFAULT_MAUDE_EXECUTABLE = "maude/maude/maude-3.5.1/maude";
+    private static final String DEFAULT_USER_OUTPUT_DIR = "generated/user-scenario";
 
     public static void main(String[] args) {
         if (args.length == 0 || args[0].trim().isEmpty()) {
-            System.err.println("Usage: --generate [options] | -- run [options] | --visual [options]");
+            System.err.println("Usage: --generate [options] | --generate-user [options] | --run [options] | --visual [options]");
             System.exit(1);
         }
 
         String mode = args[0];
         switch (mode) {
             case "--generate" ->  generateScenario(args);
+            case "--generate-user" -> generateUserScenario(args);
             case "--run" ->  runScenario(args);
             case "--visual" -> runVisualizer(args);
+            default -> {
+                System.err.println("Unknown mode: " + mode);
+                System.exit(1);
+            }
         }
 
     }
 
     private static void generateScenario(String[] args) {
+        if (isUserGenerateArguments(args)) {
+            generateUserScenario(args);
+            return;
+        }
         if (args.length < 6) {
-            System.err.println("Usage: --generate [maude executable path] [module path] [requirement TLS version] [requirement index] [output file directory]");
+            System.err.println("Usage:");
+            System.err.println("  --generate [tls profile path] [behavior spec path] [scenario spec path] [output dir?] [maude executable path?]");
+            System.err.println("  --generate [maude executable path] [module path] [requirement TLS version] [requirement index] [output file directory]");
             System.exit(1);
         }
 
@@ -46,6 +64,54 @@ public class Main {
 
         MaudeRunner maudeRunner = new MaudeRunner(maudePath);
         maudeRunner.execute(Path.of(modulePath), requirementIdx, requirementTLSVersion, Path.of(outputDir));
+    }
+
+    private static boolean isUserGenerateArguments(String[] args) {
+        return args.length >= 4
+                && Files.exists(Path.of(args[1]))
+                && Files.exists(Path.of(args[2]))
+                && Files.exists(Path.of(args[3]));
+    }
+
+    private static void generateUserScenario(String[] args) {
+        if (args.length < 4) {
+            System.err.println("Usage: --generate-user [tls profile path] [behavior spec path] [scenario spec path] [output dir?] [maude executable path?]");
+            System.exit(1);
+        }
+
+        Path profilePath = Path.of(args[1]);
+        Path behaviorPath = Path.of(args[2]);
+        Path scenarioPath = Path.of(args[3]);
+        Path outputDir = args.length >= 5 ? Path.of(args[4]) : Path.of(DEFAULT_USER_OUTPUT_DIR);
+        String maudePath = args.length >= 6 ? args[5] : DEFAULT_MAUDE_EXECUTABLE;
+
+        UserScenarioModuleBuilder builder = new UserScenarioModuleBuilder();
+        GeneratedTestModuleSpec spec = builder.fromFiles(profilePath, behaviorPath, scenarioPath);
+        GeneratedTestModuleRenderer renderer = new GeneratedTestModuleRenderer();
+
+        Path modulePath = outputDir.resolve("generated-scenario.maude");
+        Path commandPath = outputDir.resolve("reduction-command.maude");
+        Path logPath = outputDir.resolve("maude.log");
+
+        try {
+            Files.createDirectories(outputDir);
+            Files.writeString(modulePath, renderer.render(spec));
+            Files.writeString(commandPath, renderer.renderReductionCommand(spec) + System.lineSeparator());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write generated user scenario module under " + outputDir, e);
+        }
+
+        System.out.println("   User Maude analysis:");
+        System.out.println("   TLS profile path : " + profilePath);
+        System.out.println("   Behavior spec path : " + behaviorPath);
+        System.out.println("   Scenario spec path : " + scenarioPath);
+        System.out.println("   Maude executable path : " + maudePath);
+        System.out.println("   Generated module path : " + modulePath);
+        System.out.println("   Reduction command path : " + commandPath);
+        System.out.println("   Output log path : " + logPath);
+
+        MaudeRunner maudeRunner = new MaudeRunner(maudePath);
+        maudeRunner.execute(modulePath, spec.getModuleName(), spec.toRunManifest(), logPath);
     }
 
     private static void runScenario(String[] args) {

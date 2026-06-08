@@ -19,6 +19,10 @@ public class MaudeRunner {
     }
 
     public void execute(Path modulePath, MaudeRunManifest manifest, Path outputLogPath) {
+        execute(modulePath, null, manifest, outputLogPath);
+    }
+
+    public void execute(Path modulePath, String moduleName, MaudeRunManifest manifest, Path outputLogPath) {
         ProcessBuilder maudePb = new ProcessBuilder(maudeExecutable, modulePath.toAbsolutePath().toString());
         maudePb.redirectOutput(outputLogPath.toFile());
         maudePb.redirectErrorStream(true);
@@ -31,6 +35,10 @@ public class MaudeRunner {
             Process maudeProcess = maudePb.start();
             try (BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(maudeProcess.getOutputStream()))) {
+                if (moduleName != null && !moduleName.isBlank()) {
+                    writer.write("select " + moduleName + " .");
+                    writer.newLine();
+                }
                 writer.write(manifest.toReductionCommand());
                 writer.newLine();
                 writer.flush();
@@ -41,6 +49,9 @@ public class MaudeRunner {
             if (exitCode != 0) {
                 throw new RuntimeException("Maude exited with code " + exitCode
                         + " (see " + outputLogPath + ")");
+            }
+            if (hasMaudeError(outputLogPath)) {
+                throw new RuntimeException("Maude reported an error (see " + outputLogPath + ")");
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -121,5 +132,15 @@ public class MaudeRunner {
             return line + " ;";
         }
         return line;
+    }
+
+    private boolean hasMaudeError(Path outputLogPath) throws IOException {
+        String output = Files.readString(outputLogPath);
+        return output.contains("Error:")
+                || output.contains("bad token")
+                || output.contains("no parse")
+                || output.contains("not declared")
+                || output.contains("ambiguous")
+                || output.matches("(?s).*module .*does not exist.*");
     }
 }
