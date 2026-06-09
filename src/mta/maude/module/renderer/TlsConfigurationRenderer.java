@@ -2,6 +2,7 @@ package mta.maude.module.renderer;
 
 import mta.user.common.UserTerm;
 import mta.user.profile.TLSProfile;
+import mta.user.profile.TLSProfileValueNormalizer;
 import mta.user.profile.TLSProfiles;
 import mta.user.profile.TLSRole;
 
@@ -85,7 +86,7 @@ public class TlsConfigurationRenderer {
                     }
                     if (keyUpdateType != null && !keyUpdateType.isEmpty()) {
                         items.add("ikeyUpdateReq(" + tid + ", "
-                                + renderValues(keyUpdateType, profileName, profiles)
+                                + renderValues("KeyUpdateReqType", keyUpdateType, profileName, profiles)
                                 + ")");
                     } else {
                         items.add("ikeyUpdateReq(" + tid + ")");
@@ -97,7 +98,7 @@ public class TlsConfigurationRenderer {
                     + "("
                     + tid
                     + ", "
-                    + renderValues(field.getValue(), profileName, profiles)
+                    + renderValues(field.getKey(), field.getValue(), profileName, profiles)
                     + ")");
         }
     }
@@ -164,10 +165,11 @@ public class TlsConfigurationRenderer {
         return "true".equals(value);
     }
 
-    private String renderValues(List<UserTerm> values, String profileName, TLSProfiles profiles) {
+    private String renderValues(String fieldName, List<UserTerm> values, String profileName, TLSProfiles profiles) {
         if (values == null || values.isEmpty()) {
             return "nil";
         }
+        values = TLSProfileValueNormalizer.toMaudeTerms(fieldName, values);
         StringJoiner joiner = new StringJoiner(" ");
         for (UserTerm value : values) {
             joiner.add(renderTerm(value, profileName, profiles));

@@ -23,7 +23,7 @@ public enum CertificateType {
     public String maudeTerm() {
         return switch (this) {
             case RSA_SIGN -> "rsa-sign";
-            case DSS_SIGN -> "dsa-sign";
+            case DSS_SIGN -> "dss-sign";
             case RSA_FIXED_DH -> "rsa-fixed-dh";
             case DSS_FIXED_DH -> "dss-fixed-dh";
             case ECDSA_SIGN -> "ecdsa-sign";

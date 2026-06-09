@@ -111,10 +111,10 @@ public class UserScenarioModuleBuilder {
         }
         for (UserTerm value : values) {
             String rendered = renderVersionTerm(value);
-            if (rendered.contains("TLS-12")) {
+            if ("TLS12".equals(rendered) || rendered.contains("TLS-12")) {
                 versions.add("TLS-12");
             }
-            if (rendered.contains("TLS-13")) {
+            if ("TLS13".equals(rendered) || rendered.contains("TLS-13")) {
                 versions.add("TLS-13");
             }
         }

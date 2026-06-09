@@ -3,6 +3,10 @@ package mta.maude.module.renderer;
 import mta.user.common.ScenarioExpression;
 import mta.user.scenario.ScenarioSpec;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
+
 public class ScenarioPropertyRenderer {
 
     private final StepExpressionRenderer stepExpressionRenderer;
@@ -45,9 +49,7 @@ public class ScenarioPropertyRenderer {
             return renderOperand(star.expression()) + " *";
         }
         if (expression instanceof ScenarioExpression.Sequence sequence) {
-            return renderOperand(sequence.left())
-                    + " ; "
-                    + renderOperand(sequence.right());
+            return renderSequence(sequence);
         }
         if (expression instanceof ScenarioExpression.Choice choice) {
             return renderOperand(choice.left())
@@ -59,6 +61,32 @@ public class ScenarioPropertyRenderer {
 
     private String renderOperand(ScenarioExpression expression) {
         if (expression instanceof ScenarioExpression.Step) {
+            return render(expression);
+        }
+        return "(" + render(expression) + ")";
+    }
+
+    private String renderSequence(ScenarioExpression expression) {
+        List<ScenarioExpression> terms = new ArrayList<ScenarioExpression>();
+        collectSequenceTerms(expression, terms);
+        StringJoiner joiner = new StringJoiner(" ; ");
+        for (ScenarioExpression term : terms) {
+            joiner.add(renderSequenceTerm(term));
+        }
+        return joiner.toString();
+    }
+
+    private void collectSequenceTerms(ScenarioExpression expression, List<ScenarioExpression> terms) {
+        if (expression instanceof ScenarioExpression.Sequence sequence) {
+            collectSequenceTerms(sequence.left(), terms);
+            collectSequenceTerms(sequence.right(), terms);
+            return;
+        }
+        terms.add(expression);
+    }
+
+    private String renderSequenceTerm(ScenarioExpression expression) {
+        if (expression instanceof ScenarioExpression.Step || expression instanceof ScenarioExpression.Star) {
             return render(expression);
         }
         return "(" + render(expression) + ")";

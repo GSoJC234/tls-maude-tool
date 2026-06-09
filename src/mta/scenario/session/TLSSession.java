@@ -1322,6 +1322,20 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public void addRenegotiationInfoExtension(String alias, Variable extension_len, Variable handshake_message) {
+        AddRenegotiationInfoAction action = new AddRenegotiationInfoAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addCKSExtension(String alias, Variable extension_len, Variable handshake_message) {
+        AddCKSAction action = new AddCKSAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
     public void addExtensionLen(String alias, Variable extension_len, Variable handshake_message) {
         AddExtensionLenAction action = new AddExtensionLenAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
@@ -1408,6 +1422,15 @@ public class TLSSession implements Protocol {
         trace.addTlsAction(reEncryptRSAClientKeyExchange);
 
         return msg;
+    }
+
+    @Override
+    public Variable generateVerifyData(String alias) {
+        List<byte[]> verifyData = new ArrayList<>();
+        GenerateVerifyDataAction action = new GenerateVerifyDataAction(alias, verifyData);
+        trace.addTlsAction(action);
+
+        return null;
     }
 
     @Override

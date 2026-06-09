@@ -5,14 +5,14 @@ import mta.user.common.UserTerm;
 
 public class ActionExpressionRenderer {
 
-    private final MaudeUserTermRenderer termRenderer;
+    private final BehaviorValueLowerer behaviorValueLowerer;
 
     public ActionExpressionRenderer() {
         this(new MaudeUserTermRenderer());
     }
 
     public ActionExpressionRenderer(MaudeUserTermRenderer termRenderer) {
-        this.termRenderer = termRenderer;
+        this.behaviorValueLowerer = new BehaviorValueLowerer(termRenderer);
     }
 
     public String render(ActionExpression expression) {
@@ -46,13 +46,13 @@ public class ActionExpressionRenderer {
         String field = atom.field();
         UserTerm value = atom.value();
         return switch (field) {
-            case "ruleLabel" -> "ruleLabel(" + termRenderer.renderRuleLabel(value) + ")";
-            case "node" -> "appliedNode(" + termRenderer.renderTerm(value) + ")";
-            case "event", "eventType" -> "eventType(" + termRenderer.renderTerm(value) + ")";
+            case "ruleLabel" -> "ruleLabel(" + behaviorValueLowerer.renderRuleLabel(value) + ")";
+            case "node" -> "appliedNode(" + behaviorValueLowerer.renderNode(value) + ")";
+            case "event", "eventType" -> "eventType(" + behaviorValueLowerer.renderEventType(value) + ")";
             default -> "featureMap("
-                    + termRenderer.renderAttribute(new UserTerm.Atom(field))
+                    + behaviorValueLowerer.renderFeatureAttribute(field)
                     + " |-> "
-                    + termRenderer.renderAttributeValue(value)
+                    + behaviorValueLowerer.renderFeatureValue(field, value)
                     + ")";
         };
     }

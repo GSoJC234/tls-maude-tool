@@ -101,6 +101,8 @@ public interface Protocol {
     void addCHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
     void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
     void addPostHandshakeAuthExtension(String alias, Variable extension_len, Variable handshake_message);
+    void addRenegotiationInfoExtension(String alias, Variable extension_len, Variable handshake_message);
+    void addCKSExtension(String alias, Variable extension_len, Variable handshake_message);
 
 
     Variable buildEmptyKeyShareEntryList();
@@ -119,7 +121,7 @@ public interface Protocol {
     Variable changeCertificate(Variable variable, Variable after_certificate, String alias);
     Variable changeVerifyData(Variable message, Variable masterSecret, String alias);
     Variable reEncryptRSAClientKeyExchange(Variable msg, Variable decrypt_key, Variable encrypt_key, String alias);
-
+    Variable generateVerifyData(String alias);
 
     void setRandomPrivateKey(String group);
     void setCertificateEcPrivateKey(String keyPath, String namedCurve);

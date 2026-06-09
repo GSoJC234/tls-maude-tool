@@ -12,7 +12,7 @@ public class BehaviorDeviationSpecificationRenderer {
 
     private final BehaviorSpecExpander expander;
     private final ActionExpressionRenderer actionExpressionRenderer;
-    private final MaudeUserTermRenderer termRenderer;
+    private final BehaviorValueLowerer behaviorValueLowerer;
 
     public BehaviorDeviationSpecificationRenderer() {
         this(new BehaviorSpecExpander(), new ActionExpressionRenderer(), new MaudeUserTermRenderer());
@@ -23,7 +23,7 @@ public class BehaviorDeviationSpecificationRenderer {
                                                   MaudeUserTermRenderer termRenderer) {
         this.expander = expander;
         this.actionExpressionRenderer = actionExpressionRenderer;
-        this.termRenderer = termRenderer;
+        this.behaviorValueLowerer = new BehaviorValueLowerer(termRenderer);
     }
 
     public String renderEq(String opName, BehaviorDeviationSpecification specification) {
@@ -85,36 +85,40 @@ public class BehaviorDeviationSpecificationRenderer {
     private String renderModification(BehaviorModificationSpec modification) {
         if (modification instanceof BehaviorModificationSpec.SetMessage setMessage) {
             return "setM("
-                    + termRenderer.renderMessageField(setMessage.field())
+                    + behaviorValueLowerer.renderMessageField(setMessage.field())
                     + ", "
-                    + termRenderer.renderMessageValue(setMessage.value())
+                    + behaviorValueLowerer.renderMessageValue(setMessage.field(), setMessage.value())
                     + ")";
         }
         if (modification instanceof BehaviorModificationSpec.SetFeature setFeature) {
             return "setF("
-                    + termRenderer.renderAttribute(setFeature.field())
+                    + behaviorValueLowerer.renderAttribute(setFeature.field())
                     + ", "
-                    + termRenderer.renderAttributeValue(setFeature.value())
+                    + behaviorValueLowerer.renderAttributeValue(setFeature.field(), setFeature.value())
                     + ")";
         }
         if (modification instanceof BehaviorModificationSpec.AddMessage addMessage) {
             return "add("
-                    + termRenderer.renderMessageField(addMessage.field())
+                    + behaviorValueLowerer.renderMessageField(addMessage.field())
                     + ", "
-                    + termRenderer.renderMessageValue(addMessage.value())
+                    + behaviorValueLowerer.renderMessageValue(addMessage.field(), addMessage.value())
                     + ")";
         }
         if (modification instanceof BehaviorModificationSpec.RemoveMessage removeMessage) {
-            return "remove(" + termRenderer.renderMessageField(removeMessage.field()) + ")";
+            return "remove(" + behaviorValueLowerer.renderMessageField(removeMessage.field()) + ")";
         }
         if (modification instanceof BehaviorModificationSpec.NoCheck noCheck) {
-            return "noCheck(" + termRenderer.renderTerm(noCheck.label()) + ")";
+            return "noCheck(" + behaviorValueLowerer.renderNoCheckLabel(noCheck.label()) + ")";
         }
         if (modification instanceof BehaviorModificationSpec.Skip) {
-            return "skip()";
+            throw behaviorValueLowerer.unsupportedModification("skip",
+                    "current Maude behavior semantics do not apply skip()");
         }
         if (modification instanceof BehaviorModificationSpec.Delay delay) {
-            return "delay(" + termRenderer.renderTerm(delay.handshakeType()) + ")";
+            throw behaviorValueLowerer.unsupportedModification("delay",
+                    "current Maude behavior semantics do not apply delay("
+                            + delay.handshakeType().source()
+                            + ")");
         }
         if (modification instanceof BehaviorModificationSpec.RawMaude rawMaude) {
             return rawMaude.text();

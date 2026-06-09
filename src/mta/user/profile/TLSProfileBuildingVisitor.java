@@ -35,6 +35,7 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
         String fieldName = readIdentifier(ctx.identifier());
         @SuppressWarnings("unchecked")
         List<UserTerm> values = (List<UserTerm>) visit(ctx.profileValue());
+        TLSProfileValueNormalizer.validate(fieldName, values);
         profile.putRawField(fieldName, values);
 
         String scalar = values.isEmpty() ? "" : values.get(0).source();
