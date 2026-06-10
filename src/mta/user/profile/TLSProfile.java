@@ -15,6 +15,7 @@ public class TLSProfile {
     private TLSRole tlsRole;
     private String libraryName;
     private String libraryVersion;
+    private String libraryPath;
     private final Map<String, List<UserTerm>> rawFields;
 
     public TLSProfile() {
@@ -53,6 +54,14 @@ public class TLSProfile {
         this.libraryVersion = libraryVersion;
     }
 
+    public String getLibraryPath() {
+        return libraryPath;
+    }
+
+    public void setLibraryPath(String libraryPath) {
+        this.libraryPath = libraryPath;
+    }
+
     public Map<String, List<UserTerm>> getRawFields() {
         Map<String, List<UserTerm>> copy = new LinkedHashMap<String, List<UserTerm>>();
         for (Map.Entry<String, List<UserTerm>> entry : rawFields.entrySet()) {
@@ -80,12 +89,13 @@ public class TLSProfile {
                 && tlsRole == that.tlsRole
                 && Objects.equals(libraryName, that.libraryName)
                 && Objects.equals(libraryVersion, that.libraryVersion)
+                && Objects.equals(libraryPath, that.libraryPath)
                 && Objects.equals(rawFields, that.rawFields);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(testRole, tlsRole, libraryName, libraryVersion, rawFields);
+        return Objects.hash(testRole, tlsRole, libraryName, libraryVersion, libraryPath, rawFields);
     }
 
     @Override
@@ -95,6 +105,7 @@ public class TLSProfile {
                 + ", tlsRole=" + tlsRole
                 + ", libraryName='" + libraryName + '\''
                 + ", libraryVersion='" + libraryVersion + '\''
+                + ", libraryPath='" + libraryPath + '\''
                 + ", rawFields=" + rawFields
                 + '}';
     }

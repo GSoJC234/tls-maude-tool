@@ -6,8 +6,15 @@ import mta.user.profile.antlr.TLSProfileParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
+
+    private static final Set<String> TARGET_LIBRARY_FIELDS = Set.of(
+            "LibraryName",
+            "LibraryVersion",
+            "LibraryPath");
 
     @Override
     public Object visitProfiles(TLSProfileParser.ProfilesContext ctx) {
@@ -28,6 +35,7 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
         for (TLSProfileParser.ProfileEntryContext entryContext : ctx.profileEntry()) {
             applyProfileEntry(profile, entryContext);
         }
+        validateProfileBlock(profileName, profile);
         return new ProfileEntry(profileName, profile);
     }
 
@@ -44,8 +52,24 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
             case "TLSRole" -> profile.setTlsRole(TLSRole.fromValue(scalar));
             case "LibraryName" -> profile.setLibraryName(stripQuotes(scalar));
             case "LibraryVersion" -> profile.setLibraryVersion(stripQuotes(scalar));
+            case "LibraryPath" -> profile.setLibraryPath(stripQuotes(scalar));
             default -> {
             }
+        }
+    }
+
+    private static void validateProfileBlock(String profileName, TLSProfile profile) {
+        Map<String, List<UserTerm>> rawFields = profile.getRawFields();
+        if (TLSProfiles.TESTER.equals(profileName)) {
+            for (String fieldName : TARGET_LIBRARY_FIELDS) {
+                if (rawFields.containsKey(fieldName)) {
+                    throw new IllegalArgumentException("TLSProfiles tester profile must not define "
+                            + fieldName + "; library metadata belongs to target");
+                }
+            }
+        }
+        if (TLSProfiles.TARGET.equals(profileName) && !rawFields.containsKey("LibraryPath")) {
+            throw new IllegalArgumentException("TLSProfiles target profile must define LibraryPath");
         }
     }
 

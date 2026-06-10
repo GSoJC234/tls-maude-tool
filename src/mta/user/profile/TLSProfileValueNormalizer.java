@@ -15,7 +15,8 @@ public final class TLSProfileValueNormalizer {
             "TestRole",
             "TLSRole",
             "LibraryName",
-            "LibraryVersion");
+            "LibraryVersion",
+            "LibraryPath");
 
     private static final Set<String> RAW_MAUDE_FIELDS = Set.of(
             "Certificates",
