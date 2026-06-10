@@ -958,12 +958,13 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable message) {
+    public Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable record_len, Variable message) {
         List<Record> container = new ArrayList<>();
 
         BuildRecordAction action = new BuildRecordAction(alias, container);
         action.setProtocolMessageType((List<ProtocolMessageType>) content_type.getValue());
         action.setProtocolVersion((List<ProtocolVersion>) record_version.getValue());
+        action.setProtocolMessageLength((List<Integer>) record_len.getValue());
         action.setProtocolMessage((List<ProtocolMessage>) message.getValue());
 
         trace.addTlsAction(action);

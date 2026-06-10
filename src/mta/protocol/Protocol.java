@@ -71,7 +71,7 @@ public interface Protocol {
     Variable calculateMasterSecret(String clientAlias, String serverAlias, Variable preMasterSecret, Variable clientRandom, Variable serverRandom);
 
 
-    Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable message);
+    Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable record_len, Variable message);
     Variable buildClientHello(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable session_len, Variable sessionId, Variable compression_len, Variable methods);
     Variable buildServerHello(String alias, Variable handshake_type, Variable version, Variable suite, Variable random, Variable session_len, Variable sessionId, Variable compression);
     Variable buildECDHEServerKeyExchange(String alias, Variable handshake_type, Variable curve_type, Variable named_curve, Variable ec_private, Variable signature_key);
