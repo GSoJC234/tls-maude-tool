@@ -1431,7 +1431,7 @@ public class TLSSession implements Protocol {
         GenerateVerifyDataAction action = new GenerateVerifyDataAction(alias, verifyData);
         trace.addTlsAction(action);
 
-        return null;
+        return new ConstantVariable(verifyData);
     }
 
     @Override
