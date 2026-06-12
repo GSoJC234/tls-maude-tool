@@ -4,12 +4,14 @@ import mta.maude.MaudeRunner;
 import mta.maude.module.GeneratedTestModuleRenderer;
 import mta.maude.module.GeneratedTestModuleSpec;
 import mta.maude.module.UserScenarioModuleBuilder;
+import mta.maude.result.GeneratedScenarioResultExtractor;
 import mta.scenario.ScenarioRunner;
 import mta.visualizer.VisualizerConnector;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class Main {
 
@@ -112,6 +114,13 @@ public class Main {
 
         MaudeRunner maudeRunner = new MaudeRunner(maudePath);
         maudeRunner.execute(modulePath, spec.getModuleName(), spec.toRunManifest(), logPath);
+
+        GeneratedScenarioResultExtractor extractor = new GeneratedScenarioResultExtractor();
+        List<Path> testerScenarioPaths = extractor.extractTesterScenarioFiles(logPath, outputDir);
+        System.out.println("   Generated tester scenario files : " + testerScenarioPaths.size());
+        for (Path testerScenarioPath : testerScenarioPaths) {
+            System.out.println("     " + testerScenarioPath);
+        }
     }
 
     private static void runScenario(String[] args) {

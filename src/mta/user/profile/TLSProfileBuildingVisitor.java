@@ -15,6 +15,11 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
             "LibraryName",
             "LibraryVersion",
             "LibraryPath");
+    private static final Set<String> REQUIRED_CERTIFICATE_FIELDS = Set.of(
+            "CACertificateType",
+            "CertificateType",
+            "PrivateKeyType",
+            "CertificateSignatureAlgorithm");
 
     @Override
     public Object visitProfiles(TLSProfileParser.ProfilesContext ctx) {
@@ -47,12 +52,24 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
         profile.putRawField(fieldName, values);
 
         String scalar = values.isEmpty() ? "" : values.get(0).source();
+        List<UserTerm> normalizedValues = TLSProfileValueNormalizer.toMaudeTerms(fieldName, values);
+        String normalizedScalar = normalizedValues.isEmpty() ? "" : normalizedValues.get(0).source();
         switch (fieldName) {
             case "TestRole" -> profile.setTestRole(TestRole.fromValue(scalar));
             case "TLSRole" -> profile.setTlsRole(TLSRole.fromValue(scalar));
             case "LibraryName" -> profile.setLibraryName(stripQuotes(scalar));
             case "LibraryVersion" -> profile.setLibraryVersion(stripQuotes(scalar));
             case "LibraryPath" -> profile.setLibraryPath(stripQuotes(scalar));
+            case "CACertificateType" -> profile.setCaCertificateType(normalizedScalar);
+            case "CertificateType" -> profile.setCertificateType(normalizedScalar);
+            case "PrivateKeyType" -> profile.setPrivateKeyType(normalizedScalar);
+            case "CertificateSignatureAlgorithm" ->
+                    profile.setCertificateSignatureAlgorithm(firstNormalized(fieldName, normalizedValues));
+            case "CACertificateSignatureAlgorithm" ->
+                    profile.setCaCertificateSignatureAlgorithm(firstNormalized(fieldName, normalizedValues));
+            case "CACertificatePath" -> profile.setCaCertificatePath(stripQuotes(scalar));
+            case "CertificatePath" -> profile.setCertificatePath(stripQuotes(scalar));
+            case "PrivateKeyPath" -> profile.setPrivateKeyPath(stripQuotes(scalar));
             default -> {
             }
         }
@@ -70,6 +87,18 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
         }
         if (TLSProfiles.TARGET.equals(profileName) && !rawFields.containsKey("LibraryPath")) {
             throw new IllegalArgumentException("TLSProfiles target profile must define LibraryPath");
+        }
+        for (String fieldName : REQUIRED_CERTIFICATE_FIELDS) {
+            if (!rawFields.containsKey(fieldName)) {
+                throw new IllegalArgumentException("TLSProfiles " + profileName
+                        + " profile must define " + fieldName);
+            }
+        }
+        if (profile.getCertificateType() != null
+                && profile.getPrivateKeyType() != null
+                && !profile.getCertificateType().equals(profile.getPrivateKeyType())) {
+            throw new IllegalArgumentException("TLSProfiles " + profileName
+                    + " profile CertificateType must match PrivateKeyType");
         }
     }
 
@@ -184,6 +213,14 @@ public class TLSProfileBuildingVisitor extends TLSProfileBaseVisitor<Object> {
             return text.substring(1, text.length() - 1);
         }
         return text;
+    }
+
+    private static UserTerm firstNormalized(String fieldName, List<UserTerm> values) {
+        if (values == null || values.size() != 1) {
+            throw new IllegalArgumentException("TLSProfiles field " + fieldName
+                    + " expects exactly one normalized value");
+        }
+        return values.get(0);
     }
 
     private record ProfileEntry(String name, TLSProfile profile) {

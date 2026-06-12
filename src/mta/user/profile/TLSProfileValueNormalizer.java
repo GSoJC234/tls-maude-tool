@@ -18,10 +18,47 @@ public final class TLSProfileValueNormalizer {
             "LibraryVersion",
             "LibraryPath");
 
-    private static final Set<String> RAW_MAUDE_FIELDS = Set.of(
+    private static final Set<String> REMOVED_FIELDS = Set.of(
             "Certificates",
             "PublicKeys",
-            "PrivateKeys");
+            "PrivateKeys",
+            "CertificateTypes",
+            "CertificateAlgorithms",
+            "CertificateAlgos");
+
+    private static final Set<String> ASYM_KEY_TYPE_FIELDS = Set.of(
+            "CACertificateType",
+            "CertificateType",
+            "PrivateKeyType");
+
+    private static final Set<String> CERTIFICATE_SIGNATURE_FIELDS = Set.of(
+            "CertificateSignatureAlgorithm",
+            "CACertificateSignatureAlgorithm");
+
+    private static final Set<String> PATH_FIELDS = Set.of(
+            "CACertificatePath",
+            "CertificatePath",
+            "PrivateKeyPath");
+
+    private static final Set<String> SUPPORTED_ASYM_KEY_TYPES = Set.of(
+            "ecdsa",
+            "rsa",
+            "dsa",
+            "ed25519",
+            "ed448");
+
+    private static final Set<String> SUPPORTED_CERTIFICATE_SIGNATURE_ALGORITHMS = Set.of(
+            "{ecdsa,sha256}",
+            "{ecdsa,sha384}",
+            "{ecdsa,sha512}",
+            "{rsa,sha256}",
+            "{rsa,sha384}",
+            "{rsa,sha512}",
+            "{ed25519,intrinsic}",
+            "{ed448,intrinsic}",
+            "{dsa,sha256}",
+            "{dsa,sha384}",
+            "{dsa,sha512}");
 
     private static final Set<String> FLAG_FIELDS = Set.of(
             "CertificateRequest",
@@ -196,8 +233,21 @@ public final class TLSProfileValueNormalizer {
         if (values == null || values.isEmpty()) {
             return List.of();
         }
-        if (fieldName == null || METADATA_FIELDS.contains(fieldName) || RAW_MAUDE_FIELDS.contains(fieldName)) {
+        if (fieldName != null && REMOVED_FIELDS.contains(fieldName)) {
+            throw removedField(fieldName);
+        }
+        if (fieldName == null || METADATA_FIELDS.contains(fieldName)) {
             return List.copyOf(values);
+        }
+        if (PATH_FIELDS.contains(fieldName)) {
+            return normalizeScalar(fieldName, values, TLSProfileValueNormalizer::normalizePathValue);
+        }
+        if (ASYM_KEY_TYPE_FIELDS.contains(fieldName)) {
+            return normalizeScalar(fieldName, values, TLSProfileValueNormalizer::normalizeAsymKeyType);
+        }
+        if (CERTIFICATE_SIGNATURE_FIELDS.contains(fieldName)) {
+            return normalizeScalar(fieldName, values,
+                    TLSProfileValueNormalizer::normalizeCertificateSignatureAlgorithm);
         }
         if (FLAG_FIELDS.contains(fieldName)) {
             return normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeBoolean);
@@ -206,8 +256,9 @@ public final class TLSProfileValueNormalizer {
             case "Version" -> normalizeScalar(fieldName, values, TLSProfileValueNormalizer::normalizeProtocolVersion);
             case "CipherSuites" -> normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeCipherSuite);
             case "Compressions" -> normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeCompressionMethod);
-            case "CertificateTypes" -> normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeCertificateType);
-            case "CertificateAlgorithms", "CertificateAlgos", "SignatureAlgorithms" ->
+            case "ClientCertificateTypes" ->
+                    normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeCertificateType);
+            case "ClientCertificateAlgos", "SignatureAlgorithms" ->
                     normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeSignatureScheme);
             case "SupportedVersions" -> normalizeEach(fieldName, values, TLSProfileValueNormalizer::normalizeProtocolVersion);
             case "SupportedGroups", "KeyShares" ->
@@ -281,6 +332,23 @@ public final class TLSProfileValueNormalizer {
         return atom(maude);
     }
 
+    private static UserTerm normalizeAsymKeyType(String fieldName, UserTerm value) {
+        String token = atomText(fieldName, value).toLowerCase(Locale.ROOT);
+        if (!SUPPORTED_ASYM_KEY_TYPES.contains(token)) {
+            throw profileViolation(fieldName, token, "expected ecdsa, rsa, dsa, ed25519, or ed448");
+        }
+        return atom(token);
+    }
+
+    private static UserTerm normalizeCertificateSignatureAlgorithm(String fieldName, UserTerm value) {
+        String maude = certificateSignatureAlgorithmText(fieldName, value);
+        if (!SUPPORTED_CERTIFICATE_SIGNATURE_ALGORITHMS.contains(maude)) {
+            throw profileViolation(fieldName, value.source(),
+                    "expected one of " + SUPPORTED_CERTIFICATE_SIGNATURE_ALGORITHMS);
+        }
+        return rawMaude(maude);
+    }
+
     private static UserTerm normalizeSignatureScheme(String fieldName, UserTerm value) {
         String token = atomText(fieldName, value);
         String key = token.toLowerCase(Locale.ROOT);
@@ -292,6 +360,29 @@ public final class TLSProfileValueNormalizer {
             return rawMaude(maude);
         }
         throw profileViolation(fieldName, token, "expected an RFC-style signature scheme name");
+    }
+
+    private static String certificateSignatureAlgorithmText(String fieldName, UserTerm value) {
+        if (value instanceof UserTerm.BraceTerm brace) {
+            if (brace.values().size() != 2) {
+                throw profileViolation(fieldName, value.source(), "expected {auth,hash}");
+            }
+            String auth = atomText(fieldName, brace.values().get(0)).toLowerCase(Locale.ROOT);
+            String hash = atomText(fieldName, brace.values().get(1)).toLowerCase(Locale.ROOT);
+            return "{" + auth + "," + hash + "}";
+        }
+        if (value instanceof UserTerm.Atom atom) {
+            String key = atom.text().toLowerCase(Locale.ROOT);
+            if ("ed25519".equals(key) || "ed448".equals(key)) {
+                return "{" + key + ",intrinsic}";
+            }
+            String maude = SIGNATURE_SCHEME_TO_MAUDE.get(key);
+            if (maude != null) {
+                return maude;
+            }
+        }
+        throw profileViolation(fieldName, value.source(),
+                "expected a certificate signature algorithm such as {ecdsa,sha256}");
     }
 
     private static UserTerm normalizeNamedGroup(String fieldName, UserTerm value) {
@@ -333,13 +424,19 @@ public final class TLSProfileValueNormalizer {
         };
     }
 
+    private static UserTerm normalizePathValue(String fieldName, UserTerm value) {
+        if (value instanceof UserTerm.StringLiteral || value instanceof UserTerm.Atom) {
+            return value;
+        }
+        throw profileViolation(fieldName, value.source(), "expected a quoted path string or identifier");
+    }
+
     private static String atomText(String fieldName, UserTerm value) {
         if (value instanceof UserTerm.Atom atom) {
             return atom.text();
         }
         if (value instanceof UserTerm.RawMaude) {
-            throw profileViolation(fieldName, value.source(),
-                    "raw Maude is only accepted in Certificates, PublicKeys, and PrivateKeys");
+            throw profileViolation(fieldName, value.source(), "raw Maude is not accepted in TLSProfiles");
         }
         throw profileViolation(fieldName, value.source(), "expected an RFC-style identifier");
     }
@@ -360,6 +457,18 @@ public final class TLSProfileValueNormalizer {
     private static IllegalArgumentException unsupported(String fieldName, String value, String reason) {
         return new IllegalArgumentException("TLSProfiles field " + fieldName
                 + " system unsupported value '" + value + "': " + reason);
+    }
+
+    private static IllegalArgumentException removedField(String fieldName) {
+        String replacement = switch (fieldName) {
+            case "CertificateTypes" -> "ClientCertificateTypes";
+            case "CertificateAlgorithms", "CertificateAlgos" -> "ClientCertificateAlgos";
+            case "Certificates", "PublicKeys", "PrivateKeys" ->
+                    "CACertificateType, CertificateType, PrivateKeyType, and CertificateSignatureAlgorithm";
+            default -> "the current TLS profile vocabulary";
+        };
+        return new IllegalArgumentException("TLSProfiles field " + fieldName
+                + " has been removed; use " + replacement);
     }
 
     private static Map<String, String> buildSignatureSchemeMap() {

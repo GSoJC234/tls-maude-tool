@@ -67,6 +67,7 @@ public class TlsConfigurationRenderer {
                                  TLSProfile profile,
                                  String tid,
                                  TLSProfiles profiles) {
+        addCertificateAndKeyItems(items, profile, tid, profileName, profiles);
         for (Map.Entry<String, List<UserTerm>> field : profile.getRawFields().entrySet()) {
             String constructor = tlsConfigurationConstructor(field.getKey());
             if (constructor == null) {
@@ -103,16 +104,44 @@ public class TlsConfigurationRenderer {
         }
     }
 
+    private void addCertificateAndKeyItems(List<String> items,
+                                           TLSProfile profile,
+                                           String tid,
+                                           String profileName,
+                                           TLSProfiles profiles) {
+        requireCertificateField(profile.getCaCertificateType(), "CACertificateType", profileName);
+        requireCertificateField(profile.getCertificateType(), "CertificateType", profileName);
+        requireCertificateField(profile.getPrivateKeyType(), "PrivateKeyType", profileName);
+        requireCertificateField(profile.getCertificateSignatureAlgorithm(),
+                "CertificateSignatureAlgorithm", profileName);
+
+        items.add("icertificates(" + tid + ", makeCertificate("
+                + tid
+                + ", "
+                + profile.getCertificateType()
+                + ", "
+                + renderTerm(profile.getCertificateSignatureAlgorithm(), profileName, profiles)
+                + ", "
+                + profile.getCaCertificateType()
+                + "))");
+        items.add("ipublicKeys(" + tid + ", makePubKey(CA, " + profile.getCaCertificateType() + "))");
+        items.add("iprivateKeys(" + tid + ", makePrvKey(" + tid + ", " + profile.getPrivateKeyType() + "))");
+    }
+
+    private void requireCertificateField(Object value, String fieldName, String profileName) {
+        if (value == null) {
+            throw new IllegalArgumentException("TLSProfiles " + profileName
+                    + " profile must define " + fieldName);
+        }
+    }
+
     private String tlsConfigurationConstructor(String fieldName) {
         return switch (fieldName) {
             case "Version" -> "iversion";
             case "CipherSuites" -> "icipherSuites";
             case "Compressions" -> "icompressions";
-            case "Certificates" -> "icertificates";
-            case "CertificateTypes" -> "icertificateTypes";
-            case "CertificateAlgorithms", "CertificateAlgos" -> "icertificateAlgos";
-            case "PublicKeys" -> "ipublicKeys";
-            case "PrivateKeys" -> "iprivateKeys";
+            case "ClientCertificateTypes" -> "icertificateTypes";
+            case "ClientCertificateAlgos" -> "icertificateAlgos";
             case "SupportedVersions" -> "isupported-versions";
             case "SignatureAlgorithms" -> "isignature-algorithms";
             case "SupportedGroups" -> "isupported-groups";

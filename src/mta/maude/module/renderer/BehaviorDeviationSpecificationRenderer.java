@@ -111,8 +111,7 @@ public class BehaviorDeviationSpecificationRenderer {
             return "noCheck(" + behaviorValueLowerer.renderNoCheckLabel(noCheck.label()) + ")";
         }
         if (modification instanceof BehaviorModificationSpec.Skip) {
-            throw behaviorValueLowerer.unsupportedModification("skip",
-                    "current Maude behavior semantics do not apply skip()");
+            return "skip()";
         }
         if (modification instanceof BehaviorModificationSpec.Delay delay) {
             throw behaviorValueLowerer.unsupportedModification("delay",
