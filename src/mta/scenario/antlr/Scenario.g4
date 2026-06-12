@@ -55,7 +55,8 @@ function_name:
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
     | 'buildInvalidPaddingRSAClientKeyExchange' | 'changeVerifyData' | 'encrypt' | 'decrypt' | 'generateRandom' | 'close'
-    | 'generateTicket' | 'generatePSK' | 'setUpPSK' | 'generateEmptyCertificate'
+    | 'generateTicket' | 'generatePSK' | 'setUpPSK' | 'generateEmptyCertificate' | 'generateVerifyData'
+    | 'addRenegotiationInfoExtension' | 'addCKSExtension'
     ;
 
 maude_constant_list:

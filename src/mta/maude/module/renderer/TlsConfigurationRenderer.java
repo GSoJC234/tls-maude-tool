@@ -5,14 +5,37 @@ import mta.user.profile.TLSProfile;
 import mta.user.profile.TLSProfileValueNormalizer;
 import mta.user.profile.TLSProfiles;
 import mta.user.profile.TLSRole;
+import mta.user.profile.TestRole;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public class TlsConfigurationRenderer {
+    private static final String CLIENT_TID = "N1 . CI";
+    private static final String SERVER_TID = "N2 . SI";
+
+    private static final Set<String> SERVER_OWNED_FIELDS = Set.of(
+            "ClientCertificateTypes",
+            "ClientCertificateAlgos",
+            "CertificateRequest",
+            "NewSessionTicketReq",
+            "NewSessionTicketRequest",
+            "EarlyDataWait",
+            "PostClientAuthReq",
+            "PostClientAuthRequest"
+    );
+
+    private static final Set<String> CLIENT_OWNED_FIELDS = Set.of(
+            "Renegotiation",
+            "NewSessionTicketWait",
+            "EarlyDataReq",
+            "EarlyDataRequest",
+            "PostClientAuthWait"
+    );
 
     public String renderEq(String opName, TLSProfiles profiles) {
         return "  op "
@@ -30,16 +53,24 @@ public class TlsConfigurationRenderer {
         validateProfiles(profiles);
 
         List<String> items = new ArrayList<String>();
+        int testerMarkers = 0;
+        int targetMarkers = 0;
         for (Map.Entry<String, TLSProfile> entry : profiles.getProfiles().entrySet()) {
             String profileName = entry.getKey();
             TLSProfile profile = entry.getValue();
-            String tid = profileTId(profileName, profile);
-            if (TLSProfiles.TESTER.equals(profileName)) {
+            String tid = profileTId(profile);
+            TestRole testRole = effectiveTestRole(profileName, profile);
+            if (testRole == TestRole.Tester) {
                 items.add("tester(" + tid + ")");
-            } else if (TLSProfiles.TARGET.equals(profileName)) {
+                testerMarkers++;
+            } else if (testRole == TestRole.Target) {
                 items.add("target(" + tid + ")");
+                targetMarkers++;
             }
             addProfileItems(items, profileName, profile, tid, profiles);
+        }
+        if (testerMarkers != 1 || targetMarkers != 1) {
+            throw new IllegalArgumentException("TLSProfiles must define exactly one Tester and one Target profile");
         }
 
         if (items.isEmpty()) {
@@ -73,9 +104,10 @@ public class TlsConfigurationRenderer {
             if (constructor == null) {
                 continue;
             }
+            String fieldTid = fieldTId(field.getKey(), tid);
             if (isFlagField(field.getKey())) {
                 if (isEnabled(field.getValue())) {
-                    items.add(constructor + "(" + tid + ")");
+                    items.add(constructor + "(" + fieldTid + ")");
                 }
                 continue;
             }
@@ -86,18 +118,18 @@ public class TlsConfigurationRenderer {
                         keyUpdateType = profile.getRawFields().get("KeyUpdateRequestType");
                     }
                     if (keyUpdateType != null && !keyUpdateType.isEmpty()) {
-                        items.add("ikeyUpdateReq(" + tid + ", "
+                        items.add("ikeyUpdateReq(" + fieldTid + ", "
                                 + renderValues("KeyUpdateReqType", keyUpdateType, profileName, profiles)
                                 + ")");
                     } else {
-                        items.add("ikeyUpdateReq(" + tid + ")");
+                        items.add("ikeyUpdateReq(" + fieldTid + ")");
                     }
                 }
                 continue;
             }
             items.add(constructor
                     + "("
-                    + tid
+                    + fieldTid
                     + ", "
                     + renderValues(field.getKey(), field.getValue(), profileName, profiles)
                     + ")");
@@ -209,9 +241,9 @@ public class TlsConfigurationRenderer {
     private String renderTerm(UserTerm term, String profileName, TLSProfiles profiles) {
         if (term instanceof UserTerm.Atom atom) {
             return switch (atom.text()) {
-                case "self" -> profileTId(profileName, profiles.getProfile(profileName));
-                case "tester" -> profileTId(TLSProfiles.TESTER, profiles.getTester());
-                case "target" -> profileTId(TLSProfiles.TARGET, profiles.getTarget());
+                case "self" -> profileTId(profiles.getProfile(profileName));
+                case "tester" -> profileTId(profileByTestRole(profiles, TestRole.Tester));
+                case "target" -> profileTId(profileByTestRole(profiles, TestRole.Target));
                 default -> atom.text();
             };
         }
@@ -259,12 +291,59 @@ public class TlsConfigurationRenderer {
         throw new IllegalArgumentException("Unsupported TLS profile term: " + term);
     }
 
-    private String profileTId(String profileName, TLSProfile profile) {
-        if (profile == null) {
-            throw new IllegalArgumentException("Unknown profile: " + profileName);
+    private TestRole effectiveTestRole(String profileName, TLSProfile profile) {
+        if (profile.getTestRole() != null) {
+            return profile.getTestRole();
         }
-        String node = TLSProfiles.TESTER.equals(profileName) ? "N1" : "N2";
-        String component = profile.getTlsRole() == TLSRole.Server ? "SI" : "CI";
-        return node + " . " + component;
+        if (TLSProfiles.TESTER.equals(profileName)) {
+            return TestRole.Tester;
+        }
+        if (TLSProfiles.TARGET.equals(profileName)) {
+            return TestRole.Target;
+        }
+        return null;
+    }
+
+    private TLSProfile profileByTestRole(TLSProfiles profiles, TestRole testRole) {
+        TLSProfile matched = null;
+        for (Map.Entry<String, TLSProfile> entry : profiles.getProfiles().entrySet()) {
+            if (effectiveTestRole(entry.getKey(), entry.getValue()) != testRole) {
+                continue;
+            }
+            if (matched != null) {
+                throw new IllegalArgumentException("TLSProfiles must define exactly one " + testRole + " profile");
+            }
+            matched = entry.getValue();
+        }
+        if (matched == null) {
+            throw new IllegalArgumentException("TLSProfiles must define a " + testRole + " profile");
+        }
+        return matched;
+    }
+
+    private String fieldTId(String fieldName, String defaultTid) {
+        if (SERVER_OWNED_FIELDS.contains(fieldName)) {
+            return SERVER_TID;
+        }
+        if (CLIENT_OWNED_FIELDS.contains(fieldName)) {
+            return CLIENT_TID;
+        }
+        return defaultTid;
+    }
+
+    private String profileTId(TLSProfile profile) {
+        if (profile == null) {
+            throw new IllegalArgumentException("Unknown TLS profile");
+        }
+        TLSRole tlsRole = profile.getTlsRole();
+        if (tlsRole == null) {
+            throw new IllegalArgumentException("TLSProfile must define TLSRole");
+        }
+        return switch (tlsRole) {
+            case Client -> CLIENT_TID;
+            case Server -> SERVER_TID;
+            case Mitm -> throw new IllegalArgumentException(
+                    "TLSRole Mitm is not supported by the generated initial TLS system");
+        };
     }
 }
