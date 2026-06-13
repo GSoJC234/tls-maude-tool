@@ -576,10 +576,17 @@ public class TLSSession implements Protocol {
         if (input == null)
             throw new IllegalArgumentException("Input byte array cannot be null.");
         int start = 2 * n;
-        if (start + 1 >= input.length) {
+        if (start < 0 || start + 1 >= input.length) {
             throw new IndexOutOfBoundsException("Requested pair exceeds byte array bounds.");
         }
         return new byte[] { input[start], input[start + 1] };
+    }
+
+    private <T extends ExtensionMessage> T getHelloExtension(ProtocolMessage message, Class<T> extensionClass) {
+        if (!(message instanceof HelloMessage)) {
+            return null;
+        }
+        return ((HelloMessage) message).getExtension(extensionClass);
     }
 
     @Override
@@ -753,17 +760,15 @@ public class TLSSession implements Protocol {
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                        if(message instanceof HelloMessage){
-                            HelloMessage helloMessage = (HelloMessage) message;
-                            for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(extMsg instanceof SupportedVersionsExtensionMessage){
-                                    SupportedVersionsExtensionMessage svExtMsg = (SupportedVersionsExtensionMessage) extMsg;
-                                    byte[] versions = svExtMsg.getSupportedVersions().getValue();
-                                    try {
-                                        return ProtocolVersion.getProtocolVersion(extractPair(versions, idx - 1 ));
-                                    } catch (IndexOutOfBoundsException ex) {
-
-                                    }
+                        SupportedVersionsExtensionMessage svExtMsg =
+                                getHelloExtension(message, SupportedVersionsExtensionMessage.class);
+                        if(svExtMsg != null && svExtMsg.getSupportedVersions() != null && idx > 0){
+                            byte[] versions = svExtMsg.getSupportedVersions().getValue();
+                            if (versions != null) {
+                                try {
+                                    return ProtocolVersion.getProtocolVersion(extractPair(versions, idx - 1 ));
+                                } catch (IndexOutOfBoundsException ex) {
+                                    return null;
                                 }
                             }
                         }
@@ -782,17 +787,15 @@ public class TLSSession implements Protocol {
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                        if(message instanceof HelloMessage){
-                            HelloMessage helloMessage = (HelloMessage) message;
-                            for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(extMsg instanceof SignatureAndHashAlgorithmsExtensionMessage){
-                                    SignatureAndHashAlgorithmsExtensionMessage sahExtMsg = (SignatureAndHashAlgorithmsExtensionMessage) extMsg;
-                                    byte[] signatureAlgorithms = sahExtMsg.getSignatureAndHashAlgorithms().getValue();
-                                    try {
-                                        return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extractPair(signatureAlgorithms, idx - 1 ));
-                                    } catch (IndexOutOfBoundsException ex) {
-                                        return null;
-                                    }
+                        SignatureAndHashAlgorithmsExtensionMessage sahExtMsg =
+                                getHelloExtension(message, SignatureAndHashAlgorithmsExtensionMessage.class);
+                        if(sahExtMsg != null && sahExtMsg.getSignatureAndHashAlgorithms() != null && idx > 0){
+                            byte[] signatureAlgorithms = sahExtMsg.getSignatureAndHashAlgorithms().getValue();
+                            if (signatureAlgorithms != null) {
+                                try {
+                                    return SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(extractPair(signatureAlgorithms, idx - 1 ));
+                                } catch (IndexOutOfBoundsException ex) {
+                                    return null;
                                 }
                             }
                         }
@@ -811,17 +814,15 @@ public class TLSSession implements Protocol {
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                        if(message instanceof HelloMessage){
-                            HelloMessage helloMessage = (HelloMessage) message;
-                            for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(extMsg instanceof EllipticCurvesExtensionMessage){
-                                    EllipticCurvesExtensionMessage ecExtMsg = (EllipticCurvesExtensionMessage) extMsg;
-                                    byte[] namedGruops = ecExtMsg.getSupportedGroups().getValue();
-                                    try {
-                                        return NamedGroup.getNamedGroup(extractPair(namedGruops, idx - 1 ));
-                                    } catch (IndexOutOfBoundsException ex) {
-                                        return null;
-                                    }
+                        EllipticCurvesExtensionMessage ecExtMsg =
+                                getHelloExtension(message, EllipticCurvesExtensionMessage.class);
+                        if(ecExtMsg != null && ecExtMsg.getSupportedGroups() != null && idx > 0){
+                            byte[] namedGroups = ecExtMsg.getSupportedGroups().getValue();
+                            if (namedGroups != null) {
+                                try {
+                                    return NamedGroup.getNamedGroup(extractPair(namedGroups, idx - 1 ));
+                                } catch (IndexOutOfBoundsException ex) {
+                                    return null;
                                 }
                             }
                         }
@@ -840,14 +841,11 @@ public class TLSSession implements Protocol {
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                        if(message instanceof HelloMessage){
-                            HelloMessage helloMessage = (HelloMessage) message;
-                            for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.KEY_SHARE){
-                                    KeyShareExtensionMessage keyShareExtensionMessage = (KeyShareExtensionMessage) extMsg;
-                                    return keyShareExtensionMessage.getKeyShareList().subList(idx-1, idx);
-                                }
-                            }
+                        KeyShareExtensionMessage keyShareExtensionMessage =
+                                getHelloExtension(message, KeyShareExtensionMessage.class);
+                        if(keyShareExtensionMessage != null && keyShareExtensionMessage.getKeyShareList() != null
+                                && idx > 0 && idx <= keyShareExtensionMessage.getKeyShareList().size()){
+                            return keyShareExtensionMessage.getKeyShareList().subList(idx-1, idx);
                         }
                     }
                     return null;
@@ -864,14 +862,14 @@ public class TLSSession implements Protocol {
                 () -> {
                     if(!((MessageVariable) msg).getProtocolMessages().isEmpty()){
                         ProtocolMessage message = ((MessageVariable) msg).getProtocolMessages().get(0);
-                        if(message instanceof ClientHelloMessage){
-                            HelloMessage helloMessage = (HelloMessage) message;
-                            for(ExtensionMessage extMsg : helloMessage.getExtensions()){
-                                if(ExtensionType.getExtensionType(extMsg.getExtensionType().getValue()) == ExtensionType.PSK_KEY_EXCHANGE_MODES){
-                                    PSKKeyExchangeModesExtensionMessage keyShareExtensionMessage = (PSKKeyExchangeModesExtensionMessage) extMsg;
-                                    byte[] pskExchangeModes = keyShareExtensionMessage.getKeyExchangeModesListBytes().getValue();
-                                    return PskKeyExchangeMode.getExchangeModes(pskExchangeModes).get(idx-1);
-                                }
+                        PSKKeyExchangeModesExtensionMessage pskExtMsg =
+                                getHelloExtension(message, PSKKeyExchangeModesExtensionMessage.class);
+                        if(pskExtMsg != null && pskExtMsg.getKeyExchangeModesListBytes() != null
+                                && pskExtMsg.getKeyExchangeModesListBytes().getValue() != null && idx > 0){
+                            byte[] pskExchangeModes = pskExtMsg.getKeyExchangeModesListBytes().getValue();
+                            List<PskKeyExchangeMode> exchangeModes = PskKeyExchangeMode.getExchangeModes(pskExchangeModes);
+                            if (exchangeModes != null && idx <= exchangeModes.size()) {
+                                return exchangeModes.get(idx-1);
                             }
                         }
                     }
@@ -905,10 +903,18 @@ public class TLSSession implements Protocol {
         List<byte[]> container = new ArrayList<>();
         FieldAction action = new FieldAction<byte[]>(container,
                 ()-> {
-                    List<List<KeyShareEntry>> fieldVariableValue = fieldVariable.getValue();
-                    List<KeyShareEntry> entryList = fieldVariableValue.get(0);
-                    KeyShareEntry entry = entryList.get(0);
-                    return entry.getPublicKey().getValue();
+                    List<List<KeyShareEntry>> fieldVariableValue =
+                            fieldVariable == null ? null : (List<List<KeyShareEntry>>) fieldVariable.getValue();
+                    if (fieldVariableValue != null && !fieldVariableValue.isEmpty()) {
+                        List<KeyShareEntry> entryList = fieldVariableValue.get(0);
+                        if (entryList != null && !entryList.isEmpty()) {
+                            KeyShareEntry entry = entryList.get(0);
+                            if (entry != null && entry.getPublicKey() != null) {
+                                return entry.getPublicKey().getValue();
+                            }
+                        }
+                    }
+                    return null;
                 });
         trace.addTlsAction(action);
         return new ConstantVariable<byte[]>(container);

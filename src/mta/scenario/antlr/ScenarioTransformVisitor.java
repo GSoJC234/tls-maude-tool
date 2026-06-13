@@ -85,7 +85,7 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         } else if (ctx.value() != null) {
             return visit(ctx.value());
         } else if (ctx.TID() != null) {
-            return "\"" + ctx.getText() + "\"";
+            return tidLiteral(ctx.TID().getText());
         } else if (ctx.nonce() != null){
             return visit(ctx.nonce());
         } else if (ctx.other_constant() != null){
@@ -95,6 +95,19 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             return "";
         }
     }
+
+    private String tidLiteral(String rawTid) {
+        return javaStringLiteral(rawTid.trim().replaceAll("\\s*\\.\\s*", " . "));
+    }
+
+    private String javaStringLiteral(String value) {
+        return "\"" + value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\r", "\\r")
+                .replace("\n", "\\n") + "\"";
+    }
+
     @Override public String visitNonce(ScenarioParser.NonceContext ctx) {
         if(ctx.realNonce != null){
             return Random.title() + "." + Random.NONCE.name();
