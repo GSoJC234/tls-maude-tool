@@ -96,6 +96,7 @@ public interface Protocol {
     void addNamedCurvesExtension(String alias, Variable handshake_message, Variable named_curves);
     void addSupportedVersionExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_versions);
     void addSignatureAlgorithmExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms);
+    void addSignatureAlgorithmCertExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms);
     void addSupportedGroupExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_groups);
     void addPSKExchangeModeExtension(String alias, Variable extension_len, Variable handshake_message, Variable psk_exchange_modes);
     void addCHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
@@ -130,4 +131,3 @@ public interface Protocol {
     void setUpPSK(String alias, Variable psk);
 
 }
-

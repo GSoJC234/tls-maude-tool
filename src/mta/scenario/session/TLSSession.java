@@ -13,6 +13,7 @@ import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.constants.PskKeyExchangeMode;
 import de.rub.nds.tlsattacker.core.crypto.MessageDigestCollector;
+import de.rub.nds.tlsattacker.core.exceptions.SkipActionException;
 import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.*;
 import de.rub.nds.tlsattacker.core.protocol.message.cert.CertificateEntry;
@@ -24,12 +25,12 @@ import de.rub.nds.tlsattacker.core.record.cipher.cryptohelper.KeySet;
 import de.rub.nds.tlsattacker.core.state.SessionTicket;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.util.ProviderUtil;
-import de.rub.nds.tlsattacker.core.workflow.SimpleWorkflowExecutor;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowExecutor;
 import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.core.workflow.action.*;
 import de.rub.nds.tlsattacker.core.workflow.action.custom.*;
 import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.*;
+import de.rub.nds.tlsattacker.core.workflow.action.executor.WorkflowExecutorType;
 import de.rub.nds.x509attacker.config.X509CertificateConfig;
 import de.rub.nds.x509attacker.constants.X509NamedCurve;
 import de.rub.nds.x509attacker.context.X509Context;
@@ -53,6 +54,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TLSSession implements Protocol {
 
@@ -73,11 +76,16 @@ public class TLSSession implements Protocol {
         state.addWorkflowTrace(trace);
         state.addConfig(config);
 
-        executor = new SimpleWorkflowExecutor(state);
+        executor = new MarkerWorkflowExecutor(state);
     }
 
     public void execute(){
-        executor.executeWorkflow();
+        emitMarker("session-execute-start");
+        try {
+            executor.executeWorkflow();
+        } finally {
+            emitMarker("session-execute-finish");
+        }
     }
 
     public void exit() {
@@ -1215,6 +1223,19 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public void addSignatureAlgorithmCertExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms){
+        AddSignatureAlgorithmCertsAction action = new AddSignatureAlgorithmCertsAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        if (algorithms instanceof LongConstantVariable){
+            action.setLongExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
+        } else {
+            action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
+        }
+        action.setExtensionLen((List<Integer>) extension_len.getValue());
+
+        trace.addTlsAction(action);
+    }
+
+    @Override
     public void addSupportedSignatureAlgorithmExtension(String alias, Variable handshake_message, Variable supported_signature_algorithms) {
         AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         if (supported_signature_algorithms instanceof LongConstantVariable){
@@ -1452,6 +1473,73 @@ public class TLSSession implements Protocol {
         SetUpPSKAction action = new SetUpPSKAction(alias);
         action.setPSK((List<PskSet>) psk.getValue());
         trace.addTlsAction(action);
+    }
+
+    private static void emitMarker(String event) {
+        System.out.println("MTA_MARKER " + event);
+        System.out.flush();
+    }
+
+    private static final class MarkerWorkflowExecutor extends WorkflowExecutor {
+        private static final Logger LOGGER = LogManager.getLogger(MarkerWorkflowExecutor.class);
+
+        private MarkerWorkflowExecutor(State state) {
+            super(WorkflowExecutorType.DEFAULT, state);
+        }
+
+        @Override
+        public void executeWorkflow() {
+            emitMarker("workflow-execute-start");
+            try {
+                state.getWorkflowTrace().reset();
+                state.setStartTimestamp(System.currentTimeMillis());
+                List<TlsAction> tlsActions = state.getWorkflowTrace().getTlsActions();
+                int actionIndex = 0;
+                for (TlsAction action : tlsActions) {
+                    String actionType = action.getClass().getSimpleName();
+                    String phase = actionPhase(action);
+                    emitMarker(phase + "-start action=" + actionIndex + " type=" + actionType);
+                    try {
+                        action.normalize();
+                        this.executeAction(action, state);
+                        emitActionFinish(action, actionIndex, actionType, "pass");
+                    } catch (SkipActionException ex) {
+                        emitActionFinish(action, actionIndex, actionType, action instanceof AssertEqualAction ? "fail" : "skip");
+                        continue;
+                    } finally {
+                        actionIndex++;
+                    }
+                }
+                if (state.getWorkflowTrace().executedAsPlanned()) {
+                    LOGGER.info("Workflow executed as planned.");
+                } else {
+                    LOGGER.info("Workflow was not executed as planned.");
+                }
+            } finally {
+                emitMarker("workflow-execute-finish");
+            }
+        }
+
+        private static String actionPhase(TlsAction action) {
+            if (action instanceof SendAction) {
+                return "send";
+            }
+            if (action instanceof ReceiveOneAction) {
+                return "recv";
+            }
+            if (action instanceof AssertEqualAction) {
+                return "assertion";
+            }
+            return "action";
+        }
+
+        private static void emitActionFinish(TlsAction action, int actionIndex, String actionType, String status) {
+            String phase = actionPhase(action);
+            emitMarker(phase + "-finish action=" + actionIndex + " type=" + actionType + " status=" + status);
+            if (action instanceof AssertEqualAction) {
+                emitMarker("assertion-" + ("pass".equals(status) ? "pass" : "fail") + " action=" + actionIndex + " type=" + actionType);
+            }
+        }
     }
 
 }
