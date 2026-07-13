@@ -82,6 +82,7 @@ public interface Protocol {
     Variable buildCertificate(String alias, Variable handshake_type, Variable certificate_len, Variable certificate);
     Variable buildCertificate(String alias, Variable handshake_type, Variable certificate_len, Variable certificate, Variable certificate_request_context_len, Variable certificate_request_context);
     Variable buildEncryptedExtension(String alias);
+    Variable buildEncryptedExtension(String alias, Variable handshake_type);
     Variable buildCertificateRequest(String alias, Variable handshake_type, Variable certificate_type, Variable certificate_type_length, Variable certificate_algo, Variable certificate_algo_length);
     Variable buildCertificateRequest(String alias, Variable handshake_type, Variable certificate_context_len, Variable certificate_context);
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable certificate_private_key);
@@ -100,6 +101,7 @@ public interface Protocol {
     void addSupportedGroupExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_groups);
     void addPSKExchangeModeExtension(String alias, Variable extension_len, Variable handshake_message, Variable psk_exchange_modes);
     void addCHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
+    void setCHPreSharedKeyBinder(String alias, Variable handshake_message, Variable binder);
     void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable ticket);
     void addPostHandshakeAuthExtension(String alias, Variable extension_len, Variable handshake_message);
     void addRenegotiationInfoExtension(String alias, Variable extension_len, Variable handshake_message);

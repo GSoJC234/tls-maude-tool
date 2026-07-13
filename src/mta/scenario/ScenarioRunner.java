@@ -118,7 +118,6 @@ public class ScenarioRunner {
     }
 
     private String scenarioTransform(String input, List<Node> nodeList) {
-        System.out.println("Debug: " + input);
         CharStream charStream = CharStreams.fromString(input);
         ScenarioLexer lexer = new ScenarioLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

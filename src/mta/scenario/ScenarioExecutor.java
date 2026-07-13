@@ -34,12 +34,7 @@ public class ScenarioExecutor {
                                "import java.io.PrintStream;\n"+
                                "import java.io.FileNotFoundException;\n"+
                                "public class ScenarioTest {\n" +
-                               "  private static void emitMarker(String event) {\n" +
-                               "    System.out.println(\"MTA_MARKER \" + event);\n" +
-                               "    System.out.flush();\n" +
-                               "  }\n" +
                                "  public static void main(String[] args) {\n" +
-                               "    emitMarker(\"scenario-main-start\");\n" +
                                "    TLSSession session = null;\n" +
                                "    try {\n" +
                                "      session = new TLSSession(\"" + this.tlsAttackerConfigPath + "\");\n" +
@@ -49,7 +44,6 @@ public class ScenarioExecutor {
                                "      if (session != null) {\n" +
                                "        session.exit();\n" +
                                "      }\n" +
-                               "      emitMarker(\"scenario-main-finish\");\n" +
                                "    }\n" +
                                "  }\n" +
                                "}\n";
@@ -67,6 +61,7 @@ public class ScenarioExecutor {
         InMemoryClassFileManager fileManager = new InMemoryClassFileManager(standardFileManager);
 
         Iterable<String> options = Arrays.asList(
+                "-proc:none",
                 "-classpath", System.getProperty("java.class.path")
         );
 
@@ -74,12 +69,7 @@ public class ScenarioExecutor {
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
 
         boolean success = false;
-        emitMarker("compile-start");
-        try {
-            success = task.call();
-        } finally {
-            emitMarker("compile-finish success=" + success);
-        }
+        success = task.call();
 
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
             System.err.println(diagnostic.getMessage(null));
@@ -100,20 +90,10 @@ public class ScenarioExecutor {
         Method mainMethod = null;
         try {
             mainMethod = compiledClass.getMethod("main", String[].class);
-            emitMarker("invoke-main-start");
-            try {
-                mainMethod.invoke(null, (Object) new String[]{});
-            } finally {
-                emitMarker("invoke-main-finish");
-            }
+            mainMethod.invoke(null, (Object) new String[]{});
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void emitMarker(String event) {
-        System.out.println("MTA_MARKER " + event);
-        System.out.flush();
     }
 
     static class InMemoryClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {

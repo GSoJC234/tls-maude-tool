@@ -1,5 +1,6 @@
 package mta.scenario.session;
 
+import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.constants.*;
@@ -58,6 +59,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TLSSession implements Protocol {
+    private static final Logger PROTOCOL_TRACE_LOGGER = LogManager.getLogger("mta.scenario.session.ProtocolTrace");
 
     protected AliasedConnection connection;
     private WorkflowTrace trace;
@@ -80,12 +82,7 @@ public class TLSSession implements Protocol {
     }
 
     public void execute(){
-        emitMarker("session-execute-start");
-        try {
-            executor.executeWorkflow();
-        } finally {
-            emitMarker("session-execute-finish");
-        }
+        executor.executeWorkflow();
     }
 
     public void exit() {
@@ -1012,8 +1009,20 @@ public class TLSSession implements Protocol {
     public Variable buildServerHello(String alias, Variable handshake_type, Variable version, Variable suite, Variable random, Variable session_len, Variable sessionId, Variable compression){
         List<ProtocolMessage> container = new ArrayList<>();
 
+        List<HandshakeMessageType> handshakeTypes = (List<HandshakeMessageType>) handshake_type.getValue();
+        if (!handshakeTypes.isEmpty() && handshakeTypes.get(0) == HandshakeMessageType.CLIENT_HELLO) {
+            BuildWrongSideClientHelloAction action = new BuildWrongSideClientHelloAction(alias, container);
+            action.setHandshakeType(handshakeTypes);
+            action.setVersion((List<ProtocolVersion>) version.getValue());
+            action.setCipherSuite((List<CipherSuite>) suite.getValue());
+            action.setRandom((List<byte[]>) random.getValue());
+            action.setCompression((List<CompressionMethod>) compression.getValue());
+            trace.addTlsAction(action);
+            return new ProtocolMessageVariable(container);
+        }
+
         BuildServerHelloAction action = new BuildServerHelloAction(alias, container);
-        action.setHandshakeType((List<HandshakeMessageType>) handshake_type.getValue());
+        action.setHandshakeType(handshakeTypes);
         action.setVersion((List<ProtocolVersion>) version.getValue());
         action.setCipherSuite((List<CipherSuite>) suite.getValue());
         action.setRandom((List<byte[]>) random.getValue());
@@ -1093,6 +1102,16 @@ public class TLSSession implements Protocol {
     public Variable buildEncryptedExtension(String alias) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildEncryptedExtension(String alias, Variable handshake_type) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildEncryptedExtensionAction action = new BuildEncryptedExtensionAction(alias, container);
+        action.setHandshakeType((List<HandshakeMessageType>) handshake_type.getValue());
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
@@ -1290,6 +1309,14 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public void setCHPreSharedKeyBinder(String alias, Variable handshake_message, Variable binder) {
+        SetCHPreSharedKeyBinderAction action =
+                new SetCHPreSharedKeyBinderAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setBinderValues((List<byte[]>) binder.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
     public void addSHPreSharedKeyExtension(String alias, Variable extension_len, Variable handshake_message, Variable selected_identity) {
         AddSHPreSharedKeyAction action = new AddSHPreSharedKeyAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensions((List<Integer>) selected_identity.getValue());
@@ -1475,11 +1502,6 @@ public class TLSSession implements Protocol {
         trace.addTlsAction(action);
     }
 
-    private static void emitMarker(String event) {
-        System.out.println("MTA_MARKER " + event);
-        System.out.flush();
-    }
-
     private static final class MarkerWorkflowExecutor extends WorkflowExecutor {
         private static final Logger LOGGER = LogManager.getLogger(MarkerWorkflowExecutor.class);
 
@@ -1489,56 +1511,149 @@ public class TLSSession implements Protocol {
 
         @Override
         public void executeWorkflow() {
-            emitMarker("workflow-execute-start");
+            state.getWorkflowTrace().reset();
+            state.setStartTimestamp(System.currentTimeMillis());
+            List<TlsAction> tlsActions = state.getWorkflowTrace().getTlsActions();
+            int actionIndex = 0;
+            for (TlsAction action : tlsActions) {
+                try {
+                    action.normalize();
+                    this.executeAction(action, state);
+                    emitProtocolTrace(action, actionIndex);
+                } catch (SkipActionException ex) {
+                    emitProtocolTrace(action, actionIndex);
+                    continue;
+                } finally {
+                    actionIndex++;
+                }
+            }
+            if (state.getWorkflowTrace().executedAsPlanned()) {
+                LOGGER.info("Workflow executed as planned.");
+            } else {
+                LOGGER.info("Workflow was not executed as planned.");
+            }
+        }
+
+        private static void emitProtocolTrace(TlsAction action, int actionIndex) {
+            if (action instanceof SendAction sendAction) {
+                List<ProtocolMessage> messages = sendAction.getSentMessages();
+                if (isEmpty(messages)) {
+                    messages = sendAction.getConfiguredMessages();
+                }
+                List<Record> records = sendAction.getSentRecords();
+                if (isEmpty(records)) {
+                    records = sendAction.getConfiguredRecords();
+                }
+                emitMessageTrace("Sending", actionIndex, messages, records);
+            } else if (action instanceof ReceiveOneAction receiveAction) {
+                emitMessageTrace(
+                        "Received",
+                        actionIndex,
+                        receiveAction.getReceivedMessages(),
+                        receiveAction.getReceivedRecords());
+            }
+        }
+
+        private static void emitMessageTrace(
+                String direction,
+                int actionIndex,
+                List<ProtocolMessage> messages,
+                List<Record> records) {
+            int messageCount = messages == null ? 0 : messages.size();
+            int recordCount = records == null ? 0 : records.size();
+            int count = Math.max(messageCount, recordCount);
+            for (int index = 0; index < count; index++) {
+                ProtocolMessage message = index < messageCount ? messages.get(index) : null;
+                Record record = index < recordCount ? records.get(index) : null;
+                byte[] bytes = messageBytes(message);
+                String source = "message";
+                if (bytes == null || bytes.length == 0) {
+                    bytes = recordBytes(record);
+                    source = "record";
+                }
+                if (bytes != null) {
+                    PROTOCOL_TRACE_LOGGER.info(
+                            "{} Message Bytes: action={} index={} message={} source={} bytes={}",
+                            direction,
+                            actionIndex,
+                            index,
+                            messageName(message),
+                            source,
+                            toHex(bytes));
+                }
+                if (message != null) {
+                    PROTOCOL_TRACE_LOGGER.info(
+                            "{} Message Value: action={} index={} message={} value={}",
+                            direction,
+                            actionIndex,
+                            index,
+                            messageName(message),
+                            messageValue(message));
+                }
+            }
+        }
+
+        private static boolean isEmpty(List<?> values) {
+            return values == null || values.isEmpty();
+        }
+
+        private static byte[] messageBytes(ProtocolMessage message) {
+            if (message == null) {
+                return null;
+            }
+            return byteArrayValue(message.getCompleteResultingMessage());
+        }
+
+        private static byte[] recordBytes(Record record) {
+            if (record == null) {
+                return null;
+            }
+            byte[] bytes = byteArrayValue(record.getCleanProtocolMessageBytes());
+            if (bytes != null && bytes.length > 0) {
+                return bytes;
+            }
+            bytes = byteArrayValue(record.getProtocolMessageBytes());
+            if (bytes != null && bytes.length > 0) {
+                return bytes;
+            }
+            return byteArrayValue(record.getCompleteRecordBytes());
+        }
+
+        private static byte[] byteArrayValue(ModifiableByteArray value) {
+            if (value == null) {
+                return null;
+            }
+            return value.getValue();
+        }
+
+        private static String messageName(ProtocolMessage message) {
+            if (message == null) {
+                return "unknown";
+            }
+            String className = message.getClass().getSimpleName();
+            if (className.endsWith("Message")) {
+                return className.substring(0, className.length() - "Message".length());
+            }
+            return className;
+        }
+
+        private static String messageValue(ProtocolMessage message) {
             try {
-                state.getWorkflowTrace().reset();
-                state.setStartTimestamp(System.currentTimeMillis());
-                List<TlsAction> tlsActions = state.getWorkflowTrace().getTlsActions();
-                int actionIndex = 0;
-                for (TlsAction action : tlsActions) {
-                    String actionType = action.getClass().getSimpleName();
-                    String phase = actionPhase(action);
-                    emitMarker(phase + "-start action=" + actionIndex + " type=" + actionType);
-                    try {
-                        action.normalize();
-                        this.executeAction(action, state);
-                        emitActionFinish(action, actionIndex, actionType, "pass");
-                    } catch (SkipActionException ex) {
-                        emitActionFinish(action, actionIndex, actionType, action instanceof AssertEqualAction ? "fail" : "skip");
-                        continue;
-                    } finally {
-                        actionIndex++;
-                    }
-                }
-                if (state.getWorkflowTrace().executedAsPlanned()) {
-                    LOGGER.info("Workflow executed as planned.");
-                } else {
-                    LOGGER.info("Workflow was not executed as planned.");
-                }
-            } finally {
-                emitMarker("workflow-execute-finish");
+                return message.toShortString();
+            } catch (RuntimeException ex) {
+                return messageName(message);
             }
         }
 
-        private static String actionPhase(TlsAction action) {
-            if (action instanceof SendAction) {
-                return "send";
+        private static String toHex(byte[] bytes) {
+            StringBuilder builder = new StringBuilder(bytes.length * 3);
+            for (int index = 0; index < bytes.length; index++) {
+                if (index > 0) {
+                    builder.append(' ');
+                }
+                builder.append(String.format("%02X", bytes[index] & 0xFF));
             }
-            if (action instanceof ReceiveOneAction) {
-                return "recv";
-            }
-            if (action instanceof AssertEqualAction) {
-                return "assertion";
-            }
-            return "action";
-        }
-
-        private static void emitActionFinish(TlsAction action, int actionIndex, String actionType, String status) {
-            String phase = actionPhase(action);
-            emitMarker(phase + "-finish action=" + actionIndex + " type=" + actionType + " status=" + status);
-            if (action instanceof AssertEqualAction) {
-                emitMarker("assertion-" + ("pass".equals(status) ? "pass" : "fail") + " action=" + actionIndex + " type=" + actionType);
-            }
+            return builder.toString();
         }
     }
 

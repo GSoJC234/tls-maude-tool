@@ -2,19 +2,23 @@
 <Configuration status="WARN">
     <Appenders>
         <File name="MAIN" fileName="${sys:logFilePath}" append="false" createOnDemand="true">
-            <PatternLayout pattern="%d [%t] %p %c - %m%n"/>
+            <PatternLayout pattern="%m%n"/>
         </File>
     </Appenders>
 
     <Loggers>
+        <Logger name="mta.scenario.session.ProtocolTrace"
+                level="INFO"
+                additivity="false">
+            <AppenderRef ref="MAIN"/>
+        </Logger>
+
         <Logger name="de.rub.nds.tlsattacker.core.workflow.action.custom.AssertEqualAction"
                 level="DEBUG"
                 additivity="false">
             <AppenderRef ref="MAIN"/>
         </Logger>
 
-        <Root level="WARN">
-            <AppenderRef ref="MAIN"/>
-        </Root>
+        <Root level="OFF"/>
     </Loggers>
 </Configuration>

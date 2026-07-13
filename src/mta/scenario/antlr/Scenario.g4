@@ -1,5 +1,9 @@
 grammar Scenario;
 
+@header {
+package mta.scenario.antlr;
+}
+
 program: statement* EOF;
 
 statement
@@ -49,7 +53,7 @@ function_name:
     | 'getKeyShareEntry' | 'getKeyShareNamedGroup' | 'getNamedGroup' | 'getAlertDescription' | 'getCertificateContext'
     | 'getCertificate' | 'getPublicKeyFromCertificate' | 'getRandom' | 'getSessionId' | 'getHandshakeBody' | 'getAlertLevel' | 'getPskExchangeMode' | 'getTicket'
     | 'getRSAPreMasterSecret' | 'calculateMasterSecret' | 'buildEmptyKeyShareEntryList' | 'addKeyShareEntry' | 'addKeyShareExtension' | 'addHRRKeyShareExtension'
-    | 'addSupportedVersionExtension' | 'addSignatureAlgorithmExtension' | 'addSignatureAlgorithmCertExtension' | 'addSupportedGroupExtension' | 'addPSKExchangeModeExtension' | 'addCHPreSharedKeyExtension' | 'addSHPreSharedKeyExtension'
+    | 'addSupportedVersionExtension' | 'addSignatureAlgorithmExtension' | 'addSignatureAlgorithmCertExtension' | 'addSupportedGroupExtension' | 'addPSKExchangeModeExtension' | 'addCHPreSharedKeyExtension' | 'setCHPreSharedKeyBinder' | 'addSHPreSharedKeyExtension'
     | 'addExtensionLen' | 'addHandshakeLen' | 'addSupportedSignatureAlgorithmExtension' | 'addNamedCurvesExtension' | 'addPostHandshakeAuthExtension' | 'addEarlyDataExtension'
     | 'updateContext' | 'send' | 'recv' | 'buildClientHello' | 'buildServerHello' | 'buildEncryptedExtension' | 'buildECDHEServerKeyExchange' | 'buildECDHClientKeyExchange'
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
