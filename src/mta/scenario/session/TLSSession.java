@@ -41,15 +41,22 @@ import de.rub.nds.x509attacker.x509.model.publickey.X509EcdhEcdsaPublicKey;
 import de.rub.nds.x509attacker.x509.model.publickey.X509RsaPublicKey;
 import mta.maude.constant.*;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import mta.protocol.Protocol;
 import mta.protocol.Variable;
+import mta.scenario.TargetExecutionMetadata;
 import mta.scenario.variable.*;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -59,6 +66,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TLSSession implements Protocol {
+    private static final Logger LOGGER = LogManager.getLogger(TLSSession.class);
     private static final Logger PROTOCOL_TRACE_LOGGER = LogManager.getLogger("mta.scenario.session.ProtocolTrace");
 
     protected AliasedConnection connection;
@@ -70,8 +78,13 @@ public class TLSSession implements Protocol {
     private State state = null;
 
     public TLSSession(String configPath){
+        this(configPath, TargetExecutionMetadata.empty());
+    }
+
+    public TLSSession(String configPath, TargetExecutionMetadata targetExecutionMetadata){
         ProviderUtil.addBouncyCastleProvider();
         config = Config.createConfig(new File(configPath));
+        applyTargetExecutionMetadata(config, targetExecutionMetadata);
         trace = new WorkflowTrace();
 
         state = new State();
@@ -79,6 +92,21 @@ public class TLSSession implements Protocol {
         state.addConfig(config);
 
         executor = new MarkerWorkflowExecutor(state);
+    }
+
+    private void applyTargetExecutionMetadata(Config config, TargetExecutionMetadata metadata) {
+        if (metadata == null) {
+            return;
+        }
+        config.setTargetLibraryName(metadata.libraryName());
+        config.setTargetLibraryVersion(metadata.libraryVersion());
+        config.setTargetLibraryPath(metadata.libraryPath());
+        config.setTargetTlsRole(metadata.tlsRole());
+        config.setTargetExecutionMode(metadata.executionMode());
+        config.setTargetRuntimePlatform(metadata.runtimePlatform());
+        config.setTargetDockerImage(metadata.dockerImage());
+        config.setTargetBuildProfile(metadata.buildProfile());
+        config.setTargetBinaryPath(metadata.binaryPath());
     }
 
     public void execute(){
@@ -109,6 +137,7 @@ public class TLSSession implements Protocol {
         action.setPort(port);
         action.setConnectionTimeOut(300000);
         trace.addTlsAction(action);
+        trace.addTlsAction(new ClearDigestAction(alias));
     }
 
     @Override
@@ -118,6 +147,7 @@ public class TLSSession implements Protocol {
         action.setPort(port);
         action.setConnectionTimeOut(300000);
         trace.addTlsAction(action);
+        trace.addTlsAction(new ClearDigestAction(alias));
     }
 
     @Override
@@ -140,6 +170,11 @@ public class TLSSession implements Protocol {
         SendAction action = new SendAction(alias, messageVariable.getProtocolMessages());
         action.setConfiguredRecords(messageVariable.getRecordMessages());
         trace.addTlsAction(action);
+    }
+
+    @Override
+    public void echoApplicationData(String alias) {
+        trace.addTlsAction(new SendAction(alias, new ApplicationMessage()));
     }
 
     @Override
@@ -220,23 +255,43 @@ public class TLSSession implements Protocol {
             String type = po.getType();
             byte[] der = po.getContent();
 
-            byte[] dRaw;
+            List<byte[]> privateKeyContainer = new ArrayList<>();
 
             if ("PRIVATE KEY".equalsIgnoreCase(type)) {
-                throw new IllegalArgumentException("Unsupported PEM type: " + type);
+                addPkcs8PrivateKey(der, privateKeyContainer);
+            } else if ("RSA PRIVATE KEY".equalsIgnoreCase(type)) {
+                RSAPrivateKey rsa = RSAPrivateKey.getInstance(ASN1Primitive.fromByteArray(der));
+                privateKeyContainer.add(rsa.getPrivateExponent().toByteArray());
+                privateKeyContainer.add(rsa.getModulus().toByteArray());
             } else if ("EC PRIVATE KEY".equalsIgnoreCase(type)) {
                 ECPrivateKey ec = ECPrivateKey.getInstance(ASN1Primitive.fromByteArray(der));
-                dRaw = ec.getKey().toByteArray();
+                privateKeyContainer.add(ec.getKey().toByteArray());
             } else {
                 throw new IllegalArgumentException("Unsupported PEM type: " + type);
             }
-            List<byte[]> privateKeyContainer = new ArrayList<>();
-            privateKeyContainer.add(dRaw);
             return new ConstantVariable<byte[]>(privateKeyContainer);
 
         } catch (Exception e){
-            throw new RuntimeException("Could not parse EC private key from: " + privateKeyPath, e);
+            throw new RuntimeException("Could not parse private key from: " + privateKeyPath, e);
         }
+    }
+
+    private void addPkcs8PrivateKey(byte[] der, List<byte[]> privateKeyContainer) throws IOException {
+        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(ASN1Primitive.fromByteArray(der));
+        ASN1ObjectIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm().getAlgorithm();
+        ASN1Primitive privateKey = privateKeyInfo.parsePrivateKey().toASN1Primitive();
+
+        if (PKCSObjectIdentifiers.rsaEncryption.equals(algorithm)) {
+            RSAPrivateKey rsa = RSAPrivateKey.getInstance(privateKey);
+            privateKeyContainer.add(rsa.getPrivateExponent().toByteArray());
+            privateKeyContainer.add(rsa.getModulus().toByteArray());
+            return;
+        }
+        if (X9ObjectIdentifiers.id_ecPublicKey.equals(algorithm)) {
+            privateKeyContainer.add(ECPrivateKey.getInstance(privateKey).getKey().toByteArray());
+            return;
+        }
+        throw new IllegalArgumentException("Unsupported PKCS#8 private key algorithm: " + algorithm.getId());
     }
 
 

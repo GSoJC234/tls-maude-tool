@@ -19,16 +19,27 @@ public class ScenarioExecutor {
 
     private final String scenario;
     private final String tlsAttackerConfigPath;
+    private final TargetExecutionMetadata targetExecutionMetadata;
 
     public ScenarioExecutor(String scenario, String tlsAttackerConfigPath) {
+        this(scenario, tlsAttackerConfigPath, TargetExecutionMetadata.empty());
+    }
+
+    public ScenarioExecutor(String scenario,
+                            String tlsAttackerConfigPath,
+                            TargetExecutionMetadata targetExecutionMetadata) {
         this.scenario = scenario;
         this.tlsAttackerConfigPath = tlsAttackerConfigPath;
+        this.targetExecutionMetadata = targetExecutionMetadata == null
+                ? TargetExecutionMetadata.empty()
+                : targetExecutionMetadata;
     }
 
     public void execute(){
          // Java source code
         String classTemplate = "import mta.maude.constant.*;\n" +
                                "import mta.protocol.*;\n" +
+                               "import mta.scenario.ScenarioExecutionContextHolder;\n" +
                                "import mta.scenario.session.TLSSession;\n"+
                                "import java.io.File;\n"+
                                "import java.io.PrintStream;\n"+
@@ -37,7 +48,7 @@ public class ScenarioExecutor {
                                "  public static void main(String[] args) {\n" +
                                "    TLSSession session = null;\n" +
                                "    try {\n" +
-                               "      session = new TLSSession(\"" + this.tlsAttackerConfigPath + "\");\n" +
+                               "      session = new TLSSession(\"" + javaString(this.tlsAttackerConfigPath) + "\", ScenarioExecutionContextHolder.currentOrEmpty());\n" +
                                       this.scenario + "\n" +
                                "      session.execute();\n" +
                                "    } finally {\n" +
@@ -90,10 +101,17 @@ public class ScenarioExecutor {
         Method mainMethod = null;
         try {
             mainMethod = compiledClass.getMethod("main", String[].class);
+            ScenarioExecutionContextHolder.set(targetExecutionMetadata);
             mainMethod.invoke(null, (Object) new String[]{});
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
+        } finally {
+            ScenarioExecutionContextHolder.clear();
         }
+    }
+
+    private static String javaString(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     static class InMemoryClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {

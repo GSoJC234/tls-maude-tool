@@ -184,6 +184,7 @@ public class TlsConfigurationRenderer {
             case "SecureRenegotiation" -> "isecureRenegotiation";
             case "NewSessionTicketReq", "NewSessionTicketRequest" -> "inewSessionTicketReq";
             case "NewSessionTicketWait" -> "inewSessionTicketWait";
+            case "AppDataEchoBeforeNST" -> "iappDataEchoBeforeNST";
             case "Reconnect" -> "ireconnect";
             case "EarlyDataReq", "EarlyDataRequest" -> "iearlyDataReq";
             case "EarlyDataWait" -> "iearlyDataWait";
@@ -204,6 +205,7 @@ public class TlsConfigurationRenderer {
                     "NewSessionTicketReq",
                     "NewSessionTicketRequest",
                     "NewSessionTicketWait",
+                    "AppDataEchoBeforeNST",
                     "Reconnect",
                     "EarlyDataReq",
                     "EarlyDataRequest",

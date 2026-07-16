@@ -125,7 +125,7 @@ public class Main {
 
     private static void runScenario(String[] args) {
         if (args.length < 10) {
-            System.err.println("Usage: --run [scenario path] [mode] [ip] [port] [ca certificate path] [certificate path] [private key path] [tls-attacker configuration path] [output file path]");
+            System.err.println("Usage: --run [scenario path] [mode] [ip] [port] [ca certificate path] [certificate path] [private key path] [tls-attacker configuration path] [output file path] [--profile tls profile path]");
             System.exit(1);
         }
         String scenarioPath = args[1];
@@ -137,6 +137,7 @@ public class Main {
         String privateKeyPath = args[7];
         String tlsAttackerConfigPath = args[8];
         String outputPath = args[9];
+        Path targetProfilePath = parseRunProfilePath(args);
 
         System.out.println("   Run formal mta.scenario");
         System.out.println("   Scenario path : " + scenarioPath);
@@ -148,6 +149,9 @@ public class Main {
         System.out.println("   Private key path : " + privateKeyPath);
         System.out.println("   TLS attacker configuration path : " + tlsAttackerConfigPath);
         System.out.println("   Output path : " + outputPath);
+        if (targetProfilePath != null) {
+            System.out.println("   TLS profile path : " + targetProfilePath);
+        }
 
         ScenarioRunner scenarioRunner = new ScenarioRunner(
                 Path.of(scenarioPath),
@@ -158,8 +162,26 @@ public class Main {
                 certificatePath,
                 privateKeyPath,
                 Path.of(tlsAttackerConfigPath),
-                Path.of(outputPath));
+                Path.of(outputPath),
+                targetProfilePath);
         scenarioRunner.execute();
+    }
+
+    private static Path parseRunProfilePath(String[] args) {
+        Path profilePath = null;
+        int index = 10;
+        while (index < args.length) {
+            if ("--profile".equals(args[index])) {
+                if (index + 1 >= args.length) {
+                    throw new IllegalArgumentException("--profile requires a tlsprofile.dsl path");
+                }
+                profilePath = Path.of(args[index + 1]);
+                index += 2;
+                continue;
+            }
+            throw new IllegalArgumentException("Unknown --run option: " + args[index]);
+        }
+        return profilePath;
     }
 
     private static void runVisualizer(String[] args) {

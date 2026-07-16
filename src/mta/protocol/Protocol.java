@@ -9,6 +9,7 @@ public interface Protocol {
     void close(String alias);
     Variable recv(String alias);
     void send(String alias, Variable msg);
+    void echoApplicationData(String alias);
     void checkConnection(String alias);
     Variable encrypt(String alias, Variable message);
     Variable encrypt(Variable message, Variable key);

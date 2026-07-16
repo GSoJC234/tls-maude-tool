@@ -28,6 +28,7 @@ public class ScenarioRunner {
     private Path tlsAttackerConfigPath;
     private String scenario;
     private List<Node> nodes;
+    private TargetExecutionMetadata targetExecutionMetadata = TargetExecutionMetadata.empty();
 
     public ScenarioRunner(String sceanrio, Path testerConfigPath, Path outputDir) {
         this.scenario = sceanrio;
@@ -58,10 +59,28 @@ public class ScenarioRunner {
             String privateKeyPath,
             Path tlsAttackerConfigPath,
             Path outputDir) {
+        this(scenarioPath, mode, ip, port, caCertificatePath, certificatePath, privateKeyPath,
+                tlsAttackerConfigPath, outputDir, null);
+    }
+
+    public ScenarioRunner(
+            Path scenarioPath,
+            String mode,
+            String ip,
+            int port,
+            String caCertificatePath,
+            String certificatePath,
+            String privateKeyPath,
+            Path tlsAttackerConfigPath,
+            Path outputDir,
+            Path targetProfilePath) {
         this.scenario = readFile(scenarioPath);
         this.nodes = List.of(buildNode(mode, ip, port, caCertificatePath, certificatePath, privateKeyPath));
         this.tlsAttackerConfigPath = tlsAttackerConfigPath;
         this.outputDir = outputDir;
+        if (targetProfilePath != null) {
+            this.targetExecutionMetadata = new TargetExecutionMetadataLoader().load(targetProfilePath);
+        }
     }
 
 
@@ -81,7 +100,8 @@ public class ScenarioRunner {
 
         List<Node> nodeList = nodes != null ? nodes : getConfig().getNodes();
         String transformedScenario = scenarioTransform(scenario, nodeList);
-        ScenarioExecutor executor = new ScenarioExecutor(transformedScenario, tlsAttackerConfigPath.toString());
+        ScenarioExecutor executor = new ScenarioExecutor(
+                transformedScenario, tlsAttackerConfigPath.toString(), targetExecutionMetadata);
         executor.execute();
     }
 

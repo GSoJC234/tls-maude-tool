@@ -838,12 +838,12 @@ final class BehaviorValueLowerer {
         putSignature(schemes, "rsa_pkcs1_sha256", "rsa", "sha256");
         putSignature(schemes, "rsa_pkcs1_sha384", "rsa", "sha384");
         putSignature(schemes, "rsa_pkcs1_sha512", "rsa", "sha512");
-        putSignature(schemes, "rsa_pss_rsae_sha256", "rsa", "sha256");
-        putSignature(schemes, "rsa_pss_rsae_sha384", "rsa", "sha384");
-        putSignature(schemes, "rsa_pss_rsae_sha512", "rsa", "sha512");
-        putSignature(schemes, "rsa_pss_pss_sha256", "rsa", "sha256");
-        putSignature(schemes, "rsa_pss_pss_sha384", "rsa", "sha384");
-        putSignature(schemes, "rsa_pss_pss_sha512", "rsa", "sha512");
+        putSignature(schemes, "rsa_pss_rsae_sha256", "rsa-pss-rsae", "sha256");
+        putSignature(schemes, "rsa_pss_rsae_sha384", "rsa-pss-rsae", "sha384");
+        putSignature(schemes, "rsa_pss_rsae_sha512", "rsa-pss-rsae", "sha512");
+        putSignature(schemes, "rsa_pss_pss_sha256", "rsa-pss-pss", "sha256");
+        putSignature(schemes, "rsa_pss_pss_sha384", "rsa-pss-pss", "sha384");
+        putSignature(schemes, "rsa_pss_pss_sha512", "rsa-pss-pss", "sha512");
         putSignature(schemes, "ecdsa_sha1", "ecdsa", "sha");
         putSignature(schemes, "ecdsa_secp256r1_sha256", "ecdsa", "sha256");
         putSignature(schemes, "ecdsa_secp384r1_sha384", "ecdsa", "sha384");

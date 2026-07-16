@@ -130,6 +130,12 @@ public enum SignatureAlgorithm {
             case RSA_SHA256 -> "{rsa,sha256}";
             case RSA_SHA384 -> "{rsa,sha384}";
             case RSA_SHA512 -> "{rsa,sha512}";
+            case RSA_PSS_RSAE_SHA256 -> "{rsa-pss-rsae,sha256}";
+            case RSA_PSS_RSAE_SHA384 -> "{rsa-pss-rsae,sha384}";
+            case RSA_PSS_RSAE_SHA512 -> "{rsa-pss-rsae,sha512}";
+            case RSA_PSS_PSS_SHA256 -> "{rsa-pss-pss,sha256}";
+            case RSA_PSS_PSS_SHA384 -> "{rsa-pss-pss,sha384}";
+            case RSA_PSS_PSS_SHA512 -> "{rsa-pss-pss,sha512}";
             case DSA_MD5 -> "{dsa,md5}";
             case DSA_SHA1 -> "{dsa,sha1}";
             case DSA_SHA224 -> "{dsa,sha224}";
