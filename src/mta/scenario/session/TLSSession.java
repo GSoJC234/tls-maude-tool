@@ -1220,6 +1220,18 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable buildCertificateVerify(String alias, Variable handshake_type, Variable wireSignatureHashAlgorithm, Variable signingSignatureHashAlgorithm, Variable certificate_private_key) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildCertificateVerifyAction action = new BuildCertificateVerifyAction(alias, container);
+        action.setHandshakeType((List<HandshakeMessageType>) handshake_type.getValue());
+        action.setSignature_and_hash_algorithm_container((List<SignatureAndHashAlgorithm>)wireSignatureHashAlgorithm.getValue());
+        action.setSigningSignatureAndHashAlgorithmContainer((List<SignatureAndHashAlgorithm>)signingSignatureHashAlgorithm.getValue());
+        action.setCertificatePrivateKey((List<byte[]>) certificate_private_key.getValue());
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
     public Variable buildChangeCipherSpec(String alias) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildChangeCipherSpecAction action = new BuildChangeCipherSpecAction(alias, container);

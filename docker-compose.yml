@@ -1,12 +1,6 @@
 services:
   mta:
-    build:
-      context: .
-      dockerfile: DockerFile
-      args:
-        TLS_ATTACKER_REPO: ${TLS_ATTACKER_REPO:-https://github.com/GSoJC234/TLS-Attacker.git}
-        TLS_ATTACKER_REF: ${TLS_ATTACKER_REF:-main}
-    image: ${MTA_IMAGE:-maude-tls-attacker:mta}
+    image: ${MTA_IMAGE:-maude-tls-attacker:mta-dsl}
     platform: linux/amd64
     entrypoint: ["/bin/bash", "/app/scripts/run-test.sh"]
     volumes:

@@ -1,7 +1,0 @@
-BehaviorId: wrongHandshakeType
-Parameters: _handshakeType, _wrongHandshakeTypes
-EventType: Send
-Conditions:
-  fieldValue(handshakeType) = value(_handshakeType)
-Modification:
-  set(handshakeType, _wrongHandshakeTypes)

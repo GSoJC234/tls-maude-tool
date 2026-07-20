@@ -1,64 +1,30 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS tls-attacker-builder
-
-ARG TLS_ATTACKER_REPO=https://github.com/GSoJC234/TLS-Attacker.git
-ARG TLS_ATTACKER_REF=main
-
-WORKDIR /build
-
-RUN git clone "${TLS_ATTACKER_REPO}" TLS-Attacker && \
-    cd TLS-Attacker && \
-    git checkout "${TLS_ATTACKER_REF}"
-
-WORKDIR /build/TLS-Attacker
-
-RUN mvn -B -DskipTests package
-
-
-FROM eclipse-temurin:21-jdk AS mta-builder
-
-WORKDIR /build/mta
-
-COPY src ./src
-COPY resources ./resources
-COPY jar ./jar
-COPY --from=tls-attacker-builder /build/TLS-Attacker/apps/lib ./tls-attacker-lib
-
-RUN find src -name '*.java' > sources.list && \
-    mkdir -p /build/mta/classes && \
-    javac -encoding UTF-8 \
-      -cp "src:jar/*:tls-attacker-lib/*" \
-      -d /build/mta/classes \
-      @sources.list && \
-    cp -R resources/. /build/mta/classes/ && \
-    cp src/log4j2.xml /build/mta/classes/ && \
-    jar cfe /build/maude-tls-attacker.jar mta.main.Main -C /build/mta/classes .
-
-
-FROM eclipse-temurin:21-jdk
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends bash curl unzip && \
+    apt-get install -y --no-install-recommends bash ca-certificates curl unzip && \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -L -o /tmp/maude.zip \
+RUN curl -fsSL -o /tmp/maude.zip \
       https://github.com/maude-lang/Maude/releases/download/Maude3.5.1/Maude-3.5.1-linux-x86_64.zip && \
     unzip /tmp/maude.zip -d /opt/maude && \
     rm /tmp/maude.zip && \
     chmod +x /opt/maude/maude && \
     ln -s /opt/maude/maude /usr/local/bin/maude
 
-COPY --from=tls-attacker-builder /build/TLS-Attacker/apps/lib /app/tls-attacker-lib
-COPY --from=mta-builder /build/maude-tls-attacker.jar /app/maude-tls-attacker.jar
 COPY jar /app/jar
 COPY maude /app/maude
 COPY resources /app/resources
 COPY scripts/run-test.sh /app/scripts/run-test.sh
+COPY build/mta-dsl-overlay/maude-tls-attacker.jar /app/maude-tls-attacker.jar
+COPY build/mta-dsl-overlay/tls-attacker-lib /app/tls-attacker-lib
 
 RUN chmod +x /app/scripts/run-test.sh && \
     mkdir -p /work/generated /work/results /work/logs
 
+# docker-build.py compiles maude-tls-attacker against the supplied local
+# TLS-Attacker checkout and stages both local outputs under build/mta-dsl-overlay.
 ENV MTA_CLASSPATH=/app/maude-tls-attacker.jar:/app/jar/*:/app/tls-attacker-lib/*
 ENV MAUDE_LIB=/opt/maude
 

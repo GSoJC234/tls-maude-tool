@@ -39,6 +39,7 @@ case "$COMMAND" in
     PRIVATE_KEY_PATH="${7:-}"
     TLS_ATTACKER_CONFIG_PATH="${8:-/app/resources/tls-attacker/default_config.xml}"
     OUTPUT_PATH="${9:-/work/results/scenario.log}"
+    EXTRA_ARGS=("${@:10}")
 
     case "$TESTER_MODE" in
       client)
@@ -81,7 +82,8 @@ case "$COMMAND" in
       "$CERTIFICATE_PATH" \
       "$PRIVATE_KEY_PATH" \
       "$TLS_ATTACKER_CONFIG_PATH" \
-      "$OUTPUT_PATH"
+      "$OUTPUT_PATH" \
+      "${EXTRA_ARGS[@]}"
     ;;
 
   shell)
@@ -91,7 +93,7 @@ case "$COMMAND" in
   *)
     echo "Usage:" >&2
     echo "  run-test.sh generate|--generate [tls-version] [requirement-index] [module-path] [output-dir]" >&2
-    echo "  run-test.sh run|--run [scenario-path] [mode] [ip] [port] [ca-cert-path] [cert-path] [key-path] [tls-attacker-config-path] [output-path]" >&2
+    echo "  run-test.sh run|--run [scenario-path] [mode] [ip] [port] [ca-cert-path] [cert-path] [key-path] [tls-attacker-config-path] [output-path] [--profile tlsprofile.dsl]" >&2
     echo "  run-test.sh shell" >&2
     exit 2
     ;;
