@@ -13,7 +13,21 @@ behaviorIdSection
     ;
 
 parametersSection
-    : PARAMETERS COLON parameterName (COMMA parameterName)*
+    : PARAMETERS COLON parameterDeclaration (COMMA parameterDeclaration)*
+    ;
+
+parameterDeclaration
+    : parameterRef COLON typeExpression
+    | parameterName
+    ;
+
+typeExpression
+    : getTypeCall
+    | term
+    ;
+
+getTypeCall
+    : GET_TYPE LPAREN term RPAREN
     ;
 
 conditionsSection
@@ -33,7 +47,7 @@ parameterInstance
     ;
 
 parameterBinding
-    : parameterName (COLON | EQ) term
+    : (parameterName | parameterRef) (COLON | EQ) term
     ;
 
 actionExpr
@@ -161,6 +175,10 @@ MODIFICATIONS
 
 PARAMETER_INSTANCES
     : 'ParameterInstances'
+    ;
+
+GET_TYPE
+    : '#getType'
     ;
 
 SETM

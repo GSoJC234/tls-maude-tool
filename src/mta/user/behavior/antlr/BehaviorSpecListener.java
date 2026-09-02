@@ -48,6 +48,36 @@ public interface BehaviorSpecListener extends ParseTreeListener {
 	 */
 	void exitParametersSection(BehaviorSpecParser.ParametersSectionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#parameterDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#parameterDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#typeExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#typeExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link BehaviorSpecParser#getTypeCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link BehaviorSpecParser#getTypeCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link BehaviorSpecParser#conditionsSection}.
 	 * @param ctx the parse tree
 	 */

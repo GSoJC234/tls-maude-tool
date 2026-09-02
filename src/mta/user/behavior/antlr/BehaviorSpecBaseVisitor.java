@@ -46,6 +46,27 @@ public class BehaviorSpecBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitConditionsSection(BehaviorSpecParser.ConditionsSectionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

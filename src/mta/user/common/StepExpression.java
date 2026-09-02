@@ -24,6 +24,22 @@ public interface StepExpression {
         }
     }
 
+    record Reference(String name) implements StepExpression {
+        public Reference {
+            Objects.requireNonNull(name, "name must not be null");
+        }
+
+        @Override
+        public Set<String> parameterRefs() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public StepExpression substitute(Map<String, UserTerm> bindings) {
+            return this;
+        }
+    }
+
     record Action(ActionExpression expression) implements StepExpression {
         public Action {
             Objects.requireNonNull(expression, "expression must not be null");

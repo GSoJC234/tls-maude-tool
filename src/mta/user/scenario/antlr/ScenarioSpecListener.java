@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/scenario/antlr/ScenarioSpec.g4 by ANTLR 4.13.2
+// Generated from ScenarioSpec.g4 by ANTLR 4.13.2
 package mta.user.scenario.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -17,6 +17,46 @@ public interface ScenarioSpecListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#declaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclaration(ScenarioSpecParser.DeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#declaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclaration(ScenarioSpecParser.DeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ScenarioSpecParser#scenarioExpr}.
 	 * @param ctx the parse tree
@@ -68,6 +108,16 @@ public interface ScenarioSpecListener extends ParseTreeListener {
 	 */
 	void exitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#propositionRef}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropositionRef(ScenarioSpecParser.PropositionRefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#propositionRef}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropositionRef(ScenarioSpecParser.PropositionRefContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ScenarioSpecParser#stepExpr}.
 	 * @param ctx the parse tree
 	 */
@@ -117,6 +167,86 @@ public interface ScenarioSpecListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStepAtom(ScenarioSpecParser.StepAtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterStateExpr(ScenarioSpecParser.StateExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitStateExpr(ScenarioSpecParser.StateExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateOr}.
+	 * @param ctx the parse tree
+	 */
+	void enterStateOr(ScenarioSpecParser.StateOrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateOr}.
+	 * @param ctx the parse tree
+	 */
+	void exitStateOr(ScenarioSpecParser.StateOrContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateAnd}.
+	 * @param ctx the parse tree
+	 */
+	void enterStateAnd(ScenarioSpecParser.StateAndContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateAnd}.
+	 * @param ctx the parse tree
+	 */
+	void exitStateAnd(ScenarioSpecParser.StateAndContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateNot}.
+	 * @param ctx the parse tree
+	 */
+	void enterStateNot(ScenarioSpecParser.StateNotContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#stateNot}.
+	 * @param ctx the parse tree
+	 */
+	void exitStateNot(ScenarioSpecParser.StateNotContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionExpr(ScenarioSpecParser.ActionExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionExpr(ScenarioSpecParser.ActionExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionOr}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionOr(ScenarioSpecParser.ActionOrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionOr}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionOr(ScenarioSpecParser.ActionOrContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionAnd}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionAnd(ScenarioSpecParser.ActionAndContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionAnd}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionAnd(ScenarioSpecParser.ActionAndContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioSpecParser#actionNot}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionNot(ScenarioSpecParser.ActionNotContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioSpecParser#actionNot}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionNot(ScenarioSpecParser.ActionNotContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ScenarioSpecParser#stateAtom}.
 	 * @param ctx the parse tree

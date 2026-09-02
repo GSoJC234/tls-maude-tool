@@ -28,6 +28,22 @@ public interface ScenarioExpression {
         }
     }
 
+    record Reference(String name) implements ScenarioExpression {
+        public Reference {
+            Objects.requireNonNull(name, "name must not be null");
+        }
+
+        @Override
+        public Set<String> parameterRefs() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public ScenarioExpression substitute(Map<String, UserTerm> bindings) {
+            return this;
+        }
+    }
+
     record Step(StepExpression expression) implements ScenarioExpression {
         public Step {
             Objects.requireNonNull(expression, "expression must not be null");

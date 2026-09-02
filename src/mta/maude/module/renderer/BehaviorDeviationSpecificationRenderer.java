@@ -4,6 +4,7 @@ import mta.user.behavior.BehaviorDeviationSpecification;
 import mta.user.behavior.BehaviorModificationSpec;
 import mta.user.behavior.BehaviorSpec;
 import mta.user.behavior.BehaviorSpecExpander;
+import mta.user.valuedomain.ValueDomainsSpec;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -27,6 +28,12 @@ public class BehaviorDeviationSpecificationRenderer {
     }
 
     public String renderEq(String opName, BehaviorDeviationSpecification specification) {
+        return renderEq(opName, specification, null);
+    }
+
+    public String renderEq(String opName,
+                           BehaviorDeviationSpecification specification,
+                           ValueDomainsSpec valueDomains) {
         return "  op "
                 + opName
                 + " : -> Set{BehaviorDVSpec} ."
@@ -34,12 +41,16 @@ public class BehaviorDeviationSpecificationRenderer {
                 + "  eq "
                 + opName
                 + " = "
-                + render(specification)
+                + render(specification, valueDomains)
                 + " .";
     }
 
     public String render(BehaviorDeviationSpecification specification) {
-        List<BehaviorSpec> expanded = expander.expand(specification);
+        return render(specification, null);
+    }
+
+    public String render(BehaviorDeviationSpecification specification, ValueDomainsSpec valueDomains) {
+        List<BehaviorSpec> expanded = expander.expand(specification, valueDomains);
         if (expanded.isEmpty()) {
             return "empty";
         }

@@ -1,7 +1,25 @@
 grammar ScenarioSpec;
 
 scenarioSpec
-    : SCENARIO_PROPERTY COLON scenarioExpr EOF
+    : declaration+ EOF
+    ;
+
+declaration
+    : statePropositionDeclaration
+    | actionPropositionDeclaration
+    | scenarioPropertyDeclaration
+    ;
+
+statePropositionDeclaration
+    : STATE_PROPOSITION LBRACK identifier RBRACK COLON stateExpr
+    ;
+
+actionPropositionDeclaration
+    : ACTION_PROPOSITION LBRACK identifier RBRACK COLON actionExpr
+    ;
+
+scenarioPropertyDeclaration
+    : SCENARIO_PROPERTY (LBRACK identifier RBRACK)? COLON scenarioExpr
     ;
 
 scenarioExpr
@@ -27,6 +45,10 @@ scenarioPrimary
     | stepExpr
     ;
 
+propositionRef
+    : identifier
+    ;
+
 stepExpr
     : stepOr
     ;
@@ -48,6 +70,43 @@ stepNot
 stepAtom
     : stateAtom
     | actionAtom
+    | propositionRef
+    ;
+
+stateExpr
+    : stateOr
+    ;
+
+stateOr
+    : stateAnd (OR stateAnd)*
+    ;
+
+stateAnd
+    : stateNot (AND stateNot)*
+    ;
+
+stateNot
+    : NOT stateNot
+    | stateAtom
+    | LPAREN stateExpr RPAREN
+    ;
+
+actionExpr
+    : actionOr
+    ;
+
+actionOr
+    : actionAnd (OR actionAnd)*
+    ;
+
+actionAnd
+    : actionNot (AND actionNot)*
+    ;
+
+actionNot
+    : NOT actionNot
+    | actionAtom
+    | LPAREN actionExpr RPAREN
     ;
 
 stateAtom
@@ -108,6 +167,7 @@ rawMaudeCall
 
 identifier
     : IDENTIFIER
+    | ANY_STEP
     ;
 
 numberLiteral
@@ -118,12 +178,21 @@ stringLiteral
     : STRING
     ;
 
+STATE_PROPOSITION
+    : 'StateProposition'
+    ;
+
+ACTION_PROPOSITION
+    : 'ActionProposition'
+    ;
+
 SCENARIO_PROPERTY
     : 'ScenarioProperty'
     ;
 
 ANY_STEP
     : 'anyStep'
+    | 'any'
     ;
 
 MAUDE

@@ -18,8 +18,12 @@ public class TargetExecutionMetadataLoader {
 
         TLSProfiles profiles = new TLSProfileLoader().loadTLSProfiles(profilePath);
         TLSProfile target = profiles.getTarget();
+        TLSProfile tester = profiles.getTester();
         if (target == null) {
             throw new IllegalArgumentException("TLS profile has no target block: " + profilePath);
+        }
+        if (tester == null) {
+            throw new IllegalArgumentException("TLS profile has no tester block: " + profilePath);
         }
 
         return new TargetExecutionMetadata(
@@ -27,11 +31,13 @@ public class TargetExecutionMetadataLoader {
                 clean(target.getLibraryVersion()),
                 clean(target.getLibraryPath()),
                 target.getTlsRole() == null ? "" : target.getTlsRole().name(),
+                tester.getTlsRole() == null ? "" : tester.getTlsRole().name(),
                 field(target, "ExecutionMode"),
                 field(target, "RuntimePlatform"),
                 field(target, "DockerImage"),
                 field(target, "BuildProfile"),
-                field(target, "BinaryPath"));
+                field(target, "BinaryPath"),
+                field(tester, "TesterMessageConcretization"));
     }
 
     private static String field(TLSProfile profile, String fieldName) {

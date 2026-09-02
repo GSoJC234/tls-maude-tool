@@ -54,7 +54,8 @@ public class GeneratedTestModuleRenderer {
         }
         joiner.add(behaviorRenderer.renderEq(
                 spec.getBehaviorSpecificationName(),
-                spec.getBehaviorDeviationSpecification()
+                spec.getBehaviorDeviationSpecification(),
+                spec.getValueDomainsSpec()
         ));
         joiner.add("");
         joiner.add(scenarioPropertyRenderer.renderEq(spec.getScenarioPropertyName(), spec.getScenarioSpec()));

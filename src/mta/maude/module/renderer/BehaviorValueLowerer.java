@@ -80,6 +80,7 @@ final class BehaviorValueLowerer {
             "alert", "alert",
             "application_data", "application-data");
     private static final Map<String, String> HANDSHAKE_TYPE_TO_MAUDE = buildHandshakeTypes();
+    private static final Map<String, String> TLS_MESSAGE_TYPE_TO_MAUDE = buildTlsMessageTypes();
     private static final Map<String, String> MESSAGE_SIZE_TO_MAUDE = Map.of(
             "valid", "valid",
             "smaller", "smaller",
@@ -170,6 +171,13 @@ final class BehaviorValueLowerer {
 
     String renderRuleLabel(UserTerm value) {
         return termRenderer.renderRuleLabel(value);
+    }
+
+    String renderRuleMessageType(UserTerm value) {
+        if (value instanceof UserTerm.RawMaude) {
+            return termRenderer.renderTerm(value);
+        }
+        return termRenderer.renderTerm(normalizeTlsMessageType(value));
     }
 
     String renderNoCheckLabel(UserTerm label) {
@@ -416,6 +424,16 @@ final class BehaviorValueLowerer {
         return atom(maude);
     }
 
+    private UserTerm normalizeTlsMessageType(UserTerm value) {
+        String token = atomText("ruleMsgType", value);
+        String maude = TLS_MESSAGE_TYPE_TO_MAUDE.get(normalizeMessageTypeKey(token));
+        if (maude == null) {
+            throw behaviorViolation("ruleMsgType", token,
+                    "expected a supported TLS message type such as clientHello, serverHello, handshake, or alert");
+        }
+        return atom(maude);
+    }
+
     private UserTerm normalizeMessageSize(String fieldName, UserTerm value) {
         String token = atomText(fieldName, value);
         String maude = MESSAGE_SIZE_TO_MAUDE.get(normalizeKey(token));
@@ -583,6 +601,10 @@ final class BehaviorValueLowerer {
 
     private static String normalizeKey(String value) {
         return value.toLowerCase(Locale.ROOT).replace('-', '_');
+    }
+
+    private static String normalizeMessageTypeKey(String value) {
+        return normalizeKey(camelToSnake(value));
     }
 
     private static UserTerm.Atom atom(String text) {
@@ -772,6 +794,43 @@ final class BehaviorValueLowerer {
         putValue(types, "key_update", "key-update-request");
         putValue(types, "key_update_request", "key-update-request");
         return Map.copyOf(types);
+    }
+
+    private static Map<String, String> buildTlsMessageTypes() {
+        Map<String, String> types = new LinkedHashMap<String, String>();
+        putMessageType(types, "handshake", "handshake");
+        putMessageType(types, "change_cipher_spec", "change-cipher-spec", "changeCipherSpec");
+        putMessageType(types, "alert", "alert");
+        putMessageType(types, "application_data", "application-data", "applicationData");
+        putMessageType(types, "client_hello", "client-hello", "clientHello");
+        putMessageType(types, "server_hello", "server-hello", "serverHello");
+        putMessageType(types, "encrypted_extension", "encrypted-extension",
+                "encryptedExtension", "encryptedExtensions");
+        putMessageType(types, "certificate", "certificate");
+        putMessageType(types, "server_key_exchange", "server-key-exchange", "serverKeyExchange");
+        putMessageType(types, "certificate_request", "certificate-request", "certificateRequest");
+        putMessageType(types, "server_hello_done", "server-hello-done", "serverHelloDone");
+        putMessageType(types, "client_key_exchange", "client-key-exchange", "clientKeyExchange");
+        putMessageType(types, "certificate_verify", "certificate-verify", "certificateVerify");
+        putMessageType(types, "finished", "finished");
+        putMessageType(types, "hello_request", "hello-request", "helloRequest");
+        putMessageType(types, "hello_retry_request", "hello-retry-request", "helloRetryRequest");
+        putMessageType(types, "end_of_early_data", "end-of-early-data", "endOfEarlyData");
+        putMessageType(types, "new_session_ticket", "new-session-ticket", "newSessionTicket");
+        putMessageType(types, "key_update", "key-update-request", "keyUpdate");
+        putMessageType(types, "key_update_request", "key-update-request", "keyUpdateRequest");
+        return Map.copyOf(types);
+    }
+
+    private static void putMessageType(Map<String, String> types,
+                                       String userName,
+                                       String maudeName,
+                                       String... aliases) {
+        types.put(normalizeMessageTypeKey(userName), maudeName);
+        types.put(normalizeMessageTypeKey(maudeName), maudeName);
+        for (String alias : aliases) {
+            types.put(normalizeMessageTypeKey(alias), maudeName);
+        }
     }
 
     private static void putValue(Map<String, String> values, String userName, String maudeName) {

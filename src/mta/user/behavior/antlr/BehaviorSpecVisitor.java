@@ -35,6 +35,24 @@ public interface BehaviorSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParametersSection(BehaviorSpecParser.ParametersSectionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BehaviorSpecParser#parameterDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BehaviorSpecParser#typeExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BehaviorSpecParser#getTypeCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link BehaviorSpecParser#conditionsSection}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

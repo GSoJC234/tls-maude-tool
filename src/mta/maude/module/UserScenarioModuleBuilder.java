@@ -8,6 +8,8 @@ import mta.user.profile.TLSProfileLoader;
 import mta.user.profile.TLSProfiles;
 import mta.user.scenario.ScenarioSpec;
 import mta.user.scenario.ScenarioSpecLoader;
+import mta.user.valuedomain.ValueDomainsLoader;
+import mta.user.valuedomain.ValueDomainsSpec;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,47 +20,105 @@ import java.util.Set;
 public class UserScenarioModuleBuilder {
 
     public static final String PROFILE_FILE = "tlsprofile.dsl";
+    public static final String DEVIATION_FILE = "deviation.dsl";
     public static final String BEHAVIOR_FILE = "behavior.dsl";
+    public static final String VALUE_DOMAINS_FILE = "valuedomains.dsl";
+    public static final String VALUE_DOMAIN_FILE = "valuedomain.dsl";
     public static final String SCENARIO_FILE = "scenario.dsl";
 
     private final TLSProfileLoader profileLoader;
     private final BehaviorSpecLoader behaviorSpecLoader;
+    private final ValueDomainsLoader valueDomainsLoader;
     private final ScenarioSpecLoader scenarioSpecLoader;
 
     public UserScenarioModuleBuilder() {
-        this(new TLSProfileLoader(), new BehaviorSpecLoader(), new ScenarioSpecLoader());
+        this(new TLSProfileLoader(), new BehaviorSpecLoader(), new ValueDomainsLoader(),
+                new ScenarioSpecLoader());
     }
 
     public UserScenarioModuleBuilder(TLSProfileLoader profileLoader,
                                      BehaviorSpecLoader behaviorSpecLoader,
+                                     ValueDomainsLoader valueDomainsLoader,
                                      ScenarioSpecLoader scenarioSpecLoader) {
         this.profileLoader = profileLoader;
         this.behaviorSpecLoader = behaviorSpecLoader;
+        this.valueDomainsLoader = valueDomainsLoader;
         this.scenarioSpecLoader = scenarioSpecLoader;
     }
 
     public GeneratedTestModuleSpec fromDirectory(Path caseDirectory) {
         return fromFiles(
                 caseDirectory.resolve(PROFILE_FILE),
-                caseDirectory.resolve(BEHAVIOR_FILE),
-                caseDirectory.resolve(SCENARIO_FILE)
+                resolveDeviationPath(caseDirectory),
+                caseDirectory.resolve(SCENARIO_FILE),
+                resolveValueDomainsPath(caseDirectory)
         );
     }
 
     public GeneratedTestModuleSpec fromFiles(Path profilePath,
                                              Path behaviorPath,
                                              Path scenarioPath) {
+        return fromFiles(profilePath, behaviorPath, scenarioPath,
+                resolveValueDomainsPath(behaviorPath.toAbsolutePath().normalize().getParent()));
+    }
+
+    public GeneratedTestModuleSpec fromFiles(Path profilePath,
+                                             Path behaviorPath,
+                                             Path scenarioPath,
+                                             Path valueDomainsPath) {
         TLSProfiles profiles = profileLoader.loadTLSProfiles(profilePath);
         BehaviorDeviationSpecification behavior =
                 behaviorSpecLoader.loadBehaviorDeviationSpecification(behaviorPath);
+        ValueDomainsSpec valueDomains = valueDomainsPath == null
+                ? null
+                : valueDomainsLoader.load(valueDomainsPath);
         ScenarioSpec scenarioSpec = scenarioSpecLoader.loadScenarioSpec(scenarioPath);
 
         GeneratedTestModuleSpec spec = new GeneratedTestModuleSpec();
         spec.setTlsProfiles(profiles);
         spec.setBehaviorDeviationSpecification(behavior);
+        spec.setValueDomainsSpec(valueDomains);
         spec.setScenarioSpec(scenarioSpec);
         applyDefaults(spec, profilePath.toAbsolutePath().normalize().getParent());
         return spec;
+    }
+
+    private Path resolveDeviationPath(Path caseDirectory) {
+        Path deviationPath = caseDirectory.resolve(DEVIATION_FILE);
+        Path behaviorPath = caseDirectory.resolve(BEHAVIOR_FILE);
+        boolean hasDeviation = Files.isRegularFile(deviationPath);
+        boolean hasBehavior = Files.isRegularFile(behaviorPath);
+        if (hasDeviation && hasBehavior) {
+            throw new IllegalArgumentException("Case directory must contain only one of "
+                    + DEVIATION_FILE
+                    + " or "
+                    + BEHAVIOR_FILE
+                    + ": "
+                    + caseDirectory);
+        }
+        if (hasDeviation) {
+            return deviationPath;
+        }
+        return behaviorPath;
+    }
+
+    private Path resolveValueDomainsPath(Path caseDirectory) {
+        Path plural = caseDirectory.resolve(VALUE_DOMAINS_FILE);
+        Path singular = caseDirectory.resolve(VALUE_DOMAIN_FILE);
+        boolean hasPlural = Files.isRegularFile(plural);
+        boolean hasSingular = Files.isRegularFile(singular);
+        if (hasPlural && hasSingular) {
+            throw new IllegalArgumentException("Case directory must contain only one of "
+                    + VALUE_DOMAINS_FILE
+                    + " or "
+                    + VALUE_DOMAIN_FILE
+                    + ": "
+                    + caseDirectory);
+        }
+        if (hasPlural) {
+            return plural;
+        }
+        return hasSingular ? singular : null;
     }
 
     public void applyDefaults(GeneratedTestModuleSpec spec, Path searchStart) {

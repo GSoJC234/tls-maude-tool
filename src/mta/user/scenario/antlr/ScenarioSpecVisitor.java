@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/scenario/antlr/ScenarioSpec.g4 by ANTLR 4.13.2
+// Generated from ScenarioSpec.g4 by ANTLR 4.13.2
 package mta.user.scenario.antlr;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -16,6 +16,30 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#declaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclaration(ScenarioSpecParser.DeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#statePropositionDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionPropositionDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioPropertyDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#scenarioExpr}.
 	 * @param ctx the parse tree
@@ -47,6 +71,12 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitScenarioPrimary(ScenarioSpecParser.ScenarioPrimaryContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#propositionRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPropositionRef(ScenarioSpecParser.PropositionRefContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#stepExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -76,6 +106,54 @@ public interface ScenarioSpecVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStepAtom(ScenarioSpecParser.StepAtomContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStateExpr(ScenarioSpecParser.StateExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateOr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStateOr(ScenarioSpecParser.StateOrContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateAnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStateAnd(ScenarioSpecParser.StateAndContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateNot}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStateNot(ScenarioSpecParser.StateNotContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionExpr(ScenarioSpecParser.ActionExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionOr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionOr(ScenarioSpecParser.ActionOrContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionAnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionAnd(ScenarioSpecParser.ActionAndContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioSpecParser#actionNot}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionNot(ScenarioSpecParser.ActionNotContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioSpecParser#stateAtom}.
 	 * @param ctx the parse tree

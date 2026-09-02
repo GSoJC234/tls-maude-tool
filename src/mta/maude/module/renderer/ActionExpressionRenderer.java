@@ -46,7 +46,8 @@ public class ActionExpressionRenderer {
         String field = atom.field();
         UserTerm value = atom.value();
         return switch (field) {
-            case "ruleLabel" -> "ruleLabel(" + behaviorValueLowerer.renderRuleLabel(value) + ")";
+            case "label", "ruleLabel" -> "ruleLabel(" + behaviorValueLowerer.renderRuleLabel(value) + ")";
+            case "ruleMsgType" -> "ruleMsgType(" + behaviorValueLowerer.renderRuleMessageType(value) + ")";
             case "node" -> "appliedNode(" + behaviorValueLowerer.renderNode(value) + ")";
             case "event", "eventType" -> "eventType(" + behaviorValueLowerer.renderEventType(value) + ")";
             default -> "featureMap("

@@ -65,6 +65,42 @@ public class BehaviorSpecBaseListener implements BehaviorSpecListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConditionsSection(BehaviorSpecParser.ConditionsSectionContext ctx) { }
 	/**
 	 * {@inheritDoc}

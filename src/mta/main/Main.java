@@ -6,6 +6,9 @@ import mta.maude.module.GeneratedTestModuleSpec;
 import mta.maude.module.UserScenarioModuleBuilder;
 import mta.maude.result.GeneratedScenarioResultExtractor;
 import mta.scenario.ScenarioRunner;
+import mta.user.exploitability.ExploitabilityDerivationException;
+import mta.user.exploitability.ExploitabilityDerivationResult;
+import mta.user.exploitability.ExploitabilityDeriver;
 import mta.visualizer.VisualizerConnector;
 
 import java.io.IOException;
@@ -21,7 +24,8 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length == 0 || args[0].trim().isEmpty()) {
-            System.err.println("Usage: --generate [options] | --generate-user [options] | --run [options] | --visual [options]");
+            System.err.println("Usage: --generate [options] | --generate-user [options]"
+                    + " | --derive-exploitability [options] | --run [options] | --visual [options]");
             System.exit(1);
         }
 
@@ -29,6 +33,7 @@ public class Main {
         switch (mode) {
             case "--generate" ->  generateScenario(args);
             case "--generate-user" -> generateUserScenario(args);
+            case "--derive-exploitability" -> deriveExploitability(args);
             case "--run" ->  runScenario(args);
             case "--visual" -> runVisualizer(args);
             default -> {
@@ -39,6 +44,86 @@ public class Main {
 
     }
 
+    private static void deriveExploitability(String[] args) {
+        try {
+            DeriveExploitabilityOptions options = parseDeriveExploitabilityOptions(args);
+            ExploitabilityDerivationResult result = new ExploitabilityDeriver().derive(
+                    options.profilePath(),
+                    options.deviationPath(),
+                    options.scenarioPath(),
+                    options.outputDirectory(),
+                    options.valueDomainPath());
+            System.out.println("DERIVE_EXPLOITABILITY\tSUCCESS\tgenerated\t"
+                    + result.outputDirectory());
+            System.out.println("   Derived mutations : " + result.mutationCount());
+            System.out.println("   Derived acceptance stages : " + result.acceptanceCount());
+            for (Path outputFile : result.outputFiles()) {
+                System.out.println("   Output file : " + outputFile);
+            }
+        } catch (ExploitabilityDerivationException e) {
+            System.err.println("DERIVE_EXPLOITABILITY\t"
+                    + e.kind().name()
+                    + "\t"
+                    + e.reasonCode()
+                    + "\t"
+                    + diagnosticText(e.getMessage()));
+            System.exit(e.exitCode());
+        } catch (IllegalArgumentException e) {
+            System.err.println("DERIVE_EXPLOITABILITY\tINVALID\tinvalid_arguments\t"
+                    + diagnosticText(e.getMessage()));
+            System.exit(2);
+        } catch (RuntimeException e) {
+            System.err.println("DERIVE_EXPLOITABILITY\tFAILED\tinternal_failure\t"
+                    + diagnosticText(e.getMessage()));
+            System.exit(4);
+        }
+    }
+
+    private static DeriveExploitabilityOptions parseDeriveExploitabilityOptions(String[] args) {
+        if (args.length < 5) {
+            throw new IllegalArgumentException("Usage: --derive-exploitability "
+                    + "[tls profile path] [deviation spec path] [scenario spec path] [output dir] "
+                    + "[--value-domain path]");
+        }
+        Path valueDomainPath = null;
+        int index = 5;
+        while (index < args.length) {
+            String argument = args[index];
+            if ("--value-domain".equals(argument)) {
+                if (valueDomainPath != null) {
+                    throw new IllegalArgumentException("--value-domain may be provided only once");
+                }
+                if (index + 1 >= args.length) {
+                    throw new IllegalArgumentException("--value-domain requires a valuedomain DSL path");
+                }
+                valueDomainPath = Path.of(args[index + 1]);
+                index += 2;
+                continue;
+            }
+            throw new IllegalArgumentException("Unknown --derive-exploitability option: " + argument);
+        }
+        return new DeriveExploitabilityOptions(
+                Path.of(args[1]),
+                Path.of(args[2]),
+                Path.of(args[3]),
+                Path.of(args[4]),
+                valueDomainPath);
+    }
+
+    private static String diagnosticText(String message) {
+        if (message == null || message.isBlank()) {
+            return "no diagnostic message";
+        }
+        return message.replace('\t', ' ').replace('\r', ' ').replace('\n', ' ');
+    }
+
+    private record DeriveExploitabilityOptions(Path profilePath,
+                                               Path deviationPath,
+                                               Path scenarioPath,
+                                               Path outputDirectory,
+                                               Path valueDomainPath) {
+    }
+
     private static void generateScenario(String[] args) {
         if (isUserGenerateArguments(args)) {
             generateUserScenario(args);
@@ -46,7 +131,7 @@ public class Main {
         }
         if (args.length < 6) {
             System.err.println("Usage:");
-            System.err.println("  --generate [tls profile path] [behavior spec path] [scenario spec path] [output dir?] [maude executable path?]");
+            System.err.println("  --generate [tls profile path] [deviation spec path] [scenario spec path] [output dir?] [maude executable path?] [--value-domain path?]");
             System.err.println("  --generate [maude executable path] [module path] [requirement TLS version] [requirement index] [output file directory]");
             System.exit(1);
         }
@@ -77,50 +162,91 @@ public class Main {
 
     private static void generateUserScenario(String[] args) {
         if (args.length < 4) {
-            System.err.println("Usage: --generate-user [tls profile path] [behavior spec path] [scenario spec path] [output dir?] [maude executable path?]");
+            System.err.println("Usage: --generate-user [tls profile path] [deviation spec path] [scenario spec path] [output dir?] [maude executable path?] [--value-domain path?]");
             System.exit(1);
         }
 
         Path profilePath = Path.of(args[1]);
         Path behaviorPath = Path.of(args[2]);
         Path scenarioPath = Path.of(args[3]);
-        Path outputDir = args.length >= 5 ? Path.of(args[4]) : Path.of(DEFAULT_USER_OUTPUT_DIR);
-        String maudePath = args.length >= 6 ? args[5] : DEFAULT_MAUDE_EXECUTABLE;
+        GenerateUserOptions options = parseGenerateUserOptions(args);
 
         UserScenarioModuleBuilder builder = new UserScenarioModuleBuilder();
-        GeneratedTestModuleSpec spec = builder.fromFiles(profilePath, behaviorPath, scenarioPath);
+        GeneratedTestModuleSpec spec = options.valueDomainPath() == null
+                ? builder.fromFiles(profilePath, behaviorPath, scenarioPath)
+                : builder.fromFiles(profilePath, behaviorPath, scenarioPath, options.valueDomainPath());
         GeneratedTestModuleRenderer renderer = new GeneratedTestModuleRenderer();
 
-        Path modulePath = outputDir.resolve("generated-scenario.maude");
-        Path commandPath = outputDir.resolve("reduction-command.maude");
-        Path logPath = outputDir.resolve("maude.log");
+        Path modulePath = options.outputDir().resolve("generated-scenario.maude");
+        Path commandPath = options.outputDir().resolve("reduction-command.maude");
+        Path logPath = options.outputDir().resolve("maude.log");
 
         try {
-            Files.createDirectories(outputDir);
+            Files.createDirectories(options.outputDir());
             Files.writeString(modulePath, renderer.render(spec));
             Files.writeString(commandPath, renderer.renderReductionCommand(spec) + System.lineSeparator());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to write generated user scenario module under " + outputDir, e);
+            throw new RuntimeException("Failed to write generated user scenario module under "
+                    + options.outputDir(), e);
         }
 
         System.out.println("   User Maude analysis:");
         System.out.println("   TLS profile path : " + profilePath);
-        System.out.println("   Behavior spec path : " + behaviorPath);
+        System.out.println("   Deviation spec path : " + behaviorPath);
+        if (options.valueDomainPath() != null) {
+            System.out.println("   Value domain path : " + options.valueDomainPath());
+        }
         System.out.println("   Scenario spec path : " + scenarioPath);
-        System.out.println("   Maude executable path : " + maudePath);
+        System.out.println("   Maude executable path : " + options.maudePath());
         System.out.println("   Generated module path : " + modulePath);
         System.out.println("   Reduction command path : " + commandPath);
         System.out.println("   Output log path : " + logPath);
 
-        MaudeRunner maudeRunner = new MaudeRunner(maudePath);
+        MaudeRunner maudeRunner = new MaudeRunner(options.maudePath());
         maudeRunner.execute(modulePath, spec.getModuleName(), spec.toRunManifest(), logPath);
 
         GeneratedScenarioResultExtractor extractor = new GeneratedScenarioResultExtractor();
-        List<Path> testerScenarioPaths = extractor.extractTesterScenarioFiles(logPath, outputDir);
+        List<Path> testerScenarioPaths = extractor.extractTesterScenarioFiles(logPath, options.outputDir());
         System.out.println("   Generated tester scenario files : " + testerScenarioPaths.size());
         for (Path testerScenarioPath : testerScenarioPaths) {
             System.out.println("     " + testerScenarioPath);
         }
+    }
+
+    private record GenerateUserOptions(Path outputDir, String maudePath, Path valueDomainPath) {
+    }
+
+    private static GenerateUserOptions parseGenerateUserOptions(String[] args) {
+        Path outputDir = Path.of(DEFAULT_USER_OUTPUT_DIR);
+        String maudePath = DEFAULT_MAUDE_EXECUTABLE;
+        Path valueDomainPath = null;
+        int positional = 0;
+        int index = 4;
+        while (index < args.length) {
+            String argument = args[index];
+            if ("--value-domain".equals(argument) || "--value-domains".equals(argument)) {
+                if (index + 1 >= args.length) {
+                    throw new IllegalArgumentException(argument + " requires a valuedomains.dsl path");
+                }
+                valueDomainPath = Path.of(args[index + 1]);
+                index += 2;
+                continue;
+            }
+            if (argument.startsWith("--")) {
+                throw new IllegalArgumentException("Unknown --generate-user option: " + argument);
+            }
+            if (positional == 0) {
+                outputDir = Path.of(argument);
+            } else if (positional == 1) {
+                maudePath = argument;
+            } else {
+                throw new IllegalArgumentException("Unexpected --generate-user positional argument: "
+                        + argument);
+            }
+            positional++;
+            index++;
+        }
+        return new GenerateUserOptions(outputDir, maudePath, valueDomainPath);
     }
 
     private static void runScenario(String[] args) {

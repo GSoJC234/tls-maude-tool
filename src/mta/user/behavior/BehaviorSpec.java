@@ -11,12 +11,14 @@ public class BehaviorSpec {
 
     private String behaviorId;
     private final List<String> parameters;
+    private final List<BehaviorParameter> parameterDeclarations;
     private ActionExpression actionCondition;
     private final List<BehaviorModificationSpec> modificationSpecs;
     private final List<BehaviorParameterInstance> parameterInstances;
 
     public BehaviorSpec() {
         this.parameters = new ArrayList<String>();
+        this.parameterDeclarations = new ArrayList<BehaviorParameter>();
         this.modificationSpecs = new ArrayList<BehaviorModificationSpec>();
         this.parameterInstances = new ArrayList<BehaviorParameterInstance>();
     }
@@ -35,14 +37,36 @@ public class BehaviorSpec {
 
     public void setParameters(List<String> parameters) {
         this.parameters.clear();
+        this.parameterDeclarations.clear();
         if (parameters != null) {
             this.parameters.addAll(parameters);
+            for (String parameter : parameters) {
+                this.parameterDeclarations.add(new BehaviorParameter(parameter, null));
+            }
         }
     }
 
     public void addParameter(String parameter) {
         if (parameter != null) {
             this.parameters.add(parameter);
+            this.parameterDeclarations.add(new BehaviorParameter(parameter, null));
+        }
+    }
+
+    public List<BehaviorParameter> getParameterDeclarations() {
+        return Collections.unmodifiableList(parameterDeclarations);
+    }
+
+    public void setParameterDeclarations(List<BehaviorParameter> declarations) {
+        this.parameters.clear();
+        this.parameterDeclarations.clear();
+        if (declarations != null) {
+            for (BehaviorParameter declaration : declarations) {
+                if (declaration != null) {
+                    this.parameters.add(declaration.name());
+                    this.parameterDeclarations.add(declaration);
+                }
+            }
         }
     }
 
@@ -98,6 +122,7 @@ public class BehaviorSpec {
         }
         return Objects.equals(behaviorId, that.behaviorId)
                 && Objects.equals(parameters, that.parameters)
+                && Objects.equals(parameterDeclarations, that.parameterDeclarations)
                 && Objects.equals(actionCondition, that.actionCondition)
                 && Objects.equals(modificationSpecs, that.modificationSpecs)
                 && Objects.equals(parameterInstances, that.parameterInstances);
@@ -105,7 +130,7 @@ public class BehaviorSpec {
 
     @Override
     public int hashCode() {
-        return Objects.hash(behaviorId, parameters, actionCondition, modificationSpecs,
+        return Objects.hash(behaviorId, parameters, parameterDeclarations, actionCondition, modificationSpecs,
                 parameterInstances);
     }
 
@@ -114,6 +139,7 @@ public class BehaviorSpec {
         return "BehaviorSpec{"
                 + "behaviorId='" + behaviorId + '\''
                 + ", parameters=" + parameters
+                + ", parameterDeclarations=" + parameterDeclarations
                 + ", actionCondition=" + actionCondition
                 + ", modificationSpecs=" + modificationSpecs
                 + ", parameterInstances=" + parameterInstances

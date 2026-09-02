@@ -4,6 +4,7 @@ import mta.maude.MaudeRunManifest;
 import mta.user.behavior.BehaviorDeviationSpecification;
 import mta.user.profile.TLSProfiles;
 import mta.user.scenario.ScenarioSpec;
+import mta.user.valuedomain.ValueDomainsSpec;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class GeneratedTestModuleSpec {
     private final List<String> extraMaudeDefinitions = new ArrayList<String>();
     private TLSProfiles tlsProfiles;
     private BehaviorDeviationSpecification behaviorDeviationSpecification;
+    private ValueDomainsSpec valueDomainsSpec;
     private ScenarioSpec scenarioSpec;
 
     public String getModuleName() {
@@ -158,6 +160,14 @@ public class GeneratedTestModuleSpec {
 
     public void setBehaviorDeviationSpecification(BehaviorDeviationSpecification behaviorDeviationSpecification) {
         this.behaviorDeviationSpecification = behaviorDeviationSpecification;
+    }
+
+    public ValueDomainsSpec getValueDomainsSpec() {
+        return valueDomainsSpec;
+    }
+
+    public void setValueDomainsSpec(ValueDomainsSpec valueDomainsSpec) {
+        this.valueDomainsSpec = valueDomainsSpec;
     }
 
     public ScenarioSpec getScenarioSpec() {

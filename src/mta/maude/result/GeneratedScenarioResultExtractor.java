@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,13 +73,13 @@ public class GeneratedScenarioResultExtractor {
         validateGeneratedScenarioTerm(result.term);
         String inner = stripOuterList(result.term);
         List<String> rawScenarios = splitScenarioList(inner);
-        List<String> normalizedScenarios = new ArrayList<String>();
+        Set<String> normalizedScenarios = new LinkedHashSet<String>();
         for (String rawScenario : rawScenarios) {
             String scenario = normalizeScenario(rawScenario);
             validateRunnableScenario(scenario);
             normalizedScenarios.add(scenario);
         }
-        return normalizedScenarios;
+        return new ArrayList<String>(normalizedScenarios);
     }
 
     private ResultBlock readResultBlock(String output) {

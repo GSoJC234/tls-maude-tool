@@ -27,8 +27,8 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
 
         if (ctx.parametersSection() != null) {
             @SuppressWarnings("unchecked")
-            List<String> parameters = (List<String>) visit(ctx.parametersSection());
-            behaviorSpec.setParameters(parameters);
+            List<BehaviorParameter> parameters = (List<BehaviorParameter>) visit(ctx.parametersSection());
+            behaviorSpec.setParameterDeclarations(parameters);
         }
 
         behaviorSpec.setActionCondition((ActionExpression) visit(ctx.conditionsSection()));
@@ -55,11 +55,35 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
 
     @Override
     public Object visitParametersSection(BehaviorSpecParser.ParametersSectionContext ctx) {
-        List<String> parameters = new ArrayList<String>();
-        for (BehaviorSpecParser.ParameterNameContext parameterContext : ctx.parameterName()) {
-            parameters.add(readParameterName(parameterContext));
+        List<BehaviorParameter> parameters = new ArrayList<BehaviorParameter>();
+        for (BehaviorSpecParser.ParameterDeclarationContext parameterContext : ctx.parameterDeclaration()) {
+            parameters.add((BehaviorParameter) visit(parameterContext));
         }
         return parameters;
+    }
+
+    @Override
+    public Object visitParameterDeclaration(BehaviorSpecParser.ParameterDeclarationContext ctx) {
+        if (ctx.parameterRef() != null) {
+            UserTerm.Parameter parameter = (UserTerm.Parameter) visit(ctx.parameterRef());
+            return new BehaviorParameter(parameter.name(), (UserTerm) visit(ctx.typeExpression()));
+        }
+        return new BehaviorParameter(readParameterName(ctx.parameterName()), null);
+    }
+
+    @Override
+    public Object visitTypeExpression(BehaviorSpecParser.TypeExpressionContext ctx) {
+        if (ctx.getTypeCall() != null) {
+            return visit(ctx.getTypeCall());
+        }
+        return visit(ctx.term());
+    }
+
+    @Override
+    public Object visitGetTypeCall(BehaviorSpecParser.GetTypeCallContext ctx) {
+        List<UserTerm> arguments = new ArrayList<UserTerm>();
+        arguments.add((UserTerm) visit(ctx.term()));
+        return new UserTerm.Call("#getType", arguments);
     }
 
     @Override
@@ -185,8 +209,11 @@ public class BehaviorSpecBuildingVisitor extends BehaviorSpecBaseVisitor<Object>
     public Object visitParameterInstance(BehaviorSpecParser.ParameterInstanceContext ctx) {
         BehaviorParameterInstance instance = new BehaviorParameterInstance();
         for (BehaviorSpecParser.ParameterBindingContext bindingContext : ctx.parameterBinding()) {
+            String parameterName = bindingContext.parameterRef() != null
+                    ? ((UserTerm.Parameter) visit(bindingContext.parameterRef())).name()
+                    : readParameterName(bindingContext.parameterName());
             instance.addBinding(
-                    readParameterName(bindingContext.parameterName()),
+                    parameterName,
                     (UserTerm) visit(bindingContext.term())
             );
         }

@@ -1,4 +1,4 @@
-// Generated from /Users/gsojc234/git/maude-tls-attacker/src/mta/user/scenario/antlr/ScenarioSpec.g4 by ANTLR 4.13.2
+// Generated from ScenarioSpec.g4 by ANTLR 4.13.2
 package mta.user.scenario.antlr;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -19,6 +19,34 @@ public class ScenarioSpecBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitDeclaration(ScenarioSpecParser.DeclarationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStatePropositionDeclaration(ScenarioSpecParser.StatePropositionDeclarationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActionPropositionDeclaration(ScenarioSpecParser.ActionPropositionDeclarationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitScenarioPropertyDeclaration(ScenarioSpecParser.ScenarioPropertyDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -60,6 +88,13 @@ public class ScenarioSpecBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitPropositionRef(ScenarioSpecParser.PropositionRefContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitStepExpr(ScenarioSpecParser.StepExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -89,6 +124,62 @@ public class ScenarioSpecBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitStepAtom(ScenarioSpecParser.StepAtomContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStateExpr(ScenarioSpecParser.StateExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStateOr(ScenarioSpecParser.StateOrContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStateAnd(ScenarioSpecParser.StateAndContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitStateNot(ScenarioSpecParser.StateNotContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActionExpr(ScenarioSpecParser.ActionExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActionOr(ScenarioSpecParser.ActionOrContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActionAnd(ScenarioSpecParser.ActionAndContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitActionNot(ScenarioSpecParser.ActionNotContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

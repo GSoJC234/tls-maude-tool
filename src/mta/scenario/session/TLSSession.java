@@ -76,6 +76,7 @@ public class TLSSession implements Protocol {
     private Config config = null;
     private WorkflowExecutor executor = null;
     private State state = null;
+    private boolean reifyServerCertificateClientHello = false;
 
     public TLSSession(String configPath){
         this(configPath, TargetExecutionMetadata.empty());
@@ -85,6 +86,10 @@ public class TLSSession implements Protocol {
         ProviderUtil.addBouncyCastleProvider();
         config = Config.createConfig(new File(configPath));
         applyTargetExecutionMetadata(config, targetExecutionMetadata);
+        reifyServerCertificateClientHello =
+                "Server".equalsIgnoreCase(targetExecutionMetadata.testerTlsRole())
+                        && "certificate_to_client_hello".equalsIgnoreCase(
+                                targetExecutionMetadata.testerMessageConcretization());
         trace = new WorkflowTrace();
 
         state = new State();
@@ -1144,8 +1149,22 @@ public class TLSSession implements Protocol {
     @Override
     public Variable buildCertificate(String alias, Variable handshakeType, Variable certificate_len, Variable certificate) {
         List<ProtocolMessage> container = new ArrayList<>();
+        List<HandshakeMessageType> handshakeTypes =
+                (List<HandshakeMessageType>) handshakeType.getValue();
+        if (reifyServerCertificateClientHello
+                && !handshakeTypes.isEmpty()
+                && handshakeTypes.get(0) == HandshakeMessageType.CLIENT_HELLO) {
+            LOGGER.info(
+                    "Concretizing TLS 1.2 server Certificate mutation as a wrong-side ClientHello");
+            BuildWrongSideClientHelloAction action =
+                    new BuildWrongSideClientHelloAction(alias, container);
+            action.setHandshakeType(handshakeTypes);
+            trace.addTlsAction(action);
+            return new ProtocolMessageVariable(container);
+        }
+
         BuildCertificateAction action = new BuildCertificateAction(alias, container);
-        action.setHandshakeType((List<HandshakeMessageType>) handshakeType.getValue());
+        action.setHandshakeType(handshakeTypes);
         action.setCertificate((List<CertificateEntry>) certificate.getValue());
         action.setCertificateLen((List<Integer>) certificate_len.getValue());
 

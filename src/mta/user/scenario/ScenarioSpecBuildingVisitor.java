@@ -28,7 +28,34 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
     @Override
     public Object visitScenarioSpec(ScenarioSpecParser.ScenarioSpecContext ctx) {
         ScenarioSpec scenarioSpec = new ScenarioSpec();
-        scenarioSpec.setCurrentScenarioProperty((ScenarioExpression) visit(ctx.scenarioExpr()));
+        for (ScenarioSpecParser.DeclarationContext declarationContext : ctx.declaration()) {
+            if (declarationContext.statePropositionDeclaration() != null) {
+                ScenarioSpecParser.StatePropositionDeclarationContext declaration =
+                        declarationContext.statePropositionDeclaration();
+                scenarioSpec.addStateProposition(
+                        readIdentifier(declaration.identifier()),
+                        (StateExpression) visit(declaration.stateExpr())
+                );
+                continue;
+            }
+            if (declarationContext.actionPropositionDeclaration() != null) {
+                ScenarioSpecParser.ActionPropositionDeclarationContext declaration =
+                        declarationContext.actionPropositionDeclaration();
+                scenarioSpec.addActionProposition(
+                        readIdentifier(declaration.identifier()),
+                        (ActionExpression) visit(declaration.actionExpr())
+                );
+                continue;
+            }
+
+            ScenarioSpecParser.ScenarioPropertyDeclarationContext declaration =
+                    declarationContext.scenarioPropertyDeclaration();
+            scenarioSpec.declareScenarioProperty(
+                    declaration.identifier() == null ? null : readIdentifier(declaration.identifier()),
+                    (ScenarioExpression) visit(declaration.scenarioExpr())
+            );
+        }
+        scenarioSpec.validate();
         return scenarioSpec;
     }
 
@@ -131,7 +158,94 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
         if (ctx.stateAtom() != null) {
             return new StepExpression.State((StateExpression) visit(ctx.stateAtom()));
         }
-        return new StepExpression.Action((ActionExpression) visit(ctx.actionAtom()));
+        if (ctx.actionAtom() != null) {
+            return new StepExpression.Action((ActionExpression) visit(ctx.actionAtom()));
+        }
+        return new StepExpression.Reference(readIdentifier(ctx.propositionRef().identifier()));
+    }
+
+    @Override
+    public Object visitStateExpr(ScenarioSpecParser.StateExprContext ctx) {
+        return visit(ctx.stateOr());
+    }
+
+    @Override
+    public Object visitStateOr(ScenarioSpecParser.StateOrContext ctx) {
+        StateExpression expression = (StateExpression) visit(ctx.stateAnd(0));
+        for (int index = 1; index < ctx.stateAnd().size(); index++) {
+            expression = new StateExpression.Binary(
+                    StateExpression.Operator.OR,
+                    expression,
+                    (StateExpression) visit(ctx.stateAnd(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitStateAnd(ScenarioSpecParser.StateAndContext ctx) {
+        StateExpression expression = (StateExpression) visit(ctx.stateNot(0));
+        for (int index = 1; index < ctx.stateNot().size(); index++) {
+            expression = new StateExpression.Binary(
+                    StateExpression.Operator.AND,
+                    expression,
+                    (StateExpression) visit(ctx.stateNot(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitStateNot(ScenarioSpecParser.StateNotContext ctx) {
+        if (ctx.NOT() != null) {
+            return new StateExpression.Not((StateExpression) visit(ctx.stateNot()));
+        }
+        if (ctx.stateAtom() != null) {
+            return visit(ctx.stateAtom());
+        }
+        return visit(ctx.stateExpr());
+    }
+
+    @Override
+    public Object visitActionExpr(ScenarioSpecParser.ActionExprContext ctx) {
+        return visit(ctx.actionOr());
+    }
+
+    @Override
+    public Object visitActionOr(ScenarioSpecParser.ActionOrContext ctx) {
+        ActionExpression expression = (ActionExpression) visit(ctx.actionAnd(0));
+        for (int index = 1; index < ctx.actionAnd().size(); index++) {
+            expression = new ActionExpression.Binary(
+                    ActionExpression.Operator.OR,
+                    expression,
+                    (ActionExpression) visit(ctx.actionAnd(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitActionAnd(ScenarioSpecParser.ActionAndContext ctx) {
+        ActionExpression expression = (ActionExpression) visit(ctx.actionNot(0));
+        for (int index = 1; index < ctx.actionNot().size(); index++) {
+            expression = new ActionExpression.Binary(
+                    ActionExpression.Operator.AND,
+                    expression,
+                    (ActionExpression) visit(ctx.actionNot(index))
+            );
+        }
+        return expression;
+    }
+
+    @Override
+    public Object visitActionNot(ScenarioSpecParser.ActionNotContext ctx) {
+        if (ctx.NOT() != null) {
+            return new ActionExpression.Not((ActionExpression) visit(ctx.actionNot()));
+        }
+        if (ctx.actionAtom() != null) {
+            return visit(ctx.actionAtom());
+        }
+        return visit(ctx.actionExpr());
     }
 
     @Override
@@ -247,7 +361,7 @@ public class ScenarioSpecBuildingVisitor extends ScenarioSpecBaseVisitor<Object>
     }
 
     private static String readIdentifier(ScenarioSpecParser.IdentifierContext ctx) {
-        return ctx.IDENTIFIER().getText();
+        return ctx.getText();
     }
 
     private static String stripQuotes(String text) {
