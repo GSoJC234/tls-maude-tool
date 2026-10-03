@@ -1,6 +1,5 @@
 package mta.scenario.session;
 
-import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.constants.*;
@@ -31,7 +30,7 @@ import de.rub.nds.tlsattacker.core.workflow.WorkflowTrace;
 import de.rub.nds.tlsattacker.core.workflow.action.*;
 import de.rub.nds.tlsattacker.core.workflow.action.custom.*;
 import de.rub.nds.tlsattacker.core.workflow.action.custom.extension.*;
-import de.rub.nds.tlsattacker.core.workflow.action.executor.WorkflowExecutorType;
+import de.rub.nds.tlsattacker.core.workflow.observation.ExecutionEventWorkflowExecutor;
 import de.rub.nds.x509attacker.config.X509CertificateConfig;
 import de.rub.nds.x509attacker.constants.X509NamedCurve;
 import de.rub.nds.x509attacker.context.X509Context;
@@ -67,7 +66,6 @@ import org.apache.logging.log4j.Logger;
 
 public class TLSSession implements Protocol {
     private static final Logger LOGGER = LogManager.getLogger(TLSSession.class);
-    private static final Logger PROTOCOL_TRACE_LOGGER = LogManager.getLogger("mta.scenario.session.ProtocolTrace");
 
     protected AliasedConnection connection;
     private WorkflowTrace trace;
@@ -96,7 +94,7 @@ public class TLSSession implements Protocol {
         state.addWorkflowTrace(trace);
         state.addConfig(config);
 
-        executor = new MarkerWorkflowExecutor(state);
+        executor = new ExecutionEventWorkflowExecutor(state);
     }
 
     private void applyTargetExecutionMetadata(Config config, TargetExecutionMetadata metadata) {
@@ -1586,161 +1584,6 @@ public class TLSSession implements Protocol {
         SetUpPSKAction action = new SetUpPSKAction(alias);
         action.setPSK((List<PskSet>) psk.getValue());
         trace.addTlsAction(action);
-    }
-
-    private static final class MarkerWorkflowExecutor extends WorkflowExecutor {
-        private static final Logger LOGGER = LogManager.getLogger(MarkerWorkflowExecutor.class);
-
-        private MarkerWorkflowExecutor(State state) {
-            super(WorkflowExecutorType.DEFAULT, state);
-        }
-
-        @Override
-        public void executeWorkflow() {
-            state.getWorkflowTrace().reset();
-            state.setStartTimestamp(System.currentTimeMillis());
-            List<TlsAction> tlsActions = state.getWorkflowTrace().getTlsActions();
-            int actionIndex = 0;
-            for (TlsAction action : tlsActions) {
-                try {
-                    action.normalize();
-                    this.executeAction(action, state);
-                    emitProtocolTrace(action, actionIndex);
-                } catch (SkipActionException ex) {
-                    emitProtocolTrace(action, actionIndex);
-                    continue;
-                } finally {
-                    actionIndex++;
-                }
-            }
-            if (state.getWorkflowTrace().executedAsPlanned()) {
-                LOGGER.info("Workflow executed as planned.");
-            } else {
-                LOGGER.info("Workflow was not executed as planned.");
-            }
-        }
-
-        private static void emitProtocolTrace(TlsAction action, int actionIndex) {
-            if (action instanceof SendAction sendAction) {
-                List<ProtocolMessage> messages = sendAction.getSentMessages();
-                if (isEmpty(messages)) {
-                    messages = sendAction.getConfiguredMessages();
-                }
-                List<Record> records = sendAction.getSentRecords();
-                if (isEmpty(records)) {
-                    records = sendAction.getConfiguredRecords();
-                }
-                emitMessageTrace("Sending", actionIndex, messages, records);
-            } else if (action instanceof ReceiveOneAction receiveAction) {
-                emitMessageTrace(
-                        "Received",
-                        actionIndex,
-                        receiveAction.getReceivedMessages(),
-                        receiveAction.getReceivedRecords());
-            }
-        }
-
-        private static void emitMessageTrace(
-                String direction,
-                int actionIndex,
-                List<ProtocolMessage> messages,
-                List<Record> records) {
-            int messageCount = messages == null ? 0 : messages.size();
-            int recordCount = records == null ? 0 : records.size();
-            int count = Math.max(messageCount, recordCount);
-            for (int index = 0; index < count; index++) {
-                ProtocolMessage message = index < messageCount ? messages.get(index) : null;
-                Record record = index < recordCount ? records.get(index) : null;
-                byte[] bytes = messageBytes(message);
-                String source = "message";
-                if (bytes == null || bytes.length == 0) {
-                    bytes = recordBytes(record);
-                    source = "record";
-                }
-                if (bytes != null) {
-                    PROTOCOL_TRACE_LOGGER.info(
-                            "{} Message Bytes: action={} index={} message={} source={} bytes={}",
-                            direction,
-                            actionIndex,
-                            index,
-                            messageName(message),
-                            source,
-                            toHex(bytes));
-                }
-                if (message != null) {
-                    PROTOCOL_TRACE_LOGGER.info(
-                            "{} Message Value: action={} index={} message={} value={}",
-                            direction,
-                            actionIndex,
-                            index,
-                            messageName(message),
-                            messageValue(message));
-                }
-            }
-        }
-
-        private static boolean isEmpty(List<?> values) {
-            return values == null || values.isEmpty();
-        }
-
-        private static byte[] messageBytes(ProtocolMessage message) {
-            if (message == null) {
-                return null;
-            }
-            return byteArrayValue(message.getCompleteResultingMessage());
-        }
-
-        private static byte[] recordBytes(Record record) {
-            if (record == null) {
-                return null;
-            }
-            byte[] bytes = byteArrayValue(record.getCleanProtocolMessageBytes());
-            if (bytes != null && bytes.length > 0) {
-                return bytes;
-            }
-            bytes = byteArrayValue(record.getProtocolMessageBytes());
-            if (bytes != null && bytes.length > 0) {
-                return bytes;
-            }
-            return byteArrayValue(record.getCompleteRecordBytes());
-        }
-
-        private static byte[] byteArrayValue(ModifiableByteArray value) {
-            if (value == null) {
-                return null;
-            }
-            return value.getValue();
-        }
-
-        private static String messageName(ProtocolMessage message) {
-            if (message == null) {
-                return "unknown";
-            }
-            String className = message.getClass().getSimpleName();
-            if (className.endsWith("Message")) {
-                return className.substring(0, className.length() - "Message".length());
-            }
-            return className;
-        }
-
-        private static String messageValue(ProtocolMessage message) {
-            try {
-                return message.toShortString();
-            } catch (RuntimeException ex) {
-                return messageName(message);
-            }
-        }
-
-        private static String toHex(byte[] bytes) {
-            StringBuilder builder = new StringBuilder(bytes.length * 3);
-            for (int index = 0; index < bytes.length; index++) {
-                if (index > 0) {
-                    builder.append(' ');
-                }
-                builder.append(String.format("%02X", bytes[index] & 0xFF));
-            }
-            return builder.toString();
-        }
     }
 
 }

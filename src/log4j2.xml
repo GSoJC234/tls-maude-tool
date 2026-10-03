@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>
-        <File name="MAIN" fileName="${sys:logFilePath}" append="false" createOnDemand="true">
+        <File name="MAIN" fileName="${sys:logFilePath}" append="false" createOnDemand="true" immediateFlush="true">
             <PatternLayout pattern="%m%n"/>
         </File>
+        <Console name="EVENT_CONSOLE" target="SYSTEM_OUT" follow="true" immediateFlush="true">
+            <PatternLayout pattern="%m%n"/>
+        </Console>
     </Appenders>
 
     <Loggers>
@@ -11,6 +14,13 @@
                 level="INFO"
                 additivity="false">
             <AppenderRef ref="MAIN"/>
+        </Logger>
+
+        <Logger name="mta.execution.Event"
+                level="INFO"
+                additivity="false">
+            <AppenderRef ref="MAIN"/>
+            <AppenderRef ref="EVENT_CONSOLE"/>
         </Logger>
 
         <Logger name="de.rub.nds.tlsattacker.core.workflow.action.custom.AssertEqualAction"
