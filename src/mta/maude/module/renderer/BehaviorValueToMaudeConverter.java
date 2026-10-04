@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
-final class BehaviorValueLowerer {
+final class BehaviorValueToMaudeConverter {
 
     private static final Set<String> UNSUPPORTED_CIPHER_SUITES = Set.of(
             "TLS_CHACHA20_POLY1305_SHA256");
@@ -56,6 +56,7 @@ final class BehaviorValueLowerer {
             "signature-len",
             "supported-versions-len",
             "signature-algorithms-len",
+            "signature-algorithms-cert-len",
             "key-shares-len",
             "supported-groups-len",
             "psk-key-exchange-mode-len",
@@ -122,7 +123,7 @@ final class BehaviorValueLowerer {
 
     private final MaudeUserTermRenderer termRenderer;
 
-    BehaviorValueLowerer(MaudeUserTermRenderer termRenderer) {
+    BehaviorValueToMaudeConverter(MaudeUserTermRenderer termRenderer) {
         this.termRenderer = termRenderer;
     }
 
@@ -227,7 +228,8 @@ final class BehaviorValueLowerer {
             case "certificate-list" -> normalizeCertificateList(fieldName, value);
             case "certificateTypes" ->
                     LoweredValue.wrapped(normalizeSequence(fieldName, value, this::normalizeCertificateType));
-            case "certificateAlgos", "certificate-verify-algorithm", "signature-algorithms" ->
+            case "certificateAlgos", "certificate-verify-algorithm", "signature-algorithms",
+                    "signature-algorithms-cert" ->
                     LoweredValue.wrapped(normalizeSequence(fieldName, value, this::normalizeSignatureScheme));
             case "supported-groups", "key-shares-groups" ->
                     LoweredValue.wrapped(normalizeSequence(fieldName, value, this::normalizeNamedGroup));
@@ -669,6 +671,8 @@ final class BehaviorValueLowerer {
         putField(fields, "supportedVersionsLen", "supported-versions-len", "supported-versions-len");
         putField(fields, "signatureAlgorithms", "signature-algorithms", "signature-algorithms");
         putField(fields, "signatureAlgorithmsLen", "signature-algorithms-len", "signature-algorithms-len");
+        putField(fields, "signatureAlgorithmsCert", "signature-algorithms-cert", "signature-algorithms-cert");
+        putField(fields, "signatureAlgorithmsCertLen", "signature-algorithms-cert-len", "signature-algorithms-cert-len");
         putField(fields, "keyShares", "key-shares", "key-shares");
         putField(fields, "keySharesLen", "key-shares-len", "key-shares-len");
         putField(fields, "keySharesGroups", "key-shares-groups", "key-shares-groups");

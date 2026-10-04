@@ -8,7 +8,7 @@ import java.util.Locale;
 public class StateExpressionRenderer {
 
     private final MaudeUserTermRenderer termRenderer;
-    private final BehaviorValueLowerer behaviorValueLowerer;
+    private final BehaviorValueToMaudeConverter behaviorValueToMaudeConverter;
 
     public StateExpressionRenderer() {
         this(new MaudeUserTermRenderer());
@@ -16,7 +16,7 @@ public class StateExpressionRenderer {
 
     public StateExpressionRenderer(MaudeUserTermRenderer termRenderer) {
         this.termRenderer = termRenderer;
-        this.behaviorValueLowerer = new BehaviorValueLowerer(termRenderer);
+        this.behaviorValueToMaudeConverter = new BehaviorValueToMaudeConverter(termRenderer);
     }
 
     public String render(StateExpression expression) {
@@ -25,7 +25,7 @@ public class StateExpressionRenderer {
             String attribute = normalizeAttribute(endpoint, atom.attribute());
             return endpoint.maudeTid()
                     + " . "
-                    + behaviorValueLowerer.renderAttribute(new UserTerm.Atom(attribute))
+                    + behaviorValueToMaudeConverter.renderAttribute(new UserTerm.Atom(attribute))
                     + " = "
                     + renderAttributeValue(endpoint, attribute, atom.value());
         }
@@ -74,7 +74,7 @@ public class StateExpressionRenderer {
                         + "' requires client/tester or server/target endpoint");
             };
         }
-        String canonical = behaviorValueLowerer.normalizeAttributeName(attribute);
+        String canonical = behaviorValueToMaudeConverter.normalizeAttributeName(attribute);
         String role = roleForStateAttribute(canonical);
         if (!role.isEmpty() && !endpoint.role().isEmpty() && !role.equals(endpoint.role())) {
             throw new IllegalArgumentException("ScenarioProperty state attribute '"
@@ -90,7 +90,7 @@ public class StateExpressionRenderer {
         if ("clientState".equals(attribute) || "serverState".equals(attribute)) {
             return "av[" + renderStateValue(endpoint, attribute, value) + "]";
         }
-        return behaviorValueLowerer.renderAttributeValue(new UserTerm.Atom(attribute), value);
+        return behaviorValueToMaudeConverter.renderAttributeValue(new UserTerm.Atom(attribute), value);
     }
 
     private String renderStateValue(Endpoint endpoint, String attribute, UserTerm value) {

@@ -5,14 +5,14 @@ import mta.user.common.UserTerm;
 
 public class ActionExpressionRenderer {
 
-    private final BehaviorValueLowerer behaviorValueLowerer;
+    private final BehaviorValueToMaudeConverter behaviorValueToMaudeConverter;
 
     public ActionExpressionRenderer() {
         this(new MaudeUserTermRenderer());
     }
 
     public ActionExpressionRenderer(MaudeUserTermRenderer termRenderer) {
-        this.behaviorValueLowerer = new BehaviorValueLowerer(termRenderer);
+        this.behaviorValueToMaudeConverter = new BehaviorValueToMaudeConverter(termRenderer);
     }
 
     public String render(ActionExpression expression) {
@@ -46,14 +46,14 @@ public class ActionExpressionRenderer {
         String field = atom.field();
         UserTerm value = atom.value();
         return switch (field) {
-            case "label", "ruleLabel" -> "ruleLabel(" + behaviorValueLowerer.renderRuleLabel(value) + ")";
-            case "ruleMsgType" -> "ruleMsgType(" + behaviorValueLowerer.renderRuleMessageType(value) + ")";
-            case "node" -> "appliedNode(" + behaviorValueLowerer.renderNode(value) + ")";
-            case "event", "eventType" -> "eventType(" + behaviorValueLowerer.renderEventType(value) + ")";
+            case "label", "ruleLabel" -> "ruleLabel(" + behaviorValueToMaudeConverter.renderRuleLabel(value) + ")";
+            case "ruleMsgType" -> "ruleMsgType(" + behaviorValueToMaudeConverter.renderRuleMessageType(value) + ")";
+            case "node" -> "appliedNode(" + behaviorValueToMaudeConverter.renderNode(value) + ")";
+            case "event", "eventType" -> "eventType(" + behaviorValueToMaudeConverter.renderEventType(value) + ")";
             default -> "featureMap("
-                    + behaviorValueLowerer.renderFeatureAttribute(field)
+                    + behaviorValueToMaudeConverter.renderFeatureAttribute(field)
                     + " |-> "
-                    + behaviorValueLowerer.renderFeatureValue(field, value)
+                    + behaviorValueToMaudeConverter.renderFeatureValue(field, value)
                     + ")";
         };
     }
