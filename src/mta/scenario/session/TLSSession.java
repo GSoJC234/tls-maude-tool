@@ -1060,11 +1060,7 @@ public class TLSSession implements Protocol {
         action.setHandshakeType((List<HandshakeMessageType>) handshake_type.getValue());
         action.setVersion((List<ProtocolVersion>) versions.getValue());
         action.setCipherSuitesLen((List<Integer>) ciphers_len.getValue());
-        if (ciphers instanceof LongConstantVariable) {
-            action.setLongCipherSuites((List<CipherSuite>) ciphers.getValue());
-        } else {
-            action.setCipherSuites((List<CipherSuite>) ciphers.getValue());
-        }
+        action.setCipherSuites((List<CipherSuite>) ciphers.getValue());
         action.setRandom((List<byte[]>) random.getValue());
         action.setSessionIdLen((List<Integer>) sessionId_len.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
