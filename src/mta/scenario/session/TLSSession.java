@@ -319,16 +319,27 @@ public class TLSSession implements Protocol {
     }
 
     @Override
-    public Variable generateTicket(Variable random) {
+    public Variable generateTicket(Variable ticketSize, Variable nonce) {
         List<SessionTicket> container = new ArrayList<>();
 
         SessionTicket sessionTicket = new SessionTicket();
 
-        sessionTicket.setTicketNonce((byte[]) random.getValue().get(0));
+        sessionTicket.setTicketNonce((byte[]) nonce.getValue().get(0));
         sessionTicket.setTicketNonceLength(sessionTicket.getTicketNonce().getValue().length);
 
+        Object configuredTicketSize = ticketSize.getValue().get(0);
+        if (!(configuredTicketSize instanceof Number)) {
+            throw new IllegalArgumentException("Ticket size must be numeric");
+        }
+
+        int identitySize = ((Number) configuredTicketSize).intValue();
+        if (identitySize < 0 || identitySize > 0xFFFF) {
+            throw new IllegalArgumentException(
+                    "Ticket size must fit the TLS uint16 length field: " + identitySize);
+        }
+
         SecureRandom rnd = new SecureRandom();
-        byte[] identity = new byte[32];
+        byte[] identity = new byte[identitySize];
         rnd.nextBytes(identity);
         sessionTicket.setIdentity(identity);
         sessionTicket.setIdentityLength(identity.length);
@@ -373,6 +384,7 @@ public class TLSSession implements Protocol {
         trace.addTlsAction(action);
     }
 
+    @Override
     public Variable constant(int n) {
         List<Integer> container = new ArrayList<>();
         container.add(n);

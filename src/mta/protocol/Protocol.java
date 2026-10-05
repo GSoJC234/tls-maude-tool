@@ -17,6 +17,7 @@ public interface Protocol {
     Variable decrypt(Variable message, Variable key);
     void assertEqual(Variable var1, Variable var2);
 
+    Variable constant(int number);
     Variable constant(ProtocolMessageType msgType);
     Variable constant(ProtocolVersion version);
     Variable constant(HandshakeMessageType msgType);
@@ -40,7 +41,7 @@ public interface Protocol {
     Variable getCertificate(String path);
     Variable genCertificatePrivateKey(String privateKeyPath);
     Variable generateRandom(Random random);
-    Variable generateTicket(Variable random);
+    Variable generateTicket(Variable ticketSize, Variable nonce);
     Variable generatePSK(String alias, Variable ticket);
     Variable generateEmptyCertificate();
 
