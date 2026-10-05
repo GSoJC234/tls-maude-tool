@@ -90,6 +90,7 @@ public interface Protocol {
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable signatureHashAlgorithm, Variable certificate_private_key);
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable wireSignatureHashAlgorithm, Variable signingSignatureHashAlgorithm, Variable certificate_private_key);
     Variable buildChangeCipherSpec(String alias);
+    Variable buildApplicationData(String alias, Variable payload);
     Variable buildFinished(String alias, Variable handshake_type);
     Variable buildFinished(String alias, Variable handshake_type, Variable verify_data);
     Variable buildAlert(String alias, Variable level, Variable description);

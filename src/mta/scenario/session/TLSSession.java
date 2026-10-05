@@ -1258,6 +1258,16 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable buildApplicationData(String alias, Variable payload) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildApplicationDataAction action = new BuildApplicationDataAction(alias, container);
+        action.setPayload((List<byte[]>) payload.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
     public Variable buildFinished(String alias, Variable handshake_type) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildFinishedAction action = new BuildFinishedAction(alias, container);

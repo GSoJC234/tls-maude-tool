@@ -280,6 +280,8 @@ LBRACE=279
 RBRACE=280
 COMMA=281
 WS=282
+BUILD_APPLICATION_DATA=283
+APPLICATION_DATA_PAYLOAD=284
 ':='=1
 'v'=2
 '['=3
@@ -559,3 +561,5 @@ WS=282
 '{'=279
 '}'=280
 ','=281
+'buildApplicationData'=283
+'applicationData'=284

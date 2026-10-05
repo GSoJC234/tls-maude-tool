@@ -85,6 +85,12 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMaude_constant_list(ScenarioParser.Maude_constant_listContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#application_data_payload}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitApplication_data_payload(ScenarioParser.Application_data_payloadContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioParser#maude_constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

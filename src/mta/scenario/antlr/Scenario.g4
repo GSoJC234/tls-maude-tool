@@ -61,11 +61,15 @@ function_name:
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
     | 'buildInvalidPaddingRSAClientKeyExchange' | 'changeVerifyData' | 'encrypt' | 'decrypt' | 'generateRandom' | 'close'
     | 'generateTicket' | 'generatePSK' | 'setUpPSK' | 'generateEmptyCertificate' | 'generateVerifyData'
-    | 'addRenegotiationInfoExtension' | 'addCKSExtension'
+    | 'addRenegotiationInfoExtension' | 'addCKSExtension' | BUILD_APPLICATION_DATA
     ;
 
 maude_constant_list:
-    'c' '[' (maude_constant+ long_constant?) ']'
+    'c' '[' (maude_constant+ long_constant? | application_data_payload) ']'
+    ;
+
+application_data_payload:
+    APPLICATION_DATA_PAYLOAD LPAREN nonce RPAREN
     ;
 
 maude_constant:
@@ -195,3 +199,5 @@ LBRACE: '{';
 RBRACE: '}';
 COMMA: ',';
 WS: [ \t\r\n]+ -> skip;
+BUILD_APPLICATION_DATA: 'buildApplicationData';
+APPLICATION_DATA_PAYLOAD: 'applicationData';

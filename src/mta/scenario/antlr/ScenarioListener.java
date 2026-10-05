@@ -130,6 +130,16 @@ public interface ScenarioListener extends ParseTreeListener {
 	 */
 	void exitMaude_constant_list(ScenarioParser.Maude_constant_listContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#application_data_payload}.
+	 * @param ctx the parse tree
+	 */
+	void enterApplication_data_payload(ScenarioParser.Application_data_payloadContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#application_data_payload}.
+	 * @param ctx the parse tree
+	 */
+	void exitApplication_data_payload(ScenarioParser.Application_data_payloadContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ScenarioParser#maude_constant}.
 	 * @param ctx the parse tree
 	 */

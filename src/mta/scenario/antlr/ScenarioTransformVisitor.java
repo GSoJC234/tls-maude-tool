@@ -142,6 +142,10 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
 
     @Override
     public String visitMaude_constant_list(ScenarioParser.Maude_constant_listContext ctx) {
+        if (ctx.application_data_payload() != null) {
+            return "session.generateRandom(" + visit(ctx.application_data_payload().nonce()) + ")";
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append("session");
         sb.append(".");
