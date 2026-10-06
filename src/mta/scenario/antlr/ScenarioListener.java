@@ -50,6 +50,16 @@ public interface ScenarioListener extends ParseTreeListener {
 	 */
 	void exitFunctionCall(ScenarioParser.FunctionCallContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#certificate_entry_status_request_call}.
+	 * @param ctx the parse tree
+	 */
+	void enterCertificate_entry_status_request_call(ScenarioParser.Certificate_entry_status_request_callContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#certificate_entry_status_request_call}.
+	 * @param ctx the parse tree
+	 */
+	void exitCertificate_entry_status_request_call(ScenarioParser.Certificate_entry_status_request_callContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ScenarioParser#argumentList}.
 	 * @param ctx the parse tree
 	 */
@@ -349,6 +359,16 @@ public interface ScenarioListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#ocsp_response_constant}.
+	 * @param ctx the parse tree
+	 */
+	void enterOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#ocsp_response_constant}.
+	 * @param ctx the parse tree
+	 */
+	void exitOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ScenarioParser#certificate_extension_oid}.
 	 * @param ctx the parse tree

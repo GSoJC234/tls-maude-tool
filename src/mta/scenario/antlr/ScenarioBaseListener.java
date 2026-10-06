@@ -67,6 +67,18 @@ public class ScenarioBaseListener implements ScenarioListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCertificate_entry_status_request_call(ScenarioParser.Certificate_entry_status_request_callContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCertificate_entry_status_request_call(ScenarioParser.Certificate_entry_status_request_callContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArgumentList(ScenarioParser.ArgumentListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -422,6 +434,18 @@ public class ScenarioBaseListener implements ScenarioListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

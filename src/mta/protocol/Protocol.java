@@ -33,6 +33,7 @@ public interface Protocol {
     Variable constant(PskKeyExchangeMode... pskKeyExchangeModes);
     Variable constant(CertificateType... certificateType);
     Variable constant(OidFilterSpec... filters);
+    Variable constant(OcspResponseSpec... responses);
 
     Variable longConstant(CipherSuite... cipherSuites);
     Variable longConstant(ProtocolVersion... versions);
@@ -84,6 +85,8 @@ public interface Protocol {
 
     Variable buildCertificate(String alias, Variable handshake_type, Variable certificate_len, Variable certificate);
     Variable buildCertificate(String alias, Variable handshake_type, Variable certificate_len, Variable certificate, Variable certificate_request_context_len, Variable certificate_request_context);
+    void addCertificateEntryStatusRequestExtension(String alias, Variable certificate_message,
+                                                   int certificate_entry_index, Variable ocsp_response);
     Variable buildEncryptedExtension(String alias);
     Variable buildEncryptedExtension(String alias, Variable handshake_type);
     Variable buildCertificateRequest(String alias, Variable handshake_type, Variable certificate_type, Variable certificate_type_length, Variable certificate_algo, Variable certificate_algo_length);

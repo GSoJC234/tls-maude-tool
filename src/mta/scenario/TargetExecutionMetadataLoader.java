@@ -37,7 +37,20 @@ public class TargetExecutionMetadataLoader {
                 field(target, "DockerImage"),
                 field(target, "BuildProfile"),
                 field(target, "BinaryPath"),
-                field(tester, "TesterMessageConcretization"));
+                field(tester, "TesterMessageConcretization"),
+                fixtureDirectory(profilePath, tester));
+    }
+
+    private static String fixtureDirectory(Path profilePath, TLSProfile tester) {
+        String configured = field(tester, "OCSPResponseFixtureDirectory");
+        if (configured.isEmpty()) {
+            return "";
+        }
+        Path directory = Path.of(configured);
+        if (!directory.isAbsolute()) {
+            directory = profilePath.toAbsolutePath().normalize().getParent().resolve(directory);
+        }
+        return directory.normalize().toString();
     }
 
     private static String field(TLSProfile profile, String fieldName) {
@@ -47,7 +60,7 @@ public class TargetExecutionMetadataLoader {
             return "";
         }
         if (values.size() != 1) {
-            throw new IllegalArgumentException("TLSProfiles target field " + fieldName
+            throw new IllegalArgumentException("TLSProfiles field " + fieldName
                     + " expects exactly one value");
         }
         return clean(value(values.get(0)));

@@ -11,10 +11,11 @@ public record TargetExecutionMetadata(
         String dockerImage,
         String buildProfile,
         String binaryPath,
-        String testerMessageConcretization) {
+        String testerMessageConcretization,
+        String ocspResponseFixtureDirectory) {
 
     private static final TargetExecutionMetadata EMPTY =
-            new TargetExecutionMetadata("", "", "", "", "", "", "", "", "", "", "");
+            new TargetExecutionMetadata("", "", "", "", "", "", "", "", "", "", "", "");
 
     public static TargetExecutionMetadata empty() {
         return EMPTY;

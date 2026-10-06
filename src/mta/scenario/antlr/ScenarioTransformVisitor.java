@@ -39,6 +39,9 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     }
 
     private String handleFunctionCall(ScenarioParser.FunctionCallContext ctx) {
+        if (ctx.certificate_entry_status_request_call() != null) {
+            return visit(ctx);
+        }
         final String name = ctx.function_name().getText();
         if ("accept".equals(name) || "connect".equals(name)) {
             return buildSessionCall(name, visit(ctx.argumentList()), nodeList.get(0).getIp(), nodeList.get(0).getPort());
@@ -60,6 +63,9 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
 
     @Override
     public String visitFunctionCall(ScenarioParser.FunctionCallContext ctx) {
+        if (ctx.certificate_entry_status_request_call() != null) {
+            return visit(ctx.certificate_entry_status_request_call());
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("session").append(".").append(visit(ctx.function_name())).append("(");
         if(ctx.argumentList() != null) {
@@ -81,6 +87,22 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
                 .map(this::visit)
                 .collect(Collectors.joining(", "));
         return "new OidFilterSpec(" + visit(ctx.certificate_extension_oid()) + ", " + values + ")";
+    }
+
+    @Override
+    public String visitOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx) {
+        return "OcspResponseSpec."
+                + OcspResponseSpec.fromFixtureId(ctx.OCSP_FIXTURE_ID().getText()).name();
+    }
+
+    @Override
+    public String visitCertificate_entry_status_request_call(
+            ScenarioParser.Certificate_entry_status_request_callContext ctx) {
+        return "session.addCertificateEntryStatusRequestExtension("
+                + tidLiteral(ctx.TID().getText()) + ", "
+                + visit(ctx.variable()) + ", "
+                + ctx.NAT().getText() + ", "
+                + visit(ctx.maude_constant_list()) + ")";
     }
 
     @Override

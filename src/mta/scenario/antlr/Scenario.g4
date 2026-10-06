@@ -17,7 +17,12 @@ assignment
     ;
 
 functionCall
-    : function_name '(' argumentList? ')'
+    : certificate_entry_status_request_call
+    | function_name '(' argumentList? ')'
+    ;
+
+certificate_entry_status_request_call
+    : ADD_CERTIFICATE_ENTRY_STATUS_REQUEST_EXTENSION LPAREN TID COMMA variable COMMA NAT COMMA maude_constant_list RPAREN
     ;
 
 argumentList
@@ -74,7 +79,7 @@ application_data_payload:
 
 maude_constant:
       alert_constant | protocol_type_constant | protocol_version_constant | handshake_type_constant | ciphersuite_constant | certificate_type_constant
-    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | oid_filter_constant
+    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | oid_filter_constant | ocsp_response_constant
     ;
 
 alert_constant:
@@ -187,6 +192,10 @@ oid_filter_constant:
     'oidFilter' LPAREN certificate_extension_oid COMMA oid_filter_value (COMMA oid_filter_value)* RPAREN
     ;
 
+ocsp_response_constant:
+    OCSP_FIXTURE_ID
+    ;
+
 certificate_extension_oid:
     'key-usage' | 'extended-key-usage'
     ;
@@ -223,3 +232,5 @@ WS: [ \t\r\n]+ -> skip;
 BUILD_APPLICATION_DATA: 'buildApplicationData';
 APPLICATION_DATA_PAYLOAD: 'applicationData';
 ADD_OID_FILTERS_EXTENSION: 'addOidFiltersExtension';
+ADD_CERTIFICATE_ENTRY_STATUS_REQUEST_EXTENSION: 'addCertificateEntryStatusRequestExtension';
+OCSP_FIXTURE_ID: 'good-leaf' | 'valid-for-leaf' | 'wrong-certificate' | 'malformed';

@@ -76,6 +76,7 @@ public class TLSSession implements Protocol {
     private WorkflowExecutor executor = null;
     private State state = null;
     private boolean reifyServerCertificateClientHello = false;
+    private final String ocspResponseFixtureDirectory;
 
     public TLSSession(String configPath){
         this(configPath, TargetExecutionMetadata.empty());
@@ -85,6 +86,8 @@ public class TLSSession implements Protocol {
         ProviderUtil.addBouncyCastleProvider();
         config = Config.createConfig(new File(configPath));
         applyTargetExecutionMetadata(config, targetExecutionMetadata);
+        ocspResponseFixtureDirectory = targetExecutionMetadata == null
+                ? "" : targetExecutionMetadata.ocspResponseFixtureDirectory();
         reifyServerCertificateClientHello =
                 "Server".equalsIgnoreCase(targetExecutionMetadata.testerTlsRole())
                         && "certificate_to_client_hello".equalsIgnoreCase(
@@ -513,6 +516,11 @@ public class TLSSession implements Protocol {
     @Override
     public Variable constant(OidFilterSpec... filters) {
         return new ConstantVariable<>(List.of(filters));
+    }
+
+    @Override
+    public Variable constant(OcspResponseSpec... responses) {
+        return new ConstantVariable<>(List.of(responses));
     }
 
     // Note: LongConstantVariable expands the last item
@@ -1182,6 +1190,30 @@ public class TLSSession implements Protocol {
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
+    }
+
+    /** Adds a symbolic OCSP response to a zero-based TLS 1.3 Certificate entry. */
+    @Override
+    public void addCertificateEntryStatusRequestExtension(
+            String alias, Variable certificateMessage, int certificateEntryIndex,
+            Variable ocspResponse) {
+        if (certificateMessage == null) {
+            throw new IllegalArgumentException("Certificate message is required");
+        }
+        if (ocspResponse == null || ocspResponse.getValue() == null
+                || ocspResponse.getValue().size() != 1
+                || !(ocspResponse.getValue().get(0) instanceof OcspResponseSpec)) {
+            throw new IllegalArgumentException("Expected one OCSP response constant");
+        }
+        OcspResponseSpec spec = (OcspResponseSpec) ocspResponse.getValue().get(0);
+        byte[] ocspResponseBytes =
+                OcspResponseFixtureResolver.load(ocspResponseFixtureDirectory, spec);
+        AddCertificateEntryStatusRequestExtensionAction action =
+                new AddCertificateEntryStatusRequestExtensionAction(
+                        alias, (List<ProtocolMessage>) certificateMessage.getValue());
+        action.setCertificateEntryIndex(certificateEntryIndex);
+        action.setOcspResponse(ocspResponseBytes);
+        trace.addTlsAction(action);
     }
 
     @Override

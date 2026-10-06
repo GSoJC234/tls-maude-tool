@@ -38,7 +38,8 @@ public final class TLSProfileValueNormalizer {
     private static final Set<String> PATH_FIELDS = Set.of(
             "CACertificatePath",
             "CertificatePath",
-            "PrivateKeyPath");
+            "PrivateKeyPath",
+            "OCSPResponseFixtureDirectory");
 
     private static final Set<String> SUPPORTED_ASYM_KEY_TYPES = Set.of(
             "ecdsa",

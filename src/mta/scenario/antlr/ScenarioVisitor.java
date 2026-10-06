@@ -37,6 +37,12 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionCall(ScenarioParser.FunctionCallContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#certificate_entry_status_request_call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCertificate_entry_status_request_call(ScenarioParser.Certificate_entry_status_request_callContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioParser#argumentList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -216,6 +222,12 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#ocsp_response_constant}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOcsp_response_constant(ScenarioParser.Ocsp_response_constantContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ScenarioParser#certificate_extension_oid}.
 	 * @param ctx the parse tree
