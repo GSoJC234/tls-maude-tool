@@ -61,7 +61,7 @@ function_name:
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
     | 'buildInvalidPaddingRSAClientKeyExchange' | 'changeVerifyData' | 'encrypt' | 'decrypt' | 'generateRandom' | 'close'
     | 'generateTicket' | 'generatePSK' | 'setUpPSK' | 'generateEmptyCertificate' | 'generateVerifyData'
-    | 'addRenegotiationInfoExtension' | 'addCKSExtension' | BUILD_APPLICATION_DATA
+    | 'addRenegotiationInfoExtension' | 'addCKSExtension' | BUILD_APPLICATION_DATA | ADD_OID_FILTERS_EXTENSION
     ;
 
 maude_constant_list:
@@ -74,7 +74,7 @@ application_data_payload:
 
 maude_constant:
       alert_constant | protocol_type_constant | protocol_version_constant | handshake_type_constant | ciphersuite_constant | certificate_type_constant
-    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant
+    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | oid_filter_constant
     ;
 
 alert_constant:
@@ -183,6 +183,27 @@ long_constant:
     LONG (CS | PV | SA | NG) LPAREN (named_group_constant | signature_and_hash_algorithm_constant | ciphersuite_constant | protocol_version_constant) RPAREN
     ;
 
+oid_filter_constant:
+    'oidFilter' LPAREN certificate_extension_oid COMMA oid_filter_value (COMMA oid_filter_value)* RPAREN
+    ;
+
+certificate_extension_oid:
+    'key-usage' | 'extended-key-usage'
+    ;
+
+oid_filter_value:
+    key_usage_value | extended_key_usage_value
+    ;
+
+key_usage_value:
+    'digital-signature' | 'content-commitment' | 'key-encipherment' | 'data-encipherment'
+    | 'key-agreement' | 'key-cert-sign' | 'crl-sign' | 'encipher-only' | 'decipher-only'
+    ;
+
+extended_key_usage_value:
+    'server-auth' | 'client-auth' | 'code-signing' | 'email-protection' | 'time-stamping' | 'ocsp-signing'
+    ;
+
 // LEXER RULES
 LONG: 'long';
 CS: 'CS';
@@ -201,3 +222,4 @@ COMMA: ',';
 WS: [ \t\r\n]+ -> skip;
 BUILD_APPLICATION_DATA: 'buildApplicationData';
 APPLICATION_DATA_PAYLOAD: 'applicationData';
+ADD_OID_FILTERS_EXTENSION: 'addOidFiltersExtension';

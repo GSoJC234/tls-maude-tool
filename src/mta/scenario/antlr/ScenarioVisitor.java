@@ -210,4 +210,34 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLong_constant(ScenarioParser.Long_constantContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#oid_filter_constant}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#certificate_extension_oid}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCertificate_extension_oid(ScenarioParser.Certificate_extension_oidContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#oid_filter_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOid_filter_value(ScenarioParser.Oid_filter_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#key_usage_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKey_usage_value(ScenarioParser.Key_usage_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#extended_key_usage_value}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExtended_key_usage_value(ScenarioParser.Extended_key_usage_valueContext ctx);
 }

@@ -339,4 +339,54 @@ public interface ScenarioListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLong_constant(ScenarioParser.Long_constantContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#oid_filter_constant}.
+	 * @param ctx the parse tree
+	 */
+	void enterOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#oid_filter_constant}.
+	 * @param ctx the parse tree
+	 */
+	void exitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#certificate_extension_oid}.
+	 * @param ctx the parse tree
+	 */
+	void enterCertificate_extension_oid(ScenarioParser.Certificate_extension_oidContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#certificate_extension_oid}.
+	 * @param ctx the parse tree
+	 */
+	void exitCertificate_extension_oid(ScenarioParser.Certificate_extension_oidContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#oid_filter_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterOid_filter_value(ScenarioParser.Oid_filter_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#oid_filter_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitOid_filter_value(ScenarioParser.Oid_filter_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#key_usage_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterKey_usage_value(ScenarioParser.Key_usage_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#key_usage_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitKey_usage_value(ScenarioParser.Key_usage_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ScenarioParser#extended_key_usage_value}.
+	 * @param ctx the parse tree
+	 */
+	void enterExtended_key_usage_value(ScenarioParser.Extended_key_usage_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ScenarioParser#extended_key_usage_value}.
+	 * @param ctx the parse tree
+	 */
+	void exitExtended_key_usage_value(ScenarioParser.Extended_key_usage_valueContext ctx);
 }

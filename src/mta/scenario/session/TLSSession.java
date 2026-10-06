@@ -60,6 +60,7 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -507,6 +508,11 @@ public class TLSSession implements Protocol {
             container.add(type.transform());
         }
         return new ConstantVariable<>(container);
+    }
+
+    @Override
+    public Variable constant(OidFilterSpec... filters) {
+        return new ConstantVariable<>(List.of(filters));
     }
 
     // Note: LongConstantVariable expands the last item
@@ -1407,6 +1413,36 @@ public class TLSSession implements Protocol {
         AddCHPreSharedKeyAction action = new AddCHPreSharedKeyAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
         action.setExtensions((List<SessionTicket>) ticket.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
+        trace.addTlsAction(action);
+    }
+
+    @Override
+    public void addOidFiltersExtension(String alias, Variable extension_len, Variable handshake_message,
+                                       Variable filters) {
+        if (filters == null) {
+            throw new IllegalArgumentException("OID filters must not be null");
+        }
+        List<String> oids = new ArrayList<>();
+        List<byte[]> valuesDer = new ArrayList<>();
+        var seenOids = EnumSet.noneOf(CertificateExtensionOid.class);
+        for (Object item : filters.getValue()) {
+            if (!(item instanceof OidFilterSpec filter)) {
+                throw new IllegalArgumentException("Expected an OID filter term: " + item);
+            }
+            if (!seenOids.add(filter.oid())) {
+                throw new IllegalArgumentException("Duplicate OID filter: " + filter.oid());
+            }
+            oids.add(filter.oid().dottedDecimal());
+            valuesDer.add(OidFilterEncoder.encodeValue(filter));
+        }
+
+        AddOidFiltersAction action = new AddOidFiltersAction(
+                alias, (List<ProtocolMessage>) handshake_message.getValue());
+        action.setExtensions(oids);
+        action.setValuesDer(valuesDer);
+        if (extension_len != null) {
+            action.setExtensionLen((List<Integer>) extension_len.getValue());
+        }
         trace.addTlsAction(action);
     }
 

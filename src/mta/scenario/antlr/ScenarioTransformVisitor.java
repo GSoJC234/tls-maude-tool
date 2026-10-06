@@ -75,6 +75,40 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
                 .collect(Collectors.joining(", "));
     }
 
+    @Override
+    public String visitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx) {
+        String values = ctx.oid_filter_value().stream()
+                .map(this::visit)
+                .collect(Collectors.joining(", "));
+        return "new OidFilterSpec(" + visit(ctx.certificate_extension_oid()) + ", " + values + ")";
+    }
+
+    @Override
+    public String visitCertificate_extension_oid(ScenarioParser.Certificate_extension_oidContext ctx) {
+        return switch (ctx.getText()) {
+            case "key-usage" -> "CertificateExtensionOid.KEY_USAGE";
+            case "extended-key-usage" -> "CertificateExtensionOid.EXTENDED_KEY_USAGE";
+            default -> throw new IllegalArgumentException("Unknown certificate extension OID: " + ctx.getText());
+        };
+    }
+
+    @Override
+    public String visitOid_filter_value(ScenarioParser.Oid_filter_valueContext ctx) {
+        return ctx.key_usage_value() != null
+                ? visit(ctx.key_usage_value())
+                : visit(ctx.extended_key_usage_value());
+    }
+
+    @Override
+    public String visitKey_usage_value(ScenarioParser.Key_usage_valueContext ctx) {
+        return "KeyUsageValue." + ctx.getText().replace('-', '_').toUpperCase(java.util.Locale.ROOT);
+    }
+
+    @Override
+    public String visitExtended_key_usage_value(ScenarioParser.Extended_key_usage_valueContext ctx) {
+        return "ExtendedKeyUsageValue." + ctx.getText().replace('-', '_').toUpperCase(java.util.Locale.ROOT);
+    }
+
     @Override public String visitArgument(ScenarioParser.ArgumentContext ctx) {
         if(ctx.maude_constant_list() != null) {
             return visit(ctx.maude_constant_list());

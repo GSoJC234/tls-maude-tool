@@ -32,6 +32,7 @@ public interface Protocol {
     Variable constant(SupportedVersion... supportedVersions);
     Variable constant(PskKeyExchangeMode... pskKeyExchangeModes);
     Variable constant(CertificateType... certificateType);
+    Variable constant(OidFilterSpec... filters);
 
     Variable longConstant(CipherSuite... cipherSuites);
     Variable longConstant(ProtocolVersion... versions);
@@ -101,6 +102,8 @@ public interface Protocol {
     void addNamedCurvesExtension(String alias, Variable handshake_message, Variable named_curves);
     void addSupportedVersionExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_versions);
     void addSignatureAlgorithmExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms);
+    void addOidFiltersExtension(String alias, Variable extension_len, Variable handshake_message,
+                                Variable filters);
     void addSignatureAlgorithmCertExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms);
     void addSupportedGroupExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_groups);
     void addPSKExchangeModeExtension(String alias, Variable extension_len, Variable handshake_message, Variable psk_exchange_modes);
