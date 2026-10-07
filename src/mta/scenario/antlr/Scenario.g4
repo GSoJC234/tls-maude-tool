@@ -83,7 +83,7 @@ early_data_payload:
 
 maude_constant:
       alert_constant | protocol_type_constant | protocol_version_constant | handshake_type_constant | ciphersuite_constant | certificate_type_constant
-    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | session_id_constant | session_id_size_constant | oid_filter_constant | ocsp_response_constant
+    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | 'true' | 'false' | session_id_constant | session_id_size_constant | oid_filter_constant | ocsp_response_constant
     ;
 
 alert_constant:

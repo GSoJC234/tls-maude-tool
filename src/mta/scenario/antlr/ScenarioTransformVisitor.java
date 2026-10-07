@@ -545,6 +545,15 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     }
 
     @Override
+    public String visitMaude_constant(ScenarioParser.Maude_constantContext ctx) {
+        String literal = ctx.getText();
+        if ("true".equals(literal) || "false".equals(literal)) {
+            return literal;
+        }
+        return super.visitMaude_constant(ctx);
+    }
+
+    @Override
     public String visitSession_id_constant(ScenarioParser.Session_id_constantContext ctx) {
         if (ctx.NAT() != null) {
             return "session.sessionId(" + ctx.NAT().getText() + ")";

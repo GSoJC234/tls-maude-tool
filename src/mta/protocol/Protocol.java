@@ -18,6 +18,7 @@ public interface Protocol {
     void assertEqual(Variable var1, Variable var2);
 
     Variable constant(int number);
+    Variable constant(boolean value);
     Variable constant(ProtocolMessageType msgType);
     Variable constant(ProtocolVersion version);
     Variable constant(HandshakeMessageType msgType);
@@ -104,6 +105,8 @@ public interface Protocol {
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable signatureHashAlgorithm, Variable certificate_private_key);
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable wireSignatureHashAlgorithm, Variable signingSignatureHashAlgorithm, Variable certificate_private_key);
     Variable buildChangeCipherSpec(String alias);
+    Variable buildChangeCipherSpec(String alias, boolean ccsProtocolTypeValid);
+    Variable buildChangeCipherSpec(String alias, Variable ccsProtocolTypeValid);
     Variable buildApplicationData(String alias, Variable payload);
     Variable buildEarlyData(String alias, Variable payload);
     Variable buildFinished(String alias, Variable handshake_type);

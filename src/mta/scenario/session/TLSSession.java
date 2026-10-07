@@ -427,6 +427,11 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable constant(boolean value) {
+        return new ConstantVariable<>(List.of(value));
+    }
+
+    @Override
     public Variable sessionId(int size) {
         if (size < 0 || size > 255) {
             throw new IllegalArgumentException("SessionID payload size must be between 0 and 255 bytes");
@@ -1386,11 +1391,26 @@ public class TLSSession implements Protocol {
 
     @Override
     public Variable buildChangeCipherSpec(String alias) {
+        return buildChangeCipherSpec(alias, true);
+    }
+
+    @Override
+    public Variable buildChangeCipherSpec(String alias, boolean ccsProtocolTypeValid) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildChangeCipherSpecAction action = new BuildChangeCipherSpecAction(alias, container);
+        action.setCcsProtocolTypeValid(ccsProtocolTypeValid);
 
         trace.addTlsAction(action);
         return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildChangeCipherSpec(String alias, Variable ccsProtocolTypeValid) {
+        List<?> values = ccsProtocolTypeValid == null ? null : ccsProtocolTypeValid.getValue();
+        if (values == null || values.size() != 1 || !(values.get(0) instanceof Boolean value)) {
+            throw new IllegalArgumentException("CCS payload validity must be one boolean value");
+        }
+        return buildChangeCipherSpec(alias, value);
     }
 
     @Override
