@@ -305,6 +305,7 @@ ADD_CERTIFICATE_ENTRY_STATUS_REQUEST_EXTENSION=304
 OCSP_FIXTURE_ID=305
 BUILD_EARLY_DATA=306
 EARLY_DATA=307
+SET_TICKET_AGE_MILLIS=308
 ':='=1
 'v'=2
 '['=3
@@ -608,3 +609,4 @@ EARLY_DATA=307
 'addCertificateEntryStatusRequestExtension'=304
 'buildEarlyData'=306
 'earlyData'=307
+'setTicketAgeMillis'=308

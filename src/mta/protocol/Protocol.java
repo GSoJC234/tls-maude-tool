@@ -46,6 +46,7 @@ public interface Protocol {
     Variable earlyDataPayload();
     Variable generateTicket(Variable ticketSize, Variable nonce);
     Variable generatePSK(String alias, Variable ticket);
+    void setTicketAgeMillis(String alias, Variable ticket, Variable ageMillis);
     Variable generateEmptyCertificate();
 
     Variable getContentType(Variable msg);

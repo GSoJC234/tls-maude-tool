@@ -376,6 +376,29 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public void setTicketAgeMillis(String alias, Variable ticket, Variable ageMillis) {
+        if (ticket == null || ticket.getValue() == null) {
+            throw new IllegalArgumentException("Session ticket must be provided");
+        }
+        if (ageMillis == null || ageMillis.getValue() == null || ageMillis.getValue().isEmpty()) {
+            throw new IllegalArgumentException("Ticket age in milliseconds must be provided");
+        }
+        Object value = ageMillis.getValue().get(0);
+        if (!(value instanceof Number)) {
+            throw new IllegalArgumentException("Ticket age in milliseconds must be numeric");
+        }
+        long millis = ((Number) value).longValue();
+        if (millis < 0) {
+            throw new IllegalArgumentException("Ticket age in milliseconds must not be negative");
+        }
+
+        SetTicketAgeMillisAction action = new SetTicketAgeMillisAction(alias);
+        action.setSessionTickets((List<SessionTicket>) ticket.getValue());
+        action.setTicketAgeMillis(millis);
+        trace.addTlsAction(action);
+    }
+
+    @Override
     public void setCertificateEcPrivateKey(String keyPath, String namedCurve){
         try{
             PemReader pemReader = new PemReader(new FileReader(keyPath));

@@ -65,7 +65,7 @@ function_name:
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
     | 'buildInvalidPaddingRSAClientKeyExchange' | 'changeVerifyData' | 'encrypt' | 'decrypt' | 'generateRandom' | 'close'
-    | 'generateTicket' | 'generatePSK' | 'setUpPSK' | 'generateEmptyCertificate' | 'generateVerifyData'
+    | 'generateTicket' | 'generatePSK' | 'setUpPSK' | SET_TICKET_AGE_MILLIS | 'generateEmptyCertificate' | 'generateVerifyData'
     | 'addRenegotiationInfoExtension' | 'addCKSExtension' | BUILD_APPLICATION_DATA | ADD_OID_FILTERS_EXTENSION
     ;
 
@@ -240,3 +240,4 @@ ADD_CERTIFICATE_ENTRY_STATUS_REQUEST_EXTENSION: 'addCertificateEntryStatusReques
 OCSP_FIXTURE_ID: 'good-leaf' | 'valid-for-leaf' | 'wrong-certificate' | 'malformed';
 BUILD_EARLY_DATA: 'buildEarlyData';
 EARLY_DATA: 'earlyData';
+SET_TICKET_AGE_MILLIS: 'setTicketAgeMillis';
