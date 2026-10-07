@@ -187,6 +187,18 @@ public class ScenarioBaseListener implements ScenarioListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEarly_data_payload(ScenarioParser.Early_data_payloadContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEarly_data_payload(ScenarioParser.Early_data_payloadContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMaude_constant(ScenarioParser.Maude_constantContext ctx) { }
 	/**
 	 * {@inheritDoc}

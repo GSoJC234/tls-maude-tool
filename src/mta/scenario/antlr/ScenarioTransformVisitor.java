@@ -201,6 +201,9 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         if (ctx.application_data_payload() != null) {
             return "session.generateRandom(" + visit(ctx.application_data_payload().nonce()) + ")";
         }
+        if (ctx.early_data_payload() != null) {
+            return "session.earlyDataPayload()";
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("session");

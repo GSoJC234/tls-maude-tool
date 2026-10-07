@@ -61,7 +61,7 @@ function_name:
     | 'addSupportedVersionExtension' | 'addSignatureAlgorithmExtension' | 'addSignatureAlgorithmCertExtension' | 'addSupportedGroupExtension' | 'addPSKExchangeModeExtension' | 'addCHPreSharedKeyExtension' | 'setCHPreSharedKeyBinder' | 'addSHPreSharedKeyExtension'
     | 'addExtensionLen' | 'addHandshakeLen' | 'addSupportedSignatureAlgorithmExtension' | 'addNamedCurvesExtension' | 'addPostHandshakeAuthExtension' | 'addEarlyDataExtension'
     | 'updateContext' | 'send' | 'recv' | 'buildClientHello' | 'buildServerHello' | 'buildEncryptedExtension' | 'buildECDHEServerKeyExchange' | 'buildECDHClientKeyExchange'
-    | 'echoApplicationData'
+    | 'echoApplicationData' | BUILD_EARLY_DATA
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
     | 'buildInvalidPaddingRSAClientKeyExchange' | 'changeVerifyData' | 'encrypt' | 'decrypt' | 'generateRandom' | 'close'
@@ -70,11 +70,15 @@ function_name:
     ;
 
 maude_constant_list:
-    'c' '[' (maude_constant+ long_constant? | application_data_payload) ']'
+    'c' '[' (maude_constant+ long_constant? | application_data_payload | early_data_payload) ']'
     ;
 
 application_data_payload:
     APPLICATION_DATA_PAYLOAD LPAREN nonce RPAREN
+    ;
+
+early_data_payload:
+    EARLY_DATA
     ;
 
 maude_constant:
@@ -234,3 +238,5 @@ APPLICATION_DATA_PAYLOAD: 'applicationData';
 ADD_OID_FILTERS_EXTENSION: 'addOidFiltersExtension';
 ADD_CERTIFICATE_ENTRY_STATUS_REQUEST_EXTENSION: 'addCertificateEntryStatusRequestExtension';
 OCSP_FIXTURE_ID: 'good-leaf' | 'valid-for-leaf' | 'wrong-certificate' | 'malformed';
+BUILD_EARLY_DATA: 'buildEarlyData';
+EARLY_DATA: 'earlyData';

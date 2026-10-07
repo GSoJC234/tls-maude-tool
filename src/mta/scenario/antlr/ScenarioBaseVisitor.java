@@ -118,6 +118,13 @@ public class ScenarioBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitEarly_data_payload(ScenarioParser.Early_data_payloadContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitMaude_constant(ScenarioParser.Maude_constantContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

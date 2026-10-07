@@ -323,6 +323,13 @@ public class TLSSession implements Protocol {
     }
 
     @Override
+    public Variable earlyDataPayload() {
+        List<byte[]> container = new ArrayList<>();
+        container.add(new byte[] {(byte) 0x00});
+        return new ConstantVariable<>(container);
+    }
+
+    @Override
     public Variable generateTicket(Variable ticketSize, Variable nonce) {
         List<SessionTicket> container = new ArrayList<>();
 
@@ -1307,6 +1314,16 @@ public class TLSSession implements Protocol {
     public Variable buildApplicationData(String alias, Variable payload) {
         List<ProtocolMessage> container = new ArrayList<>();
         BuildApplicationDataAction action = new BuildApplicationDataAction(alias, container);
+        action.setPayload((List<byte[]>) payload.getValue());
+
+        trace.addTlsAction(action);
+        return new ProtocolMessageVariable(container);
+    }
+
+    @Override
+    public Variable buildEarlyData(String alias, Variable payload) {
+        List<ProtocolMessage> container = new ArrayList<>();
+        BuildEarlyDataAction action = new BuildEarlyDataAction(alias, container);
         action.setPayload((List<byte[]>) payload.getValue());
 
         trace.addTlsAction(action);

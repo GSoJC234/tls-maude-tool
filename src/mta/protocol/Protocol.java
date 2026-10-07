@@ -43,6 +43,7 @@ public interface Protocol {
     Variable getCertificate(String path);
     Variable genCertificatePrivateKey(String privateKeyPath);
     Variable generateRandom(Random random);
+    Variable earlyDataPayload();
     Variable generateTicket(Variable ticketSize, Variable nonce);
     Variable generatePSK(String alias, Variable ticket);
     Variable generateEmptyCertificate();
@@ -96,6 +97,7 @@ public interface Protocol {
     Variable buildCertificateVerify(String alias, Variable handshake_type, Variable wireSignatureHashAlgorithm, Variable signingSignatureHashAlgorithm, Variable certificate_private_key);
     Variable buildChangeCipherSpec(String alias);
     Variable buildApplicationData(String alias, Variable payload);
+    Variable buildEarlyData(String alias, Variable payload);
     Variable buildFinished(String alias, Variable handshake_type);
     Variable buildFinished(String alias, Variable handshake_type, Variable verify_data);
     Variable buildAlert(String alias, Variable level, Variable description);

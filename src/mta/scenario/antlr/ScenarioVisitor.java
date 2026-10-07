@@ -97,6 +97,12 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitApplication_data_payload(ScenarioParser.Application_data_payloadContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ScenarioParser#early_data_payload}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEarly_data_payload(ScenarioParser.Early_data_payloadContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ScenarioParser#maude_constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
