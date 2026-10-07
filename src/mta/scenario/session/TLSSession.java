@@ -604,50 +604,6 @@ public class TLSSession implements Protocol {
         return new ConstantVariable<>(List.of(responses));
     }
 
-    // Note: LongConstantVariable expands the last item
-    // to the maximum allowed length as defined by the RFC specification.
-    @Override
-    public Variable longConstant(mta.maude.constant.CipherSuite... cipherSuites) {
-        List<CipherSuite> container = new ArrayList<>();
-        for(mta.maude.constant.CipherSuite cipherSuite: cipherSuites){
-            container.add(cipherSuite.transform());
-        }
-        return new LongConstantVariable(container);
-    }
-
-    // Note: LongConstantVariable expands the last item
-    // to the maximum allowed length as defined by the RFC specification.
-    @Override
-    public Variable longConstant(mta.maude.constant.ProtocolVersion... versions) {
-        List<ProtocolVersion> container = new ArrayList<>();
-        for(mta.maude.constant.ProtocolVersion version: versions){
-            container.add(version.transform());
-        }
-        return new LongConstantVariable(container);
-    }
-
-    // Note: LongConstantVariable expands the last item
-    // to the maximum allowed length as defined by the RFC specification.
-    @Override
-    public Variable longConstant(mta.maude.constant.NamedGroup... groups) {
-        List<NamedGroup> container = new ArrayList<>();
-        for(mta.maude.constant.NamedGroup group: groups){
-            container.add(group.transform());
-        }
-        return new LongConstantVariable(container);
-    }
-
-    // Note: LongConstantVariable expands the last item
-    // to the maximum allowed length as defined by the RFC specification.
-    @Override
-    public Variable longConstant(SignatureAlgorithm... signatureAlgorithms) {
-        List<SignatureAndHashAlgorithm> container = new ArrayList<>();
-        for(SignatureAlgorithm signatureAlgorithm : signatureAlgorithms){
-            container.add(signatureAlgorithm.transform());
-        }
-        return new LongConstantVariable(container);
-    }
-
     @Override
     public Variable getContentType(Variable msg){
         MessageVariable messageVariable = (MessageVariable) msg;
@@ -1492,11 +1448,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addSupportedVersionExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_versions){
         AddSupportedVersionAction action = new AddSupportedVersionAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (supported_versions instanceof LongConstantVariable){
-            action.setLongExtensions((List<ProtocolVersion>) supported_versions.getValue());
-        } else {
-            action.setExtensions((List<ProtocolVersion>) supported_versions.getValue());
-        }
+        action.setExtensions((List<ProtocolVersion>) supported_versions.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
         trace.addTlsAction(action);
     }
@@ -1504,11 +1456,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addSignatureAlgorithmExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms){
         AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (algorithms instanceof LongConstantVariable){
-            action.setLongExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
-        } else {
-            action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
-        }
+        action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
 
         trace.addTlsAction(action);
@@ -1517,11 +1465,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addSignatureAlgorithmCertExtension(String alias, Variable extension_len, Variable handshake_message, Variable algorithms){
         AddSignatureAlgorithmCertsAction action = new AddSignatureAlgorithmCertsAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (algorithms instanceof LongConstantVariable){
-            action.setLongExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
-        } else {
-            action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
-        }
+        action.setExtensions((List<SignatureAndHashAlgorithm>) algorithms.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
 
         trace.addTlsAction(action);
@@ -1530,11 +1474,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addSupportedSignatureAlgorithmExtension(String alias, Variable handshake_message, Variable supported_signature_algorithms) {
         AddSignatureAndHashAlgorithmAction action = new AddSignatureAndHashAlgorithmAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (supported_signature_algorithms instanceof LongConstantVariable){
-            action.setLongExtensions((List<SignatureAndHashAlgorithm>) supported_signature_algorithms.getValue());
-        } else {
-            action.setExtensions((List<SignatureAndHashAlgorithm>) supported_signature_algorithms.getValue());
-        }
+        action.setExtensions((List<SignatureAndHashAlgorithm>) supported_signature_algorithms.getValue());
         action.setExtensionLen((List<Integer>) supported_signature_algorithms.getValue());
         trace.addTlsAction(action);
     }
@@ -1542,11 +1482,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addNamedCurvesExtension(String alias, Variable handshake_message, Variable named_curves) {
         AddSupportedGroupAction action = new AddSupportedGroupAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (named_curves instanceof LongConstantVariable){
-            action.setLongExtensions((List<NamedGroup>) named_curves.getValue());
-        } else {
-            action.setExtensions((List<NamedGroup>) named_curves.getValue());
-        }
+        action.setExtensions((List<NamedGroup>) named_curves.getValue());
         action.setExtensionLen((List<Integer>) named_curves.getValue());
         trace.addTlsAction(action);
     }
@@ -1554,11 +1490,7 @@ public class TLSSession implements Protocol {
     @Override
     public void addSupportedGroupExtension(String alias, Variable extension_len, Variable handshake_message, Variable supported_groups){
         AddSupportedGroupAction action = new AddSupportedGroupAction(alias, (List<ProtocolMessage>) handshake_message.getValue());
-        if (supported_groups instanceof LongConstantVariable){
-            action.setLongExtensions((List<NamedGroup>) supported_groups.getValue());
-        } else {
-            action.setExtensions((List<NamedGroup>) supported_groups.getValue());
-        }
+        action.setExtensions((List<NamedGroup>) supported_groups.getValue());
         action.setExtensionLen((List<Integer>) extension_len.getValue());
 
         trace.addTlsAction(action);

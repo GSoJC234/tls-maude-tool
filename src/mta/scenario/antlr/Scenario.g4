@@ -70,7 +70,7 @@ function_name:
     ;
 
 maude_constant_list:
-    'c' '[' (maude_constant+ long_constant? | application_data_payload | early_data_payload) ']'
+    'c' '[' (maude_constant+ | application_data_payload | early_data_payload) ']'
     ;
 
 application_data_payload:
@@ -196,10 +196,6 @@ session_id_size_constant:
     SESSION_ID_SIZE LPAREN NAT RPAREN
     ;
 
-long_constant:
-    LONG (CS | PV | SA | NG) LPAREN (named_group_constant | signature_and_hash_algorithm_constant | ciphersuite_constant | protocol_version_constant) RPAREN
-    ;
-
 oid_filter_constant:
     'oidFilter' LPAREN certificate_extension_oid COMMA oid_filter_value (COMMA oid_filter_value)* RPAREN
     ;
@@ -226,12 +222,6 @@ extended_key_usage_value:
     ;
 
 // LEXER RULES
-LONG: 'long';
-CS: 'CS';
-PV: 'PV';
-SA: 'SA';
-NG: 'NG';
-
 TID: [A-Za-z0-9_-]+ ( [ \t\r\n]* '.' [ \t\r\n]* [A-Za-z0-9_-]+ )+ ;
 NAT: [0-9]+;
 SEMI: ';';

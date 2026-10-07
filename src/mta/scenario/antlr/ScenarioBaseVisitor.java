@@ -272,13 +272,6 @@ public class ScenarioBaseVisitor<T> extends AbstractParseTreeVisitor<T> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLong_constant(ScenarioParser.Long_constantContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

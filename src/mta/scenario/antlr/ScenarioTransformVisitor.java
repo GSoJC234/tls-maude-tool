@@ -8,11 +8,6 @@ import java.util.stream.Collectors;
 
 public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
 
-    private final int LONGCIPHERLEN = 30000;
-    private final int LONGNAMEDGROUPLEN = 30000;
-    private final int LONGSIGNATURELEN = 30000;
-    private final int LONGPROTOCOLLEN = 254;
-
     private List<Node> nodeList = null;
     public void setNodes(List<Node> nodeList) {
         this.nodeList = nodeList;
@@ -220,11 +215,7 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         sb.append("session");
         sb.append(".");
 
-        if (ctx.long_constant() != null) {
-            sb.append("longConstant");
-        } else {
-            sb.append("constant");
-        }
+        sb.append("constant");
         sb.append("(");
         if (ctx.maude_constant().size() > 1){
             sb.append(ctx.maude_constant().stream()
@@ -234,10 +225,6 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             sb.append(visit(ctx.maude_constant().get(0)));
         }
 
-        if (ctx.long_constant() != null) {
-            sb.append(", ");
-            sb.append(visit(ctx.long_constant()));
-        }
         sb.append(")");
 
         return sb.toString();
@@ -580,17 +567,4 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         }
     }
 
-    @Override
-    public String visitLong_constant(ScenarioParser.Long_constantContext ctx) {
-        if (ctx.ciphersuite_constant() != null) {
-            return visit(ctx.ciphersuite_constant());
-        } else if (ctx.protocol_version_constant() != null) {
-            return visit(ctx.protocol_version_constant());
-        } else if (ctx.signature_and_hash_algorithm_constant() != null) {
-            return visit(ctx.signature_and_hash_algorithm_constant());
-        } else if (ctx.named_group_constant() != null) {
-            return visit(ctx.named_group_constant());
-        }
-        return "";
-    }
 }

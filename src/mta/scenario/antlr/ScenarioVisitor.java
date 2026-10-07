@@ -229,12 +229,6 @@ public interface ScenarioVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSession_id_size_constant(ScenarioParser.Session_id_size_constantContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ScenarioParser#long_constant}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLong_constant(ScenarioParser.Long_constantContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ScenarioParser#oid_filter_constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

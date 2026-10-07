@@ -451,18 +451,6 @@ public class ScenarioBaseListener implements ScenarioListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLong_constant(ScenarioParser.Long_constantContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLong_constant(ScenarioParser.Long_constantContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterOid_filter_constant(ScenarioParser.Oid_filter_constantContext ctx) { }
 	/**
 	 * {@inheritDoc}

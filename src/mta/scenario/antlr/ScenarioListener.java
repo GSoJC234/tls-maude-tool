@@ -370,16 +370,6 @@ public interface ScenarioListener extends ParseTreeListener {
 	 */
 	void exitSession_id_size_constant(ScenarioParser.Session_id_size_constantContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ScenarioParser#long_constant}.
-	 * @param ctx the parse tree
-	 */
-	void enterLong_constant(ScenarioParser.Long_constantContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ScenarioParser#long_constant}.
-	 * @param ctx the parse tree
-	 */
-	void exitLong_constant(ScenarioParser.Long_constantContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ScenarioParser#oid_filter_constant}.
 	 * @param ctx the parse tree
 	 */

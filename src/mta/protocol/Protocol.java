@@ -42,11 +42,6 @@ public interface Protocol {
     /** Supplies the exact SessionID length-field value to encode on the wire. */
     Variable sessionIdSize(int size);
 
-    Variable longConstant(CipherSuite... cipherSuites);
-    Variable longConstant(ProtocolVersion... versions);
-    Variable longConstant(NamedGroup... groups);
-    Variable longConstant(SignatureAlgorithm... signatureAlgorithms);
-
     Variable getCertificate(String path);
     Variable genCertificatePrivateKey(String privateKeyPath);
     Variable generateRandom(Random random);
