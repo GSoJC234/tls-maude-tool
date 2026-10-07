@@ -71,6 +71,7 @@ final class BehaviorValueToMaudeConverter {
     private static final Map<String, String> MESSAGE_FIELDS = buildMessageFields();
     private static final Map<String, String> ATTRIBUTES = buildAttributes();
     private static final Map<String, String> PROTOCOL_VERSION_TO_MAUDE = Map.of(
+            "SSL30", "SSL-30",
             "TLS10", "TLS-10",
             "TLS11", "TLS-11",
             "TLS12", "TLS-12",

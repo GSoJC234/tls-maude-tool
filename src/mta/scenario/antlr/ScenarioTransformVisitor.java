@@ -297,6 +297,8 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     @Override
     public String visitProtocol_version_constant(ScenarioParser.Protocol_version_constantContext ctx) {
         switch (ctx.getText()){
+            case "SSL-30": return ProtocolVersion.title() + "." + ProtocolVersion.SSL30.name();
+            case "TLS-10": return ProtocolVersion.title() + "." + ProtocolVersion.TLS10.name();
             case "TLS-11": return ProtocolVersion.title() + "." + ProtocolVersion.TLS11.name();
             case "TLS-12": return ProtocolVersion.title() + "." + ProtocolVersion.TLS12.name();
             case "TLS-13": return ProtocolVersion.title() + "." + ProtocolVersion.TLS13.name();

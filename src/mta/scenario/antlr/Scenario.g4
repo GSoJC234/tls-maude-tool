@@ -107,7 +107,7 @@ protocol_type_constant:
     ;
 
 protocol_version_constant:
-    'TLS-11' | 'TLS-12' | 'TLS-13'
+    'SSL-30' | 'TLS-10' | 'TLS-11' | 'TLS-12' | 'TLS-13'
     ;
 
 handshake_type_constant:
