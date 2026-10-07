@@ -500,6 +500,14 @@ public class TLSSession implements Protocol {
 
     @Override
     public Variable constant(mta.maude.constant.CompressionMethod... methods) {
+        if (java.util.Arrays.asList(methods).contains(mta.maude.constant.CompressionMethod.INVALID_COMPRESSION)) {
+            byte[] compressionBytes = new byte[methods.length];
+            for (int index = 0; index < methods.length; index++) {
+                compressionBytes[index] = methods[index].wireValue();
+            }
+            return new ConstantVariable<byte[]>(List.of(compressionBytes));
+        }
+
         List<CompressionMethod> container = new ArrayList<>();
         for(mta.maude.constant.CompressionMethod method : methods){
             container.add(method.transform());
@@ -1174,7 +1182,12 @@ public class TLSSession implements Protocol {
             action.setSessionIdLength((List<Integer>) sessionIdLength.getValue());
         }
         action.setCompressionsLen((List<Integer>) compression_len.getValue());
-        action.setCompressions((List<CompressionMethod>) methods.getValue());
+        List<?> compressionMethods = methods.getValue();
+        if (compressionMethods.size() == 1 && compressionMethods.get(0) instanceof byte[] rawCompressionBytes) {
+            action.setCompressionBytes(rawCompressionBytes);
+        } else {
+            action.setCompressions((List<CompressionMethod>) compressionMethods);
+        }
         trace.addTlsAction(action);
 
         return new ProtocolMessageVariable(container);

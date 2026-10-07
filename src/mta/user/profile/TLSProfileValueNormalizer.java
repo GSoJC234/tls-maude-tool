@@ -206,7 +206,8 @@ public final class TLSProfileValueNormalizer {
             "deflate", "zlib-compression",
             "zlib", "zlib-compression",
             "zlib_compression", "zlib-compression",
-            "lzs", "zlib-compression");
+            "lzs", "zlib-compression",
+            "invalid_compression", "invalid-compression");
 
     private static final Map<String, String> CERTIFICATE_TYPE_TO_MAUDE = Map.of(
             "rsa_sign", "rsa-sign",
@@ -320,7 +321,7 @@ public final class TLSProfileValueNormalizer {
         String token = atomText(fieldName, value);
         String maude = COMPRESSION_TO_MAUDE.get(token.toLowerCase(Locale.ROOT).replace('-', '_'));
         if (maude == null) {
-            throw profileViolation(fieldName, token, "expected null, NO_COMPRESSION, DEFLATE, or LZS");
+            throw profileViolation(fieldName, token, "expected null, NO_COMPRESSION, DEFLATE, LZS, or INVALID_COMPRESSION");
         }
         return atom(maude);
     }

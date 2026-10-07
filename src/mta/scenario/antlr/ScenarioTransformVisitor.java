@@ -433,6 +433,7 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         switch (ctx.getText()) {
             case "no-compression": return CompressionMethod.title() + "." + CompressionMethod.NO_COMPRESSION.name();
             case "zlib-compression": return CompressionMethod.title() + "." + CompressionMethod.DEFLATE.name();
+            case "invalid-compression": return CompressionMethod.title() + "." + CompressionMethod.INVALID_COMPRESSION.name();
             default: return "";
         }
     }

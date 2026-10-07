@@ -145,7 +145,7 @@ ciphersuite_constant:
     ;
 
 compression_constant:
-    'no-compression' | 'zlib-compression'
+    'no-compression' | 'zlib-compression' | 'invalid-compression'
     ;
 
 signature_and_hash_algorithm_constant:

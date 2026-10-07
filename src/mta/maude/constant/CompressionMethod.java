@@ -4,7 +4,8 @@ public enum CompressionMethod {
     NO_COMPRESSION,
     DEFLATE,
     NULL,
-    LZS;
+    LZS,
+    INVALID_COMPRESSION;
 
     public static String title(){
         return "CompressionMethod";
@@ -20,12 +21,17 @@ public enum CompressionMethod {
         };
     }
 
+    public byte wireValue() {
+        return this == INVALID_COMPRESSION ? (byte) 0x7f : transform().getValue();
+    }
+
     public String maudeTerm(){
         return switch (this) {
             case LZS -> "zlib-compression";
             case DEFLATE -> "zlib-compression";
             case NULL -> "no-compression";
             case NO_COMPRESSION -> "no-compression";
+            case INVALID_COMPRESSION -> "invalid-compression";
             default -> throw new IllegalArgumentException("Unknown compression method: " + this);
         };
     }
