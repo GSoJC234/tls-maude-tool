@@ -75,7 +75,8 @@ final class BehaviorValueToMaudeConverter {
             "TLS10", "TLS-10",
             "TLS11", "TLS-11",
             "TLS12", "TLS-12",
-            "TLS13", "TLS-13");
+            "TLS13", "TLS-13",
+            "UNKNOWN", "UNKNOWN");
     private static final Map<String, String> CONTENT_TYPE_TO_MAUDE = Map.of(
             "handshake", "handshake",
             "change_cipher_spec", "change-cipher-spec",
@@ -332,7 +333,7 @@ final class BehaviorValueToMaudeConverter {
                 throw behaviorViolation("protocol version", token,
                         "use RFC-style values such as TLS11, TLS12, or TLS13");
             }
-            throw behaviorViolation("protocol version", token, "expected TLS10, TLS11, TLS12, or TLS13");
+            throw behaviorViolation("protocol version", token, "expected TLS10, TLS11, TLS12, TLS13, or UNKNOWN");
         }
         return atom(maude);
     }

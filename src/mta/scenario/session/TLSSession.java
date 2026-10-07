@@ -434,6 +434,10 @@ public class TLSSession implements Protocol {
 
     @Override
     public Variable constant(mta.maude.constant.ProtocolVersion version) {
+        // UNKNOWN is a raw record-layer value, not a negotiated TLS version in TLS-Attacker's enum.
+        if (version == mta.maude.constant.ProtocolVersion.UNKNOWN) {
+            return new ConstantVariable<>(List.of(version.recordVersionBytes()));
+        }
         List<ProtocolVersion> container = new ArrayList<>();
         container.add(version.transform());
         return new ConstantVariable<ProtocolVersion>(container);
@@ -1088,7 +1092,14 @@ public class TLSSession implements Protocol {
 
         BuildRecordAction action = new BuildRecordAction(alias, container);
         action.setProtocolMessageType((List<ProtocolMessageType>) content_type.getValue());
-        action.setProtocolVersion((List<ProtocolVersion>) record_version.getValue());
+        List<?> recordVersionValue = record_version.getValue();
+        if (recordVersionValue != null
+                && !recordVersionValue.isEmpty()
+                && recordVersionValue.get(0) instanceof byte[] rawRecordVersion) {
+            action.setProtocolVersionBytes(rawRecordVersion);
+        } else {
+            action.setProtocolVersion((List<ProtocolVersion>) recordVersionValue);
+        }
         action.setProtocolMessageLength((List<Integer>) record_len.getValue());
         action.setProtocolMessage((List<ProtocolMessage>) message.getValue());
 

@@ -1,7 +1,7 @@
 package mta.maude.constant;
 
 public enum ProtocolVersion {
-    SSL30, TLS10, TLS11, TLS12, TLS13;
+    SSL30, TLS10, TLS11, TLS12, TLS13, UNKNOWN;
 
     public static String title(){
         return "ProtocolVersion";
@@ -14,8 +14,17 @@ public enum ProtocolVersion {
             case TLS11 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS11;
             case TLS12 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS12;
             case TLS13 -> de.rub.nds.tlsattacker.core.constants.ProtocolVersion.TLS13;
+            case UNKNOWN -> throw new IllegalArgumentException(
+                    "UNKNOWN is a record-layer version value, not a negotiated TLS version");
             default -> throw new IllegalArgumentException("Unknown ProtocolVersion: " + this);
         };
+    }
+
+    public byte[] recordVersionBytes() {
+        if (this == UNKNOWN) {
+            return new byte[] {0x03, (byte) 0xFF};
+        }
+        return transform().getValue().clone();
     }
 
     public String maudeTerm() {
@@ -25,6 +34,7 @@ public enum ProtocolVersion {
             case TLS11 -> "TLS-11";
             case TLS12 -> "TLS-12";
             case TLS13 -> "TLS-13";
+            case UNKNOWN -> "UNKNOWN";
             default -> throw new IllegalArgumentException("Unknown ProtocolVersion: " + this);
         };
     }

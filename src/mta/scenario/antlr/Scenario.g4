@@ -107,7 +107,7 @@ protocol_type_constant:
     ;
 
 protocol_version_constant:
-    'SSL-30' | 'TLS-10' | 'TLS-11' | 'TLS-12' | 'TLS-13'
+    'SSL-30' | 'TLS-10' | 'TLS-11' | 'TLS-12' | 'TLS-13' | UNKNOWN_VERSION
     ;
 
 handshake_type_constant:
@@ -241,3 +241,4 @@ OCSP_FIXTURE_ID: 'good-leaf' | 'valid-for-leaf' | 'wrong-certificate' | 'malform
 BUILD_EARLY_DATA: 'buildEarlyData';
 EARLY_DATA: 'earlyData';
 SET_TICKET_AGE_MILLIS: 'setTicketAgeMillis';
+UNKNOWN_VERSION: 'UNKNOWN';
