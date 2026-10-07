@@ -67,6 +67,7 @@ import org.apache.logging.log4j.Logger;
 
 public class TLSSession implements Protocol {
     private static final Logger LOGGER = LogManager.getLogger(TLSSession.class);
+    private static final int SESSION_ID_BASELINE_SIZE = 32;
 
     protected AliasedConnection connection;
     private WorkflowTrace trace;
@@ -423,6 +424,39 @@ public class TLSSession implements Protocol {
         List<Integer> container = new ArrayList<>();
         container.add(n);
         return new ConstantVariable<Integer>(container);
+    }
+
+    @Override
+    public Variable sessionId(int size) {
+        if (size < 0 || size > 255) {
+            throw new IllegalArgumentException("SessionID payload size must be between 0 and 255 bytes");
+        }
+        byte[] sessionId = new byte[size];
+        new SecureRandom().nextBytes(sessionId);
+        return new ConstantVariable<>(List.of(sessionId));
+    }
+
+    @Override
+    public Variable sessionId(mta.maude.constant.MessageSize size) {
+        if (size == null) {
+            throw new IllegalArgumentException("SessionID size category must not be null");
+        }
+        int resolvedSize = switch (size) {
+            case VALID -> SESSION_ID_BASELINE_SIZE;
+            case SMALLER -> SESSION_ID_BASELINE_SIZE - 1;
+            case LARGER -> SESSION_ID_BASELINE_SIZE + 1;
+            case MINSIZE -> 0;
+            case MAXSIZE -> 255;
+        };
+        return sessionId(resolvedSize);
+    }
+
+    @Override
+    public Variable sessionIdSize(int size) {
+        if (size < 0 || size > 255) {
+            throw new IllegalArgumentException("SessionID length field must be between 0 and 255");
+        }
+        return constant(size);
     }
 
     @Override
@@ -1108,7 +1142,18 @@ public class TLSSession implements Protocol {
         return new MessageVariable(container, (List<ProtocolMessage>) message.getValue());
     }
     @Override
-    public Variable buildClientHello(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionId_len, Variable sessionId, Variable compression_len, Variable methods){
+    public Variable buildClientHello_old(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionIdLen, Variable sessionId, Variable compression_len, Variable methods){
+        return buildClientHelloInternal(alias, handshake_type, versions, ciphers_len, ciphers, random,
+                sessionId, sessionIdLen, true, compression_len, methods);
+    }
+
+    @Override
+    public Variable buildClientHello(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionId, Variable sessionIdSize, Variable compression_len, Variable methods){
+        return buildClientHelloInternal(alias, handshake_type, versions, ciphers_len, ciphers, random,
+                sessionId, sessionIdSize, false, compression_len, methods);
+    }
+
+    private Variable buildClientHelloInternal(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionId, Variable sessionIdLength, boolean legacySessionIdLength, Variable compression_len, Variable methods){
         List<ProtocolMessage> container = new ArrayList<>();
 
         BuildClientHelloAction action = new BuildClientHelloAction(alias, container);
@@ -1117,8 +1162,12 @@ public class TLSSession implements Protocol {
         action.setCipherSuitesLen((List<Integer>) ciphers_len.getValue());
         action.setCipherSuites((List<CipherSuite>) ciphers.getValue());
         action.setRandom((List<byte[]>) random.getValue());
-        action.setSessionIdLen((List<Integer>) sessionId_len.getValue());
         action.setSessionId((List<byte[]>) sessionId.getValue());
+        if (legacySessionIdLength) {
+            action.setSessionIdLen((List<Integer>) sessionIdLength.getValue());
+        } else {
+            action.setSessionIdLength((List<Integer>) sessionIdLength.getValue());
+        }
         action.setCompressionsLen((List<Integer>) compression_len.getValue());
         action.setCompressions((List<CompressionMethod>) methods.getValue());
         trace.addTlsAction(action);

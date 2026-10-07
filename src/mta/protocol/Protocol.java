@@ -34,6 +34,12 @@ public interface Protocol {
     Variable constant(CertificateType... certificateType);
     Variable constant(OidFilterSpec... filters);
     Variable constant(OcspResponseSpec... responses);
+    /** Generates a random SessionID payload of the requested byte length. */
+    Variable sessionId(int size);
+    /** Generates a random SessionID payload using 32 bytes as the size-category baseline. */
+    Variable sessionId(mta.maude.constant.MessageSize size);
+    /** Supplies the exact SessionID length-field value to encode on the wire. */
+    Variable sessionIdSize(int size);
 
     Variable longConstant(CipherSuite... cipherSuites);
     Variable longConstant(ProtocolVersion... versions);
@@ -78,7 +84,8 @@ public interface Protocol {
 
 
     Variable buildRecord(String alias, Variable content_type, Variable record_version, Variable record_len, Variable message);
-    Variable buildClientHello(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable session_len, Variable sessionId, Variable compression_len, Variable methods);
+    Variable buildClientHello_old(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionIdLen, Variable sessionId, Variable compression_len, Variable methods);
+    Variable buildClientHello(String alias, Variable handshake_type, Variable versions, Variable ciphers_len, Variable ciphers, Variable random, Variable sessionId, Variable sessionIdSize, Variable compression_len, Variable methods);
     Variable buildServerHello(String alias, Variable handshake_type, Variable version, Variable suite, Variable random, Variable session_len, Variable sessionId, Variable compression);
     Variable buildECDHEServerKeyExchange(String alias, Variable handshake_type, Variable curve_type, Variable named_curve, Variable ec_private, Variable signature_key);
     Variable buildServerHelloDone(String alias, Variable handshake_type);

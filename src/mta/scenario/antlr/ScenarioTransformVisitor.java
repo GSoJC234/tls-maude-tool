@@ -146,6 +146,10 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
             return visit(ctx.nonce());
         } else if (ctx.other_constant() != null){
             return visit(ctx.other_constant());
+        } else if (ctx.session_id_constant() != null) {
+            return visit(ctx.session_id_constant());
+        } else if (ctx.session_id_size_constant() != null) {
+            return visit(ctx.session_id_size_constant());
         }
         else {
             return "";
@@ -203,6 +207,13 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
         }
         if (ctx.early_data_payload() != null) {
             return "session.earlyDataPayload()";
+        }
+        if (ctx.maude_constant().size() == 1) {
+            ScenarioParser.Maude_constantContext constant = ctx.maude_constant(0);
+            if (constant.session_id_constant() != null
+                    || constant.session_id_size_constant() != null) {
+                return visit(constant);
+            }
         }
 
         StringBuilder sb = new StringBuilder();
@@ -531,6 +542,19 @@ public class ScenarioTransformVisitor extends ScenarioBaseVisitor<String> {
     @Override
     public String visitNumber_constant(ScenarioParser.Number_constantContext ctx) {
         return ctx.getText();
+    }
+
+    @Override
+    public String visitSession_id_constant(ScenarioParser.Session_id_constantContext ctx) {
+        if (ctx.NAT() != null) {
+            return "session.sessionId(" + ctx.NAT().getText() + ")";
+        }
+        return "session.sessionId(" + visit(ctx.msg_size_constant()) + ")";
+    }
+
+    @Override
+    public String visitSession_id_size_constant(ScenarioParser.Session_id_size_constantContext ctx) {
+        return "session.sessionIdSize(" + ctx.NAT().getText() + ")";
     }
 
     @Override

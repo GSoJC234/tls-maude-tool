@@ -427,6 +427,30 @@ public class ScenarioBaseListener implements ScenarioListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSession_id_constant(ScenarioParser.Session_id_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSession_id_constant(ScenarioParser.Session_id_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSession_id_size_constant(ScenarioParser.Session_id_size_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSession_id_size_constant(ScenarioParser.Session_id_size_constantContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLong_constant(ScenarioParser.Long_constantContext ctx) { }
 	/**
 	 * {@inheritDoc}

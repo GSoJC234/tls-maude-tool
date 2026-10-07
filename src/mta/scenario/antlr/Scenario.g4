@@ -30,7 +30,7 @@ argumentList
     ;
 
 argument:
-    maude_constant_list | TID | functionCall | variable | value | nonce | other_constant
+    maude_constant_list | TID | functionCall | variable | value | nonce | other_constant | session_id_constant | session_id_size_constant
     ;
 
 variable:
@@ -60,7 +60,7 @@ function_name:
     | 'getRSAPreMasterSecret' | 'calculateMasterSecret' | 'buildEmptyKeyShareEntryList' | 'addKeyShareEntry' | 'addKeyShareExtension' | 'addHRRKeyShareExtension'
     | 'addSupportedVersionExtension' | 'addSignatureAlgorithmExtension' | 'addSignatureAlgorithmCertExtension' | 'addSupportedGroupExtension' | 'addPSKExchangeModeExtension' | 'addCHPreSharedKeyExtension' | 'setCHPreSharedKeyBinder' | 'addSHPreSharedKeyExtension'
     | 'addExtensionLen' | 'addHandshakeLen' | 'addSupportedSignatureAlgorithmExtension' | 'addNamedCurvesExtension' | 'addPostHandshakeAuthExtension' | 'addEarlyDataExtension'
-    | 'updateContext' | 'send' | 'recv' | 'buildClientHello' | 'buildServerHello' | 'buildEncryptedExtension' | 'buildECDHEServerKeyExchange' | 'buildECDHClientKeyExchange'
+    | 'updateContext' | 'send' | 'recv' | 'buildClientHello' | BUILD_CLIENT_HELLO_OLD | 'buildServerHello' | 'buildEncryptedExtension' | 'buildECDHEServerKeyExchange' | 'buildECDHClientKeyExchange'
     | 'echoApplicationData' | BUILD_EARLY_DATA
     | 'buildCertificate' | 'buildCertificateVerify' | 'buildCertificateRequest' | 'buildChangeCipherSpec' | 'buildFinished' | 'buildAlert' | 'buildNewSessionTicket' | 'buildServerHelloDone'
     | 'buildRecord' | 'genCertificatePrivateKey' | 'getCertificate' | 'changeCertificate' | 'reEncryptRSAClientKeyExchange'
@@ -83,7 +83,7 @@ early_data_payload:
 
 maude_constant:
       alert_constant | protocol_type_constant | protocol_version_constant | handshake_type_constant | ciphersuite_constant | certificate_type_constant
-    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | oid_filter_constant | ocsp_response_constant
+    | compression_constant | signature_and_hash_algorithm_constant | named_group_constant | psk_key_exchange_mode | msg_size_constant | curve_type_constant | number_constant | session_id_constant | session_id_size_constant | oid_filter_constant | ocsp_response_constant
     ;
 
 alert_constant:
@@ -188,6 +188,14 @@ number_constant:
     NAT
     ;
 
+session_id_constant:
+    SESSION_ID LPAREN (NAT | msg_size_constant) RPAREN
+    ;
+
+session_id_size_constant:
+    SESSION_ID_SIZE LPAREN NAT RPAREN
+    ;
+
 long_constant:
     LONG (CS | PV | SA | NG) LPAREN (named_group_constant | signature_and_hash_algorithm_constant | ciphersuite_constant | protocol_version_constant) RPAREN
     ;
@@ -242,3 +250,6 @@ BUILD_EARLY_DATA: 'buildEarlyData';
 EARLY_DATA: 'earlyData';
 SET_TICKET_AGE_MILLIS: 'setTicketAgeMillis';
 UNKNOWN_VERSION: 'UNKNOWN';
+SESSION_ID_SIZE: 'sessionIdSize';
+SESSION_ID: 'sessionId';
+BUILD_CLIENT_HELLO_OLD: 'buildClientHello_old';
